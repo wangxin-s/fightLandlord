@@ -1,0 +1,9 @@
+.idea/
+local.properties
+build
+*.iml
+*.log
+.project
+server/views/
+source/node_modules/
+
