@@ -25,7 +25,8 @@ pool.connect(function(err,connection){
         console.log(err);
         throw(err)
     }else{
-        console.log("链接成功");
+		console.log("链接成功");
+		//console.log(connection)
     }
 });
 function query(sql,callback){
