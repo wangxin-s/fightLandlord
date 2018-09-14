@@ -22,6 +22,7 @@ var pool = mysql.createConnection({
 pool.connect(function(err,connection){
     if(err){
         console.log("链接失败");
+        console.log("新增打印");
         console.log(err);
         // throw(err)
     }else{
