@@ -7,7 +7,11 @@ exports.websocket = function websocket(socket) {
     socket.on('news', function (data) {
         console.log(data);
         //socket.emit('news', data);
-        var  sql = 'SELECT * FROM websites';
+<<<<<<< HEAD
+        var  sql = 'SELECT * FROM detail';
+=======
+        var  sql = 'SELECT * FROM test_tbl';
+>>>>>>> 64f31a376507990fa704323407e3c0c29f871ee4
         //查
         connect.query(sql,function (err, result) {
             console.log('------');
