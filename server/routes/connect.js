@@ -3,6 +3,34 @@
  */
 var mysql = require("mysql");
 
+<<<<<<< HEAD
+=======
+// var pool = mysql.createConnection({
+//     host     : 'localhost',
+//     port: '3306',
+//     user     : 'root',
+//     password : '123456',
+//     database: 'wx',
+//     typeCast: true             // 是否把结果值转换为原生的 javascript 类型
+// });
+// var pool = mysql.createConnection({
+//     host     : 'localhost',
+//     port: '3306',
+//     user     : 'root',
+//     password : '123',
+//     database: 'test',
+//     typeCast: true,             // 是否把结果值转换为原生的 javascript 类型
+// });
+
+/*var pool = mysql.createConnection({
+    host     : '172.16.15.205',
+    port: '3306',
+    user     : 'root',
+    password : '123456',
+    database: 'wx',
+    typeCast: true,             // 是否把结果值转换为原生的 javascript 类型
+});*/
+>>>>>>> e7aad519d1e9704fc8a643eb3f51fd4fb666e376
 var pool = mysql.createConnection({
     host     : '172.16.12.145',
     port: '3306',
