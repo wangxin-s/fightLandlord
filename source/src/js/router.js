@@ -13,8 +13,9 @@ import ReduxThunk from 'redux-thunk';
 import Reducer from './reducers/index';
 
 import Index from './containers/index';
-import About from './containers/about';
 import ProductDetail from './containers/websocket';
+import About from './containers/about';
+import Login from './containers/login';
 
 //redux 传入中间件
 const store = createStore(Reducer, compose(
@@ -31,6 +32,7 @@ ReactDom.render(
                 <Route exact path="/" component={Index}/>
                 <Route path="/about" component={About}/>
                 <Route path="/ProductDetail" component={ProductDetail}/>
+                <Route path="/login" component={Login}/>
             </div>
         </Router>
     </Provider>,

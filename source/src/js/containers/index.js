@@ -2,7 +2,9 @@
  * Created by ex-wangxin on 2018/9/11.
  */
 import React from 'react';
-class Index extends React.Component {
+import { connect } from 'react-redux'
+import Login from './login'
+class IndexMain extends React.Component {
     test(){
         let a={name:'李白'};
         let b={age:'123'};
@@ -10,12 +12,38 @@ class Index extends React.Component {
     }
 
     render(){
-        return(
-            <div>
-                holle world
-                {this.test()}
-            </div>
-        )
+        if(!this.props.login.token) {
+            return(
+                <div>
+                    <Login />
+                </div>
+            )
+        }else {
+            return(
+                <div>
+                    holle world
+                    {this.test()}
+                </div>
+            )
+        }
+        
     }
+    
 }
+const mapStateToProps=(state)=>{
+    return state;
+};
+
+const mapDispatchToProps =(dispatch)=>{
+    return {
+        _aboutHandle:(options)=>{
+            dispatch(aboutAllHandle(text))
+        }
+    }
+};
+
+const Index = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(IndexMain);
 export default Index
