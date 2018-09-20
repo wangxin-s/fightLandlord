@@ -69,7 +69,8 @@ module.exports={
         new webpack.ProvidePlugin({
             jQuery: "jquery",
             $: "jquery",
-            socket:'socket.io-client'
+            socket:'socket.io-client',
+            Phaser: 'phaser',// 无需每个文件导入，全局直接使用Phaser
         })
     ]
 };
