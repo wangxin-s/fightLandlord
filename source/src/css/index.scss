@@ -1,7 +1,14 @@
-div{
-  div{
-    color:green;
-    // background:url('../images/02.jpg') no-repeat;
-    // height:200px;
-  }
+html,body{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-size: 50px;
+}
+
+#content {
+  height: 100%;
+}
+
+.h100 {
+  height: 100%;
 }

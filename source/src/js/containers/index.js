@@ -14,7 +14,7 @@ class IndexMain extends React.Component {
     render(){
         if(!this.props.login.token) {
             return(
-                <div>
+                <div className="h100">
                     <Login />
                 </div>
             )
