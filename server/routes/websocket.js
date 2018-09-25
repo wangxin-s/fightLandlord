@@ -2,13 +2,17 @@
  * Created by ex-wangxin on 2018/9/13.
  */
 var connect = require("./connect");
+var moduleData = {
+    code: 200,
+    msg: '成功'
+}
 exports.websocket = function websocket(socket) {
     socket.emit('news', {hello: 'world1'});
     socket.on('news', function (data) {
         console.log(data);
         //socket.emit('news', data);
 
-        var  sql = 'SELECT * FROM test_tbl';
+        var  sql = 'SELECT * FROM users';
 
         //查
         connect.query(sql,function (err, result) {
@@ -24,4 +28,36 @@ exports.websocket = function websocket(socket) {
         });
 
     });
+
+    // 登录
+    socket.on('login',(data)=> {
+        let sql = 'select * from users where account='+'"'+data.account+'"';
+        connect.query(sql,function (err, result) {
+            if(err){
+                console.log('[SELECT ERROR] - ',err.message);
+                return;
+            }
+            let serverData = {...moduleData};
+            if(result.length) {
+                if(result[0].password===data.password) {
+                    serverData.data = result[0]
+                    socket.emit('loginServer', serverData);
+                    return;
+                }else {
+                    serverData.code = 202;
+                    serverData.msg = '密码错误';
+                    socket.emit('loginServer', serverData);
+                    return;
+                }
+                
+            }else {
+                serverData.code = 201;
+                serverData.msg = '用户不存在';
+                socket.emit('loginServer', serverData);
+                console.log("201")
+                return;
+            }
+            
+        });
+    })
 };

@@ -3,8 +3,8 @@
  */
 const loginState = {
    token:'',
-   userName:'',
-   passworld:'',
+   account:'',
+   password:'',
    isShow_dialog:false,//登陆弹窗dialog 是否显示
 };
 const login=(state=loginState,action)=>{
