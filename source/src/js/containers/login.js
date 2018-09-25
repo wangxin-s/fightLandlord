@@ -8,7 +8,16 @@ const socket = require('socket.io-client')('http://localhost:3001');
 class LoginMain extends React.Component {
 
     componentDidMount() {
-      
+        socket.on('login',(data)=> {
+            console.log(data)
+            if(data.code==200) {
+                alert('登陆成功')
+                return;
+            }else {
+                alert(data.msg)
+                return;
+            }
+        })
     }
 
     //点击 开始游戏
@@ -30,16 +39,6 @@ class LoginMain extends React.Component {
             password: this.props.login.password
         }
         socket.emit('login', loginData);
-        socket.on('loginServer',(data)=> {
-            console.log(data)
-            if(data.code==200) {
-                alert('登陆成功')
-                return;
-            }else {
-                alert(data.msg)
-                return;
-            }
-        })
     }
     // 账号密码填写
     inputChange(type,name,event) {
@@ -61,11 +60,11 @@ class LoginMain extends React.Component {
                         <div className='login-dialog-body'>
                             <div className='mt10'>
                                 <img src={require('../../images/account.png')} alt="" />
-                                <input type="text" value={this.props.login.userName} onChange={this.inputChange.bind(this,0,'account')} />
+                                <input type="text" onChange={this.inputChange.bind(this,0,'account')} />
                             </div>
                             <div className='mt20'>
                                 <img src={require('../../images/password.png')} alt="" />
-                                <input type="password" value={this.props.login.password} onChange={this.inputChange.bind(this,0,'password')} />
+                                <input type="password" onChange={this.inputChange.bind(this,0,'password')} />
                             </div>
                             <div className='login-btn mt30' onClick={()=> this.loginBtn()}>
                                 <img src={require('../../images/login-btn.png')} alt="" />

@@ -7,7 +7,8 @@ var moduleData = {
     msg: '成功'
 }
 exports.websocket = function websocket(socket) {
-    socket.emit('news', {hello: 'world1'});
+    console.log('websocket')
+    // socket.emit('news', {hello: 'world1'});
     socket.on('news', function (data) {
         console.log(data);
         //socket.emit('news', data);
@@ -41,20 +42,19 @@ exports.websocket = function websocket(socket) {
             if(result.length) {
                 if(result[0].password===data.password) {
                     serverData.data = result[0]
-                    socket.emit('loginServer', serverData);
+                    socket.emit('login', serverData);
                     return;
                 }else {
                     serverData.code = 202;
                     serverData.msg = '密码错误';
-                    socket.emit('loginServer', serverData);
+                    socket.emit('login', serverData);
                     return;
                 }
                 
             }else {
                 serverData.code = 201;
                 serverData.msg = '用户不存在';
-                socket.emit('loginServer', serverData);
-                console.log("201")
+                socket.emit('login', serverData);
                 return;
             }
             
