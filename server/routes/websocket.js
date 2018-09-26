@@ -32,7 +32,7 @@ exports.websocket = function websocket(socket) {
 
     // 登录
     socket.on('login',(data)=> {
-        let sql = 'select * from users where account='+'"'+data.account+'"';
+        var sql = 'select * from users where account='+'"'+data.account+'"';
         connect.query(sql,function (err, result) {
             if(err){
                 console.log('[SELECT ERROR] - ',err.message);
