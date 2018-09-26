@@ -38,7 +38,11 @@ exports.websocket = function websocket(socket) {
                 console.log('[SELECT ERROR] - ',err.message);
                 return;
             }
-            let serverData = {...moduleData};
+            // let serverData = {...moduleData};
+            var serverData = {
+                code: 200,
+                msg: '成功'
+            }
             if(result.length) {
                 if(result[0].password===data.password) {
                     serverData.data = result[0]
