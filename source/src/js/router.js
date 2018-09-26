@@ -17,6 +17,7 @@ import Index from './containers/index';
 import ProductDetail from './containers/websocket';
 import About from './containers/about';
 import Login from './containers/login';
+import Hall from './containers/hall';
 
 //redux 传入中间件
 const store = createStore(Reducer, compose(
@@ -34,6 +35,7 @@ ReactDom.render(
                 <Route path="/about" component={About}/>
                 <Route path="/ProductDetail" component={ProductDetail}/>
                 <Route path="/login" component={Login}/>
+                <Route path="/hall" component={Hall}/>
             </div>
         </Router>
     </Provider>,

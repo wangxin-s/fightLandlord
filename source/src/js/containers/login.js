@@ -4,6 +4,8 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import {loginAllHandle} from '../actions/login'
+import {withRouter} from "react-router-dom";
+
 const socket = require('socket.io-client')('http://localhost:3001');
 class LoginMain extends React.Component {
 
@@ -12,6 +14,8 @@ class LoginMain extends React.Component {
             console.log(data)
             if(data.code==200) {
                 alert('登陆成功')
+                this.props.history.push("/hall");
+                // browserHistory.push('/hall');
                 return;
             }else {
                 alert(data.msg)
@@ -102,4 +106,4 @@ const Login = connect(
     mapDispatchToProps
 )(LoginMain);
 
-export default Login;
+export default withRouter(Login);
