@@ -30,13 +30,15 @@ const history = syncHistoryWithStore(createBrowserHistory(), store);
 ReactDom.render(
     <Provider store={store}>
         <Router history={history}>
-            <div className='h100'>
-                <Route exact path="/" component={Index}/>
-                <Route path="/about" component={About}/>
-                <Route path="/ProductDetail" component={ProductDetail}/>
-                <Route path="/login" component={Login}/>
-                <Route path="/hall" component={Hall}/>
-            </div>
+            <BrowserRouter>
+                <div className='h100'>
+                    <Route exact path="/" component={Index}/>
+                    <Route path="/about" component={About}/>
+                    <Route path="/ProductDetail" component={ProductDetail}/>
+                    <Route path="/login" component={Login}/>
+                    <Route path="/hall" component={Hall}/>
+                </div>
+            </BrowserRouter>
         </Router>
     </Provider>,
     document.getElementById('content')
