@@ -8,16 +8,11 @@ const socket = require('socket.io-client')('http://localhost:3001');
 class HallMain extends React.Component {
 
     componentDidMount() {
-        // socket.on('login',(data)=> {
-        //     console.log(data)
-        //     if(data.code==200) {
-        //         alert('登陆成功')
-        //         return;
-        //     }else {
-        //         alert(data.msg)
-        //         return;
-        //     }
-        // })
+        
+    }
+
+    action() {
+        this.props.history.push("/room");
     }
 
     render() {
@@ -94,7 +89,7 @@ class HallMain extends React.Component {
                                 </span>
                             </div>
                             <div className="clear"></div>
-                            <div className="fast-action">
+                            <div className="fast-action" onClick={this.action.bind(this)}>
                                 快速开始
                             </div>
                         </div>

@@ -15,7 +15,6 @@ class LoginMain extends React.Component {
             if(data.code==200) {
                 alert('登陆成功')
                 this.props.history.push("/hall");
-                // browserHistory.push('/hall');
                 return;
             }else {
                 alert(data.msg)
