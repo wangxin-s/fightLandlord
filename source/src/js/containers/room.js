@@ -109,7 +109,7 @@ class RoomMain extends React.Component {
             //模拟出牌 
             setTimeout(()=> {
                 this.setState({
-                    playerOneData: [card1, card2, card3, card4, card5, card6, card7, card8, card9, card10,card1, card2, card3, card4, card5, card6, card7, card8, card9, card10]
+                    playerOneData: [card1, card2, card3, card4, card5, card6, card7, card8, card9,]
                 })
             },1000)
             setTimeout(()=> {
@@ -241,9 +241,10 @@ class RoomMain extends React.Component {
                         </div>
 
                         {/* 我的头像 */}
-                        <div className="my-head">
+                        <div className="my-head"></div>
 
-                        </div>
+                        {/* 地主农民身份 */}
+                        <div className="my-identity"></div>
                     </div>
 
                     <div className="room-container-footer">

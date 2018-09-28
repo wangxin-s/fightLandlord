@@ -112,6 +112,7 @@
                     float: left;
                     width: 60%;
                     height: 2.2rem;
+                    text-align: left;
                     img {
                         width: .9rem;
                         height: .9rem;
@@ -128,6 +129,9 @@
             .room-container-player-right {
                 float: right;
                 width: 50%;
+                .out-brand {
+                    text-align: right;
+                }
             }
         }
         .my-show-brand {
@@ -143,7 +147,7 @@
                     width: 1.5rem;
                     height: 1.5rem;
                     margin-left: -1rem;
-                    margin-top: 1.5rem;
+                    margin-top: 1.48rem;
                 }
                 img.ml0 {
                     margin-left: 0;
@@ -208,6 +212,16 @@
                 background-size: 100% 100%;
                 position: absolute;
                 left: .58rem;
+                bottom: 0;
+            }
+
+            .my-identity {
+                width: .5rem;
+                height: 1.2rem;
+                background: url('../images/Landlord.png') no-repeat;
+                background-size: 100% 100%;
+                position: absolute;
+                left: 2.1rem;
                 bottom: 0;
             }
         }
