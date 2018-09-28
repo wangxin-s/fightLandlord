@@ -39,6 +39,7 @@ class HallMain extends React.Component {
                         <img src={require('../../images/setting.png')} alt="" />
                         <img src={require('../../images/exit.png')} alt="" />
                     </div>
+                    <div className="clear"></div>
                 </div>
                 <div className="container">
                     <div className="character-left">
