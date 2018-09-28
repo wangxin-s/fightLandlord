@@ -68,12 +68,12 @@
             margin-top: .2rem;
             .room-container-player-left {
                 float: left;
-                width: 40%;
+                width: 50%;
                 font-size: .3rem;
                 color: white;
                 .player {
                     float: left;
-                    width: 50%;
+                    width: 40%;
                     .player-head {
                         float: left;
                         width: 60%;
@@ -110,13 +110,24 @@
                 }
                 .out-brand {
                     float: left;
-                    width: 50%;
+                    width: 60%;
                     height: 2.2rem;
+                    img {
+                        width: .9rem;
+                        height: .9rem;
+                        margin-left: -.6rem;
+                    }
+                    img:first-child {
+                        margin-left: 0;
+                    }
+                    img:nth-child(13) {
+                        margin-left: 0;
+                    }
                 }
             }
             .room-container-player-right {
                 float: right;
-                width: 40%;
+                width: 50%;
             }
         }
         .my-show-brand {
@@ -187,7 +198,7 @@
                 img {
                     width: 1rem;
                     height: 1rem;
-                    margin-left: -.5rem;
+                    margin-left: -.6rem;
                 }
             }
             .my-head {

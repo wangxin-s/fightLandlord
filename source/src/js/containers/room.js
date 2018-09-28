@@ -21,15 +21,6 @@ import card15 from '../../images/card/card_1066@2x.png';
 import card16 from '../../images/card/card_1066@2x.png';
 import card17 from '../../images/card/card_1066@2x.png';
 
-let brandArr = [//卡牌 数据源
-    card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, card16, card17,
-
-]
-
-let outData = [
-
-];//出牌 的数据源
-
 const socket = require('socket.io-client')('http://localhost:3001');
 class RoomMain extends React.Component {
     constructor(props) {
@@ -41,6 +32,14 @@ class RoomMain extends React.Component {
             isShow_playCard: true,
             // 已出的牌   控制隐藏显示
             isShow_beenOut: false,
+            // 卡牌 数据源
+            brandArr: [card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, card16, card17,],
+            // 已出牌 的数据源
+            outData : [],
+            // 一号玩家数据源
+            playerOneData: [],
+            // 二号玩家数据源
+            playerTwoData:[],
         }
     }
 
@@ -48,7 +47,7 @@ class RoomMain extends React.Component {
     brandData() {
         let is_ml0 = true;
         let imgData = [];
-        brandArr.forEach((item, index) => {
+        this.state.brandArr.forEach((item, index) => {
             if(is_ml0 && this.state.imgArr[index]!='out') {//当前第一张图片  margin-left 0
                 imgData.push(
                     <img key={index} src={item} className={['ml0',this.state.imgArr[index] ? 'transition-selection' : '', this.state.imgArr[index] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.imgClick.bind(this, index)} alt="" />
@@ -100,19 +99,53 @@ class RoomMain extends React.Component {
             let updateState = this.state.imgArr;
             updateState.forEach((item, index) => {
                 if (item == 'out') {
-                    outData.push(brandArr[index])
+                    this.state.outData.push(this.state.brandArr[index])
                 }
             })
             this.setState({
                 isShow_beenOut: true
             })
+
+            //模拟出牌 
+            setTimeout(()=> {
+                this.setState({
+                    playerOneData: [card1, card2, card3, card4, card5, card6, card7, card8, card9, card10,card1, card2, card3, card4, card5, card6, card7, card8, card9, card10]
+                })
+            },1000)
+            setTimeout(()=> {
+                this.setState({
+                    playerTwoData: [card1, card2, card3, card4, card5]
+                })
+            },2000)
         })
     }
 
     // 已出的牌展示
     beenOut() {
         let imgData = [];
-        outData.forEach((item, index) => {
+        this.state.outData.forEach((item, index) => {
+            imgData.push(
+                <img key={index} src={item} alt="" />
+            )
+        })
+        return imgData;
+    }
+
+    // 左边玩家出牌展示
+    leftCardData() {
+        let imgData = [];
+        this.state.playerTwoData.forEach((item, index) => {
+            imgData.push(
+                <img key={index} src={item} alt="" />
+            )
+        })
+        return imgData;
+    }
+
+    // 右边玩家出牌展示
+    rightCardData() {
+        let imgData = [];
+        this.state.playerOneData.forEach((item, index) => {
             imgData.push(
                 <img key={index} src={item} alt="" />
             )
@@ -155,12 +188,14 @@ class RoomMain extends React.Component {
                                 </div>
                             </div>
                             <div className="out-brand">
-
+                                {/* 左边玩家出牌区 */}
+                                {this.leftCardData()}
                             </div>
                         </div>
                         <div className="room-container-player-right room-container-player-left">
                             <div className="out-brand">
-
+                                {/* 右边玩家出牌区 */}
+                                {this.rightCardData()}
                             </div>
                             <div className="player">
                                 <div className="player-identity">
