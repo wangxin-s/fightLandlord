@@ -21,6 +21,18 @@ import card15 from '../../images/card/card_1066@2x.png';
 import card16 from '../../images/card/card_1066@2x.png';
 import card17 from '../../images/card/card_1066@2x.png';
 
+import Top from '../components/room/top';
+import MyCard from '../components/room/myCard';
+import MyPlayButton from '../components/room/myPlayButton';
+import MyBeenOutCard from '../components/room/myBeenOutCard';
+import LeftPlay from '../components/room/leftPlay';
+import Bottom from '../components/room/bottom';
+import {
+    roomHandle
+} from '../actions/room';
+
+
+
 const socket = require('socket.io-client')('http://localhost:3001');
 class RoomMain extends React.Component {
     constructor(props) {
@@ -43,35 +55,16 @@ class RoomMain extends React.Component {
         }
     }
 
-    // 渲染所有牌
-    brandData() {
-        let is_ml0 = true;
-        let imgData = [];
-        this.state.brandArr.forEach((item, index) => {
-            if(is_ml0 && this.state.imgArr[index]!='out') {//当前第一张图片  margin-left 0
-                imgData.push(
-                    <img key={index} src={item} className={['ml0',this.state.imgArr[index] ? 'transition-selection' : '', this.state.imgArr[index] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.imgClick.bind(this, index)} alt="" />
-                )
-                is_ml0 = false;
-            }else {
-                imgData.push(
-                    <img key={index} src={item} className={[this.state.imgArr[index] ? 'transition-selection' : '', this.state.imgArr[index] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.imgClick.bind(this, index)} alt="" />
-                )
-            }
-            
-        })
-        return imgData;
-
-    }
-
     //当牌被点击时
-    imgClick(index) {
+    imgClick=(index)=> {
         let state = this.state.imgArr;
         state[index] = !state[index]
         this.setState({
             imgArr: state,
+        },()=>{
+            console.log(this.state.imgArr)
         })
-    }
+    };
 
     //不出
     notOut() {
@@ -120,125 +113,46 @@ class RoomMain extends React.Component {
         })
     }
 
-    // 已出的牌展示
-    beenOut() {
-        let imgData = [];
-        this.state.outData.forEach((item, index) => {
-            imgData.push(
-                <img key={index} src={item} alt="" />
-            )
-        })
-        return imgData;
-    }
 
-    // 左边玩家出牌展示
-    leftCardData() {
-        let imgData = [];
-        this.state.playerTwoData.forEach((item, index) => {
-            imgData.push(
-                <img key={index} src={item} alt="" />
-            )
-        })
-        return imgData;
-    }
-
-    // 右边玩家出牌展示
-    rightCardData() {
-        let imgData = [];
-        this.state.playerOneData.forEach((item, index) => {
-            imgData.push(
-                <img key={index} src={item} alt="" />
-            )
-        })
-        return imgData;
-    }
 
     render() {
         return (
             <div id="landlord-room">
-                <div className="room-header">
-                    <div className="room-header-left">
-                        <img src={require('../../images/exit.png')} alt="" />
-                        <span className="timer">19:53</span>
-                    </div>
-                    <div className="room-header-center">
-                        <img src={require('../../images/card_back.png')} alt="" />
-                        <img src={require('../../images/card_back.png')} alt="" />
-                        <img src={require('../../images/card_back.png')} alt="" />
-                    </div>
-                    <div className="room-header-right">
-                        <img src={require('../../images/hosting.png')} alt="" />
-                        <img src={require('../../images/setting.png')} alt="" />
-                    </div>
-                </div>
-                <div className="room-container">
-                    <div className="room-container-player">
-                        <div className="room-container-player-left">
-                            <div className="player">
-                                <div className="player-head text-r">
-                                    <img src={require('../../images/player8.png')} alt="" />
-                                    <p>平安是福</p>
-                                    <p className="color-y"><img className="beans" src={require('../../images/beans2.png')}></img>9999</p>
-                                </div>
-                                <div className="player-identity">
-                                    <img className="farmer" src={require('../../images/farmer.png')} alt="" />
-                                    <div className="card-back">
-                                        17
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="out-brand">
-                                {/* 左边玩家出牌区 */}
-                                {this.leftCardData()}
-                            </div>
-                        </div>
-                        <div className="room-container-player-right room-container-player-left">
-                            <div className="out-brand">
-                                {/* 右边玩家出牌区 */}
-                                {this.rightCardData()}
-                            </div>
-                            <div className="player">
-                                <div className="player-identity">
-                                    <img className="farmer" src={require('../../images/farmer.png')} alt="" />
-                                    <div className="card-back">
-                                        17
-                                    </div>
-                                </div>
-                                <div className="player-head text-l">
-                                    <img src={require('../../images/player8.png')} alt="" />
-                                    <p>平安是福</p>
-                                    <p className="color-y"><img className="beans" src={require('../../images/beans2.png')}></img>9999</p>
-                                </div>
+                {/*顶部展示区域 start*/}
+                <Top list={[1,2,3]} />
+                {/*顶部展示区域 end*/}
 
-                            </div>
-                        </div>
-                        <div className="clear"></div>
-                    </div>
+                <div className="room-container">
+                    {/*其他玩家区域 start*/}
+                    <LeftPlay
+                        leftList={this.state.playerTwoData}
+                        rightList={this.state.playerOneData}
+                    />
+                    {/*其他玩家区域 end*/}
 
                     <div className="my-show-brand">
-                        {/* 不出&出牌 */}
-                        {this.state.isShow_playCard ?
-                            <div className="my-operating">
-                                <div className="not-out" onClick={this.notOut.bind(this)}>
-                                    不出
-                                </div>
-                                <div className="play-card" onClick={this.playCard.bind(this)}>
-                                    出牌
-                                </div>
-                            </div> : ''
-                        }
+                        {/* 不出&出牌 按钮 start */}
+                        <MyPlayButton
+                            show={this.state.isShow_playCard}
+                            notOut={this.notOut.bind(this)}
+                            playCard={this.playCard.bind(this)}
+                        />
+                        {/* 不出&出牌 按钮 end */}
 
-                        {/* 已出的牌 */}
-                        {this.state.isShow_beenOut ?
-                            <div className="been-out">
-                                {this.beenOut()}
-                            </div> : ''
-                        }
+                        {/* 已出的牌  start*/}
+                        <MyBeenOutCard
+                            show={this.state.isShow_beenOut}
+                            list={this.state.outData}
+                        />
+                        {/* 已出的牌  end*/}
 
-                        {/* 我的卡牌 */}
-                        <div className="show-card" style={{ overflow: "hidden", display: "inline-block", verticalAlign: "bottom" }}>
-                            {this.brandData()}
-                        </div>
+                        {/* 我的卡牌  start*/}
+                        <MyCard
+                            list={this.state.brandArr}
+                            imgArr={this.state.imgArr}
+                            imgClick={this.imgClick}
+                        />
+                        {/* 我的卡牌  end*/}
 
                         {/* 我的头像 */}
                         <div className="my-head"></div>
@@ -247,16 +161,9 @@ class RoomMain extends React.Component {
                         <div className="my-identity"></div>
                     </div>
 
-                    <div className="room-container-footer">
-                        <div className="footer-left">
-                            <p>平安是福</p>
-                            <p className="color-y"><img className="beans" src={require('../../images/beans2.png')}></img>9999</p>
-                        </div>
-                        <div className="footer-right">
-                            <img src={require('../../images/expression.png')} alt=""/>
-                            <img src={require('../../images/say.png')} alt=""/>
-                        </div>
-                    </div>
+                    {/*底部静态文件 start*/}
+                    <Bottom />
+                    {/*底部静态文件 end*/}
                 </div>
             </div>
         )
@@ -269,7 +176,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        _roomHandle: (options) => {
+            dispatch(roomHandle(options))
+        }
     }
 };
 
