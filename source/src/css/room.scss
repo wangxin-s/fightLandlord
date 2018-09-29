@@ -33,7 +33,7 @@
             img {
                 margin-left: .5rem;
             }
-            .timer {
+            .time {
                 margin-left: .1rem;
                 color: white;
             }
@@ -113,6 +113,7 @@
                     width: 60%;
                     height: 2.2rem;
                     text-align: left;
+                    position: relative;
                     img {
                         width: .9rem;
                         height: .9rem;
@@ -123,6 +124,26 @@
                     }
                     img:nth-child(13) {
                         margin-left: 0;
+                    }
+                    .timer {
+                        width: 1rem;
+                        height: 1rem;
+                        line-height: 1.1rem;
+                        text-align: center;
+                        background: url('../images/timer.png') no-repeat;
+                        background-size: 100% 100%;
+                        position: absolute;
+                        top: 25%;
+                        right: 0;
+                    }
+                    .is-landlord {
+                        width: 1.2rem;
+                        height: .5rem;
+                        background: url('../images/play-landlord.png') no-repeat;
+                        background-size: 100% 100%;
+                        position: absolute;
+                        top: 40%;
+                        left: 0;
                     }
                 }
             }
@@ -140,30 +161,6 @@
             text-align: center;
             display: table;
             position: relative;
-            .show-card {
-                img {
-                    display: block;
-                    float: left;
-                    width: 1.5rem;
-                    height: 1.5rem;
-                    margin-left: -1rem;
-                    margin-top: 1.48rem;
-                }
-                img.ml0 {
-                    margin-left: 0;
-                }
-                img.transition-selection {
-                    transition: margin-top .1s linear;
-                    margin-top: 1.3rem;
-                }
-                img.transition-out {
-                    transition: margin-top width height .1s linear;
-                    width: 1rem;
-                    height: 1rem;
-                    margin-top: .2rem;
-                    display: none;
-                }
-            }
             .my-operating {
                 width: 30%;
                 height: 1rem;
@@ -189,6 +186,40 @@
                     float: right;
                     background: url('../images/border.png') no-repeat;
                     background-size: 100% 100%;
+                }
+                .not-landlord {
+                    float: left;
+                    background: url('../images/border.png') no-repeat;
+                    background-size: 100% 100%;
+                }
+                .play-landlord {
+                    float: right;
+                    background: url('../images/border.png') no-repeat;
+                    background-size: 100% 100%;
+                }   
+            }
+            .show-card {
+                img {
+                    display: block;
+                    float: left;
+                    width: 1.5rem;
+                    height: 1.5rem;
+                    margin-left: -1rem;
+                    margin-top: 1.48rem;
+                }
+                img.ml0 {
+                    margin-left: 0;
+                }
+                img.transition-selection {
+                    transition: margin-top .1s linear;
+                    margin-top: 1.3rem;
+                }
+                img.transition-out {
+                    transition: margin-top width height .1s linear;
+                    width: 1rem;
+                    height: 1rem;
+                    margin-top: .2rem;
+                    display: none;
                 }
             }
             .been-out {

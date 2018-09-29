@@ -10,12 +10,9 @@ class MyBeenOutCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            count: 90
+            count: 30
         };
-    }
-
-    componentDidMount() {
-
+        
     }
 
     // 左边玩家出牌展示
@@ -53,12 +50,18 @@ class MyBeenOutCard extends React.Component {
                     <div className="out-brand">
                         {/* 左边玩家出牌区 */}
                         {this.leftCardData(this.props.leftList)}
+                        {/* 提示 title */}
+                        <div className="is-landlord"></div>
                     </div>
                 </div>
                 <div className="room-container-player-right room-container-player-left">
                     <div className="out-brand">
                         {/* 右边玩家出牌区 */}
                         {this.rightCardData(this.props.rightList)}
+                        {/* 倒计时 */}
+                        <div className="timer" style={{display:this.props.isTimer?'block':'none'}}>
+                            {this.props.count}
+                        </div>
                     </div>
                     <div className="player">
                         <div className="player-identity">
