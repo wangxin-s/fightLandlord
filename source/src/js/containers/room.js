@@ -33,7 +33,8 @@ import {
 } from '../actions/room';
 
 
-let timer;
+let timer;//玩家操作倒计时
+let timeTimer;//当前时间倒计时
 const socket = require('socket.io-client')('http://localhost:3001');
 class RoomMain extends React.Component {
     constructor(props) {
@@ -55,11 +56,33 @@ class RoomMain extends React.Component {
             playerOneData: [],
             // 二号玩家数据源
             playerTwoData: [],
-            // 倒计时  控制隐藏显示
+            // 玩家操作倒计时  控制隐藏显示
             isTimer: false,
-            // 倒计时 时间
-            count: 30
+            // 玩家操作倒计时 时间
+            count: 30,
+            // 当前时间
+            newTime:'',
         }
+    }
+
+    componentDidMount() {
+        // 获取当前时间  倒计时
+        timeTimer = setInterval(()=> {
+            let date = new Date();
+            let hours=date.getHours();
+            let minutes=date.getMinutes();
+            let seconds=date.getSeconds();
+            let newTime = hours+':'+minutes+':'+seconds;
+            this.setState({
+                newTime: newTime
+            })
+        },1000)
+        
+    }
+
+    componentWillUnmount() {
+        clearInterval(timeTimer)
+        clearInterval(timer)
     }
 
     //当牌被点击时
@@ -69,7 +92,7 @@ class RoomMain extends React.Component {
         this.setState({
             imgArr: state,
         }, () => {
-            console.log(this.state.imgArr)
+
         })
     };
 
@@ -152,7 +175,9 @@ class RoomMain extends React.Component {
         return (
             <div id="landlord-room">
                 {/*顶部展示区域 start*/}
-                <Top list={[1, 2, 3]} />
+                <Top 
+                    list={[1, 2, 3]} 
+                    newTime={this.state.newTime}                />
                 {/*顶部展示区域 end*/}
 
                 <div className="room-container">

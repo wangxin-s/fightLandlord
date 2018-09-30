@@ -29,7 +29,7 @@ class BottomCard extends React.Component {
             <div className="room-header">
                 <div className="room-header-left">
                     <img src={require('../../../images/exit.png')} alt=""/>
-                    <span className="time">19:53</span>
+                    <span className="time">{this.props.newTime}</span>
                 </div>
                 {/*三张底牌 start*/}
                 <div className="room-header-center">
