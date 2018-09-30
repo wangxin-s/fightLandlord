@@ -20,6 +20,7 @@ import card14 from '../../images/card/card_1066@2x.png';
 import card15 from '../../images/card/card_1066@2x.png';
 import card16 from '../../images/card/card_1066@2x.png';
 import card17 from '../../images/card/card_1066@2x.png';
+import card_back from '../../images/card_back.png';
 
 import Top from '../components/room/top';
 import MyCard from '../components/room/myCard';
@@ -62,6 +63,10 @@ class RoomMain extends React.Component {
             count: 10,
             // 当前时间
             newTime: '',
+            // 地主牌  翻转控制
+            isRevers: false,
+            //地主牌数据源
+            list: [card_back,card_back,card_back]
         }
     }
 
@@ -82,10 +87,10 @@ class RoomMain extends React.Component {
         timer = setInterval(() => {
             if (this.state.count == 1) {
                 let isTimer = 1;
-                if(this.state.isTimer==1) {
+                if (this.state.isTimer == 1) {
                     isTimer = 2;
                 }
-                if(this.state.isTimer==2) {
+                if (this.state.isTimer == 2) {
                     isTimer = 3;
                 }
                 this.setState({
@@ -197,14 +202,29 @@ class RoomMain extends React.Component {
         })
     }
 
+    //地主牌翻转 
+    revers() {
+        this.setState({
+            isRevers: true,
+        },()=> {
+            this.setState({
+                list: [card4,card5,card6],
+                brandArr:this.state.brandArr.concat([card4,card5,card6]),
+            })
+        })
+    }
+
 
     render() {
         return (
             <div id="landlord-room">
                 {/*顶部展示区域 start*/}
                 <Top
-                    list={[1, 2, 3]}
-                    newTime={this.state.newTime} />
+                    list={this.state.list}
+                    newTime={this.state.newTime} 
+                    isRevers = {this.state.isRevers}
+                    revers = {this.revers.bind(this)}
+                />
                 {/*顶部展示区域 end*/}
 
                 <div className="room-container">
@@ -221,8 +241,8 @@ class RoomMain extends React.Component {
                         {/* 不出&出牌 按钮 start */}
                         <MyPlayButton
                             show={this.state.isShow_playCard}
-                            isTimer = {this.state.isTimer}
-                            count = {this.state.count}
+                            isTimer={this.state.isTimer}
+                            count={this.state.count}
                             notOut={this.notOut.bind(this)}
                             playCard={this.playCard.bind(this)}
                         />
