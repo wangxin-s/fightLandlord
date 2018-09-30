@@ -28,15 +28,14 @@ import MyBeenOutCard from '../components/room/myBeenOutCard';
 import LeftPlay from '../components/room/leftPlay';
 import Bottom from '../components/room/bottom';
 import {
-    roomHandle
+    roomHandle,getCard
 } from '../actions/room';
-
-
-
+import {cardType,compareCard} from '../units/room'
 const socket = require('socket.io-client')('http://localhost:3001');
+
 class RoomMain extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             // 卡牌是否选择 及出牌控制  true：选中  'out'：出牌
             imgArr: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
@@ -55,10 +54,55 @@ class RoomMain extends React.Component {
         }
     }
 
+    //初始化生命周期函数
+    componentDidMount() {
+        console.log('单牌',cardType([53]));
+        console.log('火箭',cardType([52,53]));
+        console.log('单顺',cardType([1,5,9,13,17,21,25]));
+        console.log('单顺',cardType([30,34,38,42,46,50]));
+        console.log('双顺',cardType([0,1,5,6,9,10,13,15,16,19]));
+        console.log('三顺',cardType([0,1,2,5,6,7,9,10,11,12,14,15]));
+        console.log('三顺',cardType([47,46,45,43,42,41,39,38,37,33,35,34]));
+        console.log('对牌',cardType([0,2]));
+        console.log('三牌',cardType([0,3,2]));
+        console.log('炸弹',cardType([8,10,11,9]));
+        console.log('三带一',cardType([0,1,2,12]));
+        console.log('三带二',cardType([16,17,19,20,21]));
+        console.log('四带二',cardType([24,25,26,27,28,31]));
+        console.log('四带二',cardType([24,25,26,27,28,29,30,31]));
+        console.log('飞机带翅膀',cardType([0,1,2,5,6,7,8,9,11,18,23,45]));
+        console.log('飞机带翅膀',cardType([0,1,2,5,6,7,12,14,15,20,23,45]));
+        console.log('飞机带翅膀',cardType([0,1,2,5,6,7,12,14,15,20,23,22]));
+
+
+        socket.emit('getCards', '发送消息--发牌');
+        //调用接口获取发牌内容
+        socket.on('getCards', (data) => {
+            this.props._roomHandle({
+                bottomCard:data.bottomCard,//顶部中间的底牌
+                myCard:data.myCard,//我的牌
+                left:data.left,//左侧玩家的牌
+                right:data.right,//右侧玩家的牌
+            })
+        });
+        //左侧玩家出牌接口
+        socket.on('leftPushCards', (data) => {
+            this.props._roomHandle({
+                leftList:data.leftList,//左侧玩家出的牌
+            })
+        });
+        //右侧玩家出牌接口
+        socket.on('rightPushCards', (data) => {
+            this.props._roomHandle({
+                rightList:data.rightList,//右侧玩家出的牌
+            })
+        });
+    }
+
     //当牌被点击时
     imgClick=(index)=> {
         let state = this.state.imgArr;
-        state[index] = !state[index]
+        state[index] = !state[index];
         this.setState({
             imgArr: state,
         },()=>{
@@ -71,7 +115,7 @@ class RoomMain extends React.Component {
         let state = this.state.imgArr;
         state.forEach((item, index) => {
             state[index] = false;
-        })
+        });
         this.setState({
             imgArr: state,
         })
@@ -84,7 +128,13 @@ class RoomMain extends React.Component {
             if (state[index]) {
                 state[index] = 'out'
             }
-        })
+        });
+
+        //调用接口出牌
+        socket.emit('emitCard', (data) => {
+
+        });
+
         this.setState({
             imgArr: state,
             isShow_playCard: false,
@@ -116,6 +166,7 @@ class RoomMain extends React.Component {
 
 
     render() {
+        let room=this.props.room;
         return (
             <div id="landlord-room">
                 {/*顶部展示区域 start*/}
@@ -148,7 +199,7 @@ class RoomMain extends React.Component {
 
                         {/* 我的卡牌  start*/}
                         <MyCard
-                            list={this.state.brandArr}
+                            list={room.myCard}
                             imgArr={this.state.imgArr}
                             imgClick={this.imgClick}
                         />
@@ -171,6 +222,7 @@ class RoomMain extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+    console.log(state);
     return state;
 };
 
@@ -178,6 +230,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         _roomHandle: (options) => {
             dispatch(roomHandle(options))
+        },
+        _getCard: (options) => {
+            dispatch(getCard(options))
         }
     }
 };

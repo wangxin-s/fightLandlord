@@ -29,7 +29,57 @@ exports.websocket = function websocket(socket) {
         });
 
     });
+    var obj={
+        list:[],
+        myCard:[],
+        left:[],
+        right:[],
+        bottomCard:[]
+    };
+    socket.on('getCards',function(data){
+        if(obj.list.length<=0){
+            var list=[];
+            for(var i=0;i<54;i++){
+                list.push(i);
+            }
+            creatCard();
+        }
+        console.log(data);
+        //js 随机整数方法
+        function rnd(n, m){
+            return Math.floor(Math.random()*(m-n+1)+n)
+        }
+        function creatCard(){
+            for(var j=0;j<54;j++){
+                var index=rnd(0,53);
+                var one=list[j];
+                var two=list[index];
+                list[j]=two;
+                list[index]=one;
+            }
+            var myCard=list.slice(0,17);
+            myCard.sort(function(a,b){return b-a});
+            obj= {
+                list:list,
+                myCard:myCard,
+                left:obj.list.slice(17,34),
+                right:obj.list.slice(34,51),
+                bottomCard:obj.list.slice(51,54)
+            }
+        }
 
+        socket.emit('getCards', obj);
+    });
+
+    //接收当前人出牌
+    socket.on('emitCard',function(data){
+        socket.emit('emitCard', {
+            code:'0000',
+            message:'出牌成功'
+        });
+        //向前端--发送最新的纸牌
+        socket.emit('getCards', obj);
+    });
     // 登录
     socket.on('login',(data)=> {
         var sql = 'select * from users where account='+'"'+data.account+'"';
