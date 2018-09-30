@@ -43,9 +43,9 @@ class RoomMain extends React.Component {
             // 卡牌是否选择 及出牌控制  true：选中  'out'：出牌
             imgArr: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
             // 出牌&不出  控制隐藏显示
-            isShow_playCard: false,
+            isShow_playCard: true,
             // 抢地主&不抢  控制隐藏显示
-            isShow_playLandlord: true,
+            isShow_playLandlord: false,
             // 已出的牌   控制隐藏显示
             isShow_beenOut: false,
             // 卡牌 数据源
@@ -57,27 +57,50 @@ class RoomMain extends React.Component {
             // 二号玩家数据源
             playerTwoData: [],
             // 玩家操作倒计时  控制隐藏显示
-            isTimer: false,
+            isTimer: 1,
             // 玩家操作倒计时 时间
-            count: 30,
+            count: 10,
             // 当前时间
-            newTime:'',
+            newTime: '',
         }
     }
 
     componentDidMount() {
         // 获取当前时间  倒计时
-        timeTimer = setInterval(()=> {
+        timeTimer = setInterval(() => {
             let date = new Date();
-            let hours=date.getHours();
-            let minutes=date.getMinutes();
-            let seconds=date.getSeconds();
-            let newTime = hours+':'+minutes+':'+seconds;
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let seconds = date.getSeconds();
+            let newTime = hours + ':' + minutes + ':' + seconds;
             this.setState({
                 newTime: newTime
             })
-        },1000)
-        
+        }, 1000)
+
+        // 玩家操作  倒计时
+        timer = setInterval(() => {
+            if (this.state.count == 1) {
+                let isTimer = 1;
+                if(this.state.isTimer==1) {
+                    isTimer = 2;
+                }
+                if(this.state.isTimer==2) {
+                    isTimer = 3;
+                }
+                this.setState({
+                    isShow_playLandlord: false,
+                    isTimer: isTimer,
+                    count: 10,
+                })
+            } else {
+                console.log('timer')
+                this.setState({
+                    count: this.state.count -= 1
+                })
+            }
+
+        }, 1000)
     }
 
     componentWillUnmount() {
@@ -150,23 +173,27 @@ class RoomMain extends React.Component {
 
     //抢地主
     playLandlord() {
+        clearInterval(timer)
         this.setState({
             isShow_playLandlord: false,
-            isTimer: true
-        },()=> {
-            if(this.state.isTimer) {
-                timer = setInterval(()=> {
-                    if(this.state.count == 0) {
-                        clearInterval(timer)
-                        this.setState({
-                            isTimer:false
-                        })
-                    }
+            isTimer: 2,
+            count: 10,
+        }, () => {
+            timer = setInterval(() => {
+                if (this.state.count == 1) {
                     this.setState({
-                        count: this.state.count-=1
+                        isShow_playLandlord: false,
+                        isTimer: 3,
+                        count: 10,
                     })
-                },1000)
-            }
+                } else {
+                    console.log('timer')
+                    this.setState({
+                        count: this.state.count -= 1
+                    })
+                }
+
+            }, 1000)
         })
     }
 
@@ -175,9 +202,9 @@ class RoomMain extends React.Component {
         return (
             <div id="landlord-room">
                 {/*顶部展示区域 start*/}
-                <Top 
-                    list={[1, 2, 3]} 
-                    newTime={this.state.newTime}                />
+                <Top
+                    list={[1, 2, 3]}
+                    newTime={this.state.newTime} />
                 {/*顶部展示区域 end*/}
 
                 <div className="room-container">
@@ -185,8 +212,8 @@ class RoomMain extends React.Component {
                     <LeftPlay
                         leftList={this.state.playerTwoData}
                         rightList={this.state.playerOneData}
-                        isTimer = {this.state.isTimer}
-                        count = {this.state.count}
+                        isTimer={this.state.isTimer}
+                        count={this.state.count}
                     />
                     {/*其他玩家区域 end*/}
 
@@ -194,16 +221,20 @@ class RoomMain extends React.Component {
                         {/* 不出&出牌 按钮 start */}
                         <MyPlayButton
                             show={this.state.isShow_playCard}
+                            isTimer = {this.state.isTimer}
+                            count = {this.state.count}
                             notOut={this.notOut.bind(this)}
                             playCard={this.playCard.bind(this)}
                         />
                         {/* 不出&出牌 按钮 end */}
-                        
+
                         {/* 不抢&抢地主 按钮 start */}
                         <PlayLandlordButton
                             show={this.state.isShow_playLandlord}
                             noLandlord={this.noLandlord.bind(this)}
                             playLandlord={this.playLandlord.bind(this)}
+                            isTimer={this.state.isTimer}
+                            count={this.state.count}
                         />
                         {/* 不抢&抢地主 按钮 end */}
 
