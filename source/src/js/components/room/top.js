@@ -18,8 +18,7 @@ class BottomCard extends React.Component {
     imgFun(list) {
         return (
             list.map((item, i)=> {
-                return <img key={i} src={require('../../../images/card_back.png')} alt=""/>;
-                //return <img src={item.card} alt=""/>
+                return <div key={i} className={this.props.isRevers?'revers':''}><img src={item} alt=""/></div>;
             })
         )
     }
@@ -29,10 +28,10 @@ class BottomCard extends React.Component {
             <div className="room-header">
                 <div className="room-header-left">
                     <img src={require('../../../images/exit.png')} alt=""/>
-                    <span className="timer">19:53</span>
+                    <span className="time">{this.props.newTime}</span>
                 </div>
                 {/*三张底牌 start*/}
-                <div className="room-header-center">
+                <div className='room-header-center' onClick={this.props.revers}>
                     {this.imgFun(this.props.list)}
                 </div>
                 {/*三张底牌 end*/}

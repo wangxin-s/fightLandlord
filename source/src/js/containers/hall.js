@@ -46,8 +46,8 @@ class HallMain extends React.Component {
                         <img src={require('../../images/character5.png')} alt=""/>
                     </div>
                     <div className="table-right">
-                        <div className="table-right-top">
-                            <div className="table-right-top-left">
+                        <ul className="table-list clearfix">
+                            <li>
                                 <img src={require('../../images/player1.png')} className="player" alt="" />
                                 <span className="table">
                                     <img src={require("../../images/one.png")} alt=""/>
@@ -55,9 +55,8 @@ class HallMain extends React.Component {
                                 <img src={require('../../images/player2.png')} className="player" alt="" />
                                 <span className="player-bottom">
                                 </span>
-                            </div>
-                            
-                            <div className="table-right-top-right table-right-top-left">
+                            </li>
+                            <li>
                                 <img src={require('../../images/player1.png')} className="player" alt="" />
                                 <span className="table">
                                     <img src={require("../../images/two.png")} alt=""/>
@@ -65,12 +64,8 @@ class HallMain extends React.Component {
                                 <img src={require('../../images/player2.png')} className="player" alt="" />
                                 <span className="player-bottom">
                                 </span>
-                            </div>
-                            <div className="clear"></div>
-                        </div>
-
-                        <div className="table-right-bottom table-right-top">
-                            <div className="table-right-top-left">
+                            </li>
+                            <li>
                                 <img src={require('../../images/player1.png')} className="player" alt="" />
                                 <span className="table">
                                     <img src={require("../../images/three.png")} alt=""/>
@@ -78,21 +73,19 @@ class HallMain extends React.Component {
                                 <img src={require('../../images/player2.png')} className="player" alt="" />
                                 <span className="player-bottom">
                                 </span>
-                            </div>
-                            
-                            <div className="table-right-top-right table-right-top-left">
-                                <img src={require('../../images/player1.png')} className="player" alt="" />
+                            </li>
+                            <li>
+                                 <img src={require('../../images/player1.png')} className="player" alt="" />
                                 <span className="table">
                                     <img src={require("../../images/four.png")} alt=""/>
                                 </span>
                                 <img src={require('../../images/player2.png')} className="player" alt="" />
                                 <span className="player-bottom">
                                 </span>
-                            </div>
-                            <div className="clear"></div>
-                            <div className="fast-action" onClick={this.action.bind(this)}>
-                                快速开始
-                            </div>
+                            </li>
+                        </ul>
+                        <div className="fast-action" onClick={this.action.bind(this)}>
+                            快速开始
                         </div>
                     </div>
                 </div>
