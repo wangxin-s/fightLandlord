@@ -26,7 +26,7 @@ module.exports={
     output:{
         path:sourcePath[WEBPACK_PRO_ENV],
         filename:'js/main_[hash:8].js',
-        publicPath:'./',
+        publicPath:'/',
     },
     mode:'development',
     devtool :"#source-map",
