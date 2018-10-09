@@ -37,7 +37,7 @@ ReactDom.render(
                     <Route path="/about" component={About}/>
                     <Route path="/ProductDetail" component={ProductDetail}/>
                     <Route path="/login" component={Login}/>
-                    <Route path="/hall" component={Hall}/>
+                    <Route path="/hall/:id" component={Hall}/>
                     <Route path="/room" component={Room}/>
                 </div>
             </BrowserRouter>
