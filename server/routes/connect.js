@@ -7,8 +7,8 @@ var pool = mysql.createConnection({
     host     : 'localhost',
     port: '3306',
     user     : 'root',
-    password : '123456',
-    database: 'landlord',
+    password : '123',
+    database: 'test',
     typeCast: true,             // 是否把结果值转换为原生的 javascript 类型
 });
 
