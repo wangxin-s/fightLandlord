@@ -33,12 +33,12 @@ class MyCard extends React.Component {
             let src=require('../../../images/card/card_'+i+'@2x.png');
             if(is_ml0 && imgArr[index]!='out') {//当前第一张图片  margin-left 0
                 imgData.push(
-                    <img key={index} src={src} className={['ml0',imgArr[index] ? 'transition-selection' : '', imgArr[index] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.props.imgClick.bind(this,index)} alt="" />
+                    <img key={index} src={src} className={['ml0',imgArr[item] ? 'transition-selection' : '', imgArr[item] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.props.imgClick.bind(this,index)} alt="" />
                 )
                 is_ml0 = false;
             }else {
                 imgData.push(
-                    <img key={index} src={src} className={[imgArr[index] ? 'transition-selection' : '',imgArr[index] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.props.imgClick.bind(this,index)} alt="" />
+                    <img key={index} src={src} className={[imgArr[item] ? 'transition-selection' : '',imgArr[item] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.props.imgClick.bind(this,index)} alt="" />
                 )
             }
 

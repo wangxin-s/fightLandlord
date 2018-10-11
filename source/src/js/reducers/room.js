@@ -4,7 +4,8 @@
 const roomState =sessionStorage.getItem('roomIndex')? JSON.parse(sessionStorage.getItem('roomIndex')):{
     bottomCard:[],//顶部中间的底牌
     myCard:[],//我的牌
-    mySelectCard:[],//当前玩家选中的牌
+    mySelectCard:{},//当前玩家选中的牌
+    myCardOut:[],//已出的牌
     left:[],//左侧玩家的牌
     right:[],//右侧玩家的牌
 
