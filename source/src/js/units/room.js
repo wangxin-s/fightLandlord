@@ -302,3 +302,7 @@ export function getVal(val) {
 export function len(list) {
     return len.length;
 }
+
+export function cloneFun(list){
+    return JSON.parse(JSON.stringify(list));
+}
