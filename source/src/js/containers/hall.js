@@ -7,14 +7,27 @@ import { connect } from 'react-redux'
 const socket = require('socket.io-client')('http://localhost:3001');
 class HallMain extends React.Component {
 
-    componentDidMount() {
-        
+    componentDidMount() {        
+        socket.emit('hall','');
+        socket.on('hall',(data)=>{
+            console.log(data);
+        })
     }
 
     action() {
         this.props.history.push("/room");
     }
 
+    intoRoom(){
+        let roomData = {
+            partyId : 'YH7403',
+            roomId : 3
+        }
+        socket.emit('room',roomData)
+        socket.on('room',(data)=>{
+            console.log(data);
+        })
+    }
     render() {
         return (
             <div id="landlord-hall">
@@ -47,7 +60,7 @@ class HallMain extends React.Component {
                     </div>
                     <div className="table-right">
                         <ul className="table-list clearfix">
-                            <li>
+                            <li onClick={this.intoRoom.bind(this)}>
                                 <img src={require('../../images/player1.png')} className="player" alt="" />
                                 <span className="table">
                                     <img src={require("../../images/one.png")} alt=""/>

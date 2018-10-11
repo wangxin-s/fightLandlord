@@ -221,6 +221,14 @@ class RoomMain extends React.Component {
 
     //初始化生命周期函数
     componentDidMount() {
+        // let roomData = {
+        //     partyId : 'YH006',
+        //     roomId : 1
+        // }
+        // socket.emit('room',roomData)
+        // socket.on('room',(data)=>{
+        //     console.log(data);
+        // })
         this.resetRedux();
         //调用接口获取发牌内容
         socket.on('getCards', (data) => {
