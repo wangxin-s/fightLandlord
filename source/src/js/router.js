@@ -17,6 +17,8 @@ import Index from './containers/index';
 import ProductDetail from './containers/websocket';
 import About from './containers/about';
 import Login from './containers/login';
+import Hall from './containers/hall';
+import Room from './containers/room';
 
 //redux 传入中间件
 const store = createStore(Reducer, compose(
@@ -29,12 +31,16 @@ const history = syncHistoryWithStore(createBrowserHistory(), store);
 ReactDom.render(
     <Provider store={store}>
         <Router history={history}>
-            <div className='h100'>
-                <Route exact path="/" component={Index}/>
-                <Route path="/about" component={About}/>
-                <Route path="/ProductDetail" component={ProductDetail}/>
-                <Route path="/login" component={Login}/>
-            </div>
+            <BrowserRouter>
+                <div className='h100'>
+                    <Route exact path="/" component={Index}/>
+                    <Route path="/about" component={About}/>
+                    <Route path="/ProductDetail" component={ProductDetail}/>
+                    <Route path="/login" component={Login}/>
+                    <Route path="/hall/:id" component={Hall}/>
+                    <Route path="/room" component={Room}/>
+                </div>
+            </BrowserRouter>
         </Router>
     </Provider>,
     document.getElementById('content')

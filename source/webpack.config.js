@@ -26,7 +26,7 @@ module.exports={
     output:{
         path:sourcePath[WEBPACK_PRO_ENV],
         filename:'js/main_[hash:8].js',
-        publicPath:'./',
+        publicPath:'/',
     },
     mode:'development',
     devtool :"#source-map",
@@ -61,7 +61,8 @@ module.exports={
     plugins:[
         new HtmlWebpackPlugin({
             template:'./src/index.html',
-            filename:'index.html'
+            filename:'index.html',
+            favicon:'./src/images/favicon.ico',
         }),
         new MiniCssExtractPlugin({
             filename:'css/[name]_[hash:8].css'

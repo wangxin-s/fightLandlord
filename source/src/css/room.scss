@@ -1,0 +1,391 @@
+#landlord-room {
+    .color-y {
+        color: #F5CD95;
+    }
+    .text-l {
+        text-align: left;
+    }
+    .text-r {
+        text-align: right;
+    }
+    .clear {
+        clear: both;
+    }
+    width: 100%;
+    height: 100%;
+    background: url('../images/room-bj4.png') no-repeat;
+    background-size: 100% 100%;
+    .room-header {
+        width: 100%;
+        height: 1.5rem;
+        img {
+            width: .9rem;
+            height: .9rem;
+            vertical-align: middle;
+        }
+        .room-header-left {
+            float: left;
+            width: 30%;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            font-size: .5rem;
+            font-weight: 700; // color: white;
+            img {
+                margin-left: .5rem;
+            }
+            .time {
+                margin-left: .1rem;
+                color: white;
+            }
+        }
+        .room-header-center {
+            float: left;
+            width: 40%;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            text-align: center;
+            
+            div {
+                display: inline-block;
+                transition:all .2s;
+			    transform:rotatey(0deg);
+                transform-style:preserve-3d;
+                img {
+                    margin-left: .1rem;
+                    transform:rotatey(180deg);
+                }
+            }
+            .revers {
+                transform:rotatey(180deg);
+            }
+            
+        }
+
+       
+        .room-header-right {
+            float: left;
+            width: 30%;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            text-align: right;
+            img {
+                margin-right: .4rem;
+            }
+        }
+    }
+    .room-container {
+        width: 100%;
+        height: 6.5rem;
+        .room-container-player {
+            width: 100%;
+            height: 2.2rem;
+            margin-top: .2rem;
+            .room-container-player-left {
+                float: left;
+                width: 50%;
+                font-size: .3rem;
+                color: white;
+                .player {
+                    float: left;
+                    width: 40%;
+                    .player-head {
+                        float: left;
+                        width: 60%;
+                        img {
+                            width: 1.2rem;
+                        }
+                        img.beans {
+                            width: .3rem;
+                            height: .3rem;
+                            margin-right: .1rem;
+                            margin-top: .1rem;
+                        }
+                    }
+                    .player-identity {
+                        text-align: center;
+                        float: left;
+                        width: 40%;
+                        .farmer {
+                            width: .5rem;
+                            height: 1.2rem;
+                        }
+                        .card-back {
+                            width: .6rem;
+                            height: .8rem;
+                            line-height: .8rem;
+                            font-size: .4rem;
+                            font-weight: 700;
+                            color: #F8F8FF;
+                            margin: 0 auto;
+                            background: url('../images/card_back.png') no-repeat;
+                            background-size: 100% 100%;
+                        }
+                    }
+                }
+                .out-brand {
+                    float: left;
+                    width: 60%;
+                    height: 2.2rem;
+                    text-align: left;
+                    position: relative;
+                    img {
+                        width: .9rem;
+                        height: .9rem;
+                        margin-left: -.6rem;
+                    }
+                    img:first-child {
+                        margin-left: 0;
+                    }
+                    img:nth-child(13) {
+                        margin-left: 0;
+                    }
+                    .timer {
+                        width: 1rem;
+                        height: 1rem;
+                        line-height: 1.1rem;
+                        text-align: center;
+                        background: url('../images/timer.png') no-repeat;
+                        background-size: 100% 100%;
+                        position: absolute;
+                        top: 25%;
+                        left: 0;
+                    }
+                    .is-landlord {
+                        width: 1.2rem;
+                        height: .5rem;
+                        background: url('../images/play-landlord.png') no-repeat;
+                        background-size: 100% 100%;
+                        position: absolute;
+                        top: 40%;
+                        left: 0;
+                    }
+                }
+            }
+            .room-container-player-right {
+                float: left;
+                width: 50%;
+                font-size: .3rem;
+                color: white;
+                .player {
+                    float: left;
+                    width: 40%;
+                    .player-head {
+                        float: left;
+                        width: 60%;
+                        img {
+                            width: 1.2rem;
+                        }
+                        img.beans {
+                            width: .3rem;
+                            height: .3rem;
+                            margin-right: .1rem;
+                            margin-top: .1rem;
+                        }
+                    }
+                    .player-identity {
+                        text-align: center;
+                        float: left;
+                        width: 40%;
+                        .farmer {
+                            width: .5rem;
+                            height: 1.2rem;
+                        }
+                        .card-back {
+                            width: .6rem;
+                            height: .8rem;
+                            line-height: .8rem;
+                            font-size: .4rem;
+                            font-weight: 700;
+                            color: #F8F8FF;
+                            margin: 0 auto;
+                            background: url('../images/card_back.png') no-repeat;
+                            background-size: 100% 100%;
+                        }
+                    }
+                }
+                .out-brand {
+                    float: left;
+                    width: 60%;
+                    height: 2.2rem;
+                    text-align: right;
+                    position: relative;
+                    img {
+                        width: .9rem;
+                        height: .9rem;
+                        margin-left: -.6rem;
+                    }
+                    img:first-child {
+                        margin-left: 0;
+                    }
+                    img:nth-child(13) {
+                        margin-left: 0;
+                    }
+                    .timer {
+                        width: 1rem;
+                        height: 1rem;
+                        line-height: 1.1rem;
+                        text-align: center;
+                        background: url('../images/timer.png') no-repeat;
+                        background-size: 100% 100%;
+                        position: absolute;
+                        top: 25%;
+                        right: 0;
+                    }
+                    .is-landlord {
+                        width: 1.2rem;
+                        height: .5rem;
+                        background: url('../images/play-landlord.png') no-repeat;
+                        background-size: 100% 100%;
+                        position: absolute;
+                        top: 40%;
+                        right: 0;
+                    }
+                }
+                
+            }
+        }
+        .my-show-brand {
+            width: 100%;
+            height: 3rem;
+            text-align: center;
+            display: table;
+            position: relative;
+            .my-operating {
+                width: 40%;
+                height: 1rem;
+                margin: 0 auto;
+                position: absolute;
+                left: 50%;
+                top: .2rem;
+                transform: translate(-50%, 0);
+                div {
+                    width: 30%;
+                    height: .8rem;
+                    line-height: .8rem;
+                    font-size: .3rem;
+                    font-weight: 700;
+                    color: #FDF5E3;
+                }
+                .not-out {
+                    float: left;
+                    background: url('../images/border.png') no-repeat;
+                    background-size: 100% 100%;
+                }
+                .play-card {
+                    float: right;
+                    background: url('../images/border.png') no-repeat;
+                    background-size: 100% 100%;
+                }
+                .not-landlord {
+                    float: left;
+                    background: url('../images/border.png') no-repeat;
+                    background-size: 100% 100%;
+                }
+                .play-landlord {
+                    float: right;
+                    background: url('../images/border.png') no-repeat;
+                    background-size: 100% 100%;
+                } 
+                .timer {
+                    width: 1rem;
+                    height: 1rem;
+                    line-height: 1.1rem;
+                    text-align: center;
+                    background: url('../images/timer.png') no-repeat;
+                    background-size: 100% 100%;
+                    position: absolute;
+                    left: 42%;
+                } 
+            }
+            .show-card {
+                img {
+                    display: block;
+                    float: left;
+                    width: 1.4rem;
+                    height: 1.4rem;
+                    margin-left: -1rem;
+                    margin-top: 1.48rem;
+                }
+                img.ml0 {
+                    margin-left: 0;
+                }
+                img.transition-selection {
+                    transition: margin-top .1s linear;
+                    margin-top: 1.3rem;
+                }
+                img.transition-out {
+                    transition: margin-top width height .1s linear;
+                    width: 1rem;
+                    height: 1rem;
+                    margin-top: .2rem;
+                    display: none;
+                }
+            }
+            .been-out {
+                text-align: center;
+                display: table;
+                height: 1rem;
+                position: absolute;
+                left: 50%;
+                top: .2rem;
+                transform: translate(-50%, 0);
+                img {
+                    width: 1rem;
+                    height: 1rem;
+                    margin-left: -.6rem;
+                }
+            }
+            .my-head {
+                width: 1.2rem;
+                height: 1.2rem;
+                background: url('../images/player8.png') no-repeat;
+                background-size: 100% 100%;
+                position: absolute;
+                left: .58rem;
+                bottom: 0;
+            }
+
+            .my-identity {
+                width: .5rem;
+                height: 1.2rem;
+                background: url('../images/Landlord.png') no-repeat;
+                background-size: 100% 100%;
+                position: absolute;
+                left: 2.1rem;
+                bottom: 0;
+            }
+        }
+        .room-container-footer {
+            width: 100%;
+            height: 1.2rem;
+            div {
+                width: 30%;
+                height: 1.2rem;
+            }
+            .footer-left {
+                float: left;
+                font-size: .3rem;
+                color: white;
+                padding-left: .55rem;
+                img.beans {
+                    width: .3rem;
+                    height: .3rem;
+                    margin-right: .1rem;
+                    margin-top: .1rem;
+                }
+                p:first-child {
+                    margin-top: .1rem;
+                }
+            }
+            .footer-right {
+                text-align: right;
+                float: right;
+                img {
+                    width: .9rem;
+                    height: .9rem;
+                    margin-right: .4rem;
+                }
+            }
+        }
+    }
+}

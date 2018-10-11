@@ -6,61 +6,66 @@ var moduleData = {
     code: 200,
     msg: '成功'
 }
+var serverData = {
+    code: 200,
+    msg: '成功'
+}
+
 let Cards = [
-        {icon: 'j1.jpg', type: '0', val: 17},
-        {icon: 'j2.jpg', type: '0', val: 16},
-        {icon: 't1.jpg', type: '1', val: 14},
-        {icon: 't2.jpg', type: '1', val: 15},
-        {icon: 't3.jpg', type: '1', val: 3},
-        {icon: 't4.jpg', type: '1', val: 4},
-        {icon: 't5.jpg', type: '1', val: 5},
-        {icon: 't6.jpg', type: '1', val: 6},
-        {icon: 't7.jpg', type: '1', val: 7},
-        {icon: 't8.jpg', type: '1', val: 8},
-        {icon: 't9.jpg', type: '1', val: 9},
-        {icon: 't10.jpg', type: '1', val: 10},
-        {icon: 't11.jpg', type: '1', val: 11},
-        {icon: 't12.jpg', type: '1', val: 12},
-        {icon: 't13.jpg', type: '1', val: 13},
-        {icon: 'x1.jpg', type: '2', val: 14},
-        {icon: 'x2.jpg', type: '2', val: 15},
-        {icon: 'x3.jpg', type: '2', val: 3},
-        {icon: 'x4.jpg', type: '2', val: 4},
-        {icon: 'x5.jpg', type: '2', val: 5},
-        {icon: 'x6.jpg', type: '2', val: 6},
-        {icon: 'x7.jpg', type: '2', val: 7},
-        {icon: 'x8.jpg', type: '2', val: 8},
-        {icon: 'x9.jpg', type: '2', val: 9},
-        {icon: 'x10.jpg', type: '2', val: 10},
-        {icon: 'x11.jpg', type: '2', val: 11},
-        {icon: 'x12.jpg', type: '2', val: 12},
-        {icon: 'x13.jpg', type: '2', val: 13},
-        {icon: 'h1.jpg', type: '3', val: 14},
-        {icon: 'h2.jpg', type: '3', val: 15},
-        {icon: 'h3.jpg', type: '3', val: 3},
-        {icon: 'h4.jpg', type: '3', val: 4},
-        {icon: 'h5.jpg', type: '3', val: 5},
-        {icon: 'h6.jpg', type: '3', val: 6},
-        {icon: 'h7.jpg', type: '3', val: 7},
-        {icon: 'h8.jpg', type: '3', val: 8},
-        {icon: 'h9.jpg', type: '3', val: 9},
-        {icon: 'h10.jpg', type: '3', val: 10},
-        {icon: 'h11.jpg', type: '3', val: 11},
-        {icon: 'h12.jpg', type: '3', val: 12},
-        {icon: 'h13.jpg', type: '3', val: 13},
-        {icon: 'k1.jpg', type: '4', val: 14},
-        {icon: 'k2.jpg', type: '4', val: 15},
-        {icon: 'k3.jpg', type: '4', val: 3},
-        {icon: 'k4.jpg', type: '4', val: 4},
-        {icon: 'k5.jpg', type: '4', val: 5},
-        {icon: 'k6.jpg', type: '4', val: 6},
-        {icon: 'k7.jpg', type: '4', val: 7},
-        {icon: 'k8.jpg', type: '4', val: 8},
-        {icon: 'k9.jpg', type: '4', val: 9},
-        {icon: 'k10.jpg', type: '4', val: 10},
-        {icon: 'k11.jpg', type: '4', val: 11},
-        {icon: 'k12.jpg', type: '4', val: 12},
-        {icon: 'k13.jpg', type: '4', val: 13}
+        {icon: 53, type: '0', val: 17},
+        {icon: 52, type: '0', val: 16},
+        {icon: 44, type: '1', val: 14},
+        {icon: 48, type: '1', val: 15},
+        {icon: 0, type: '1', val: 3},
+        {icon: 4, type: '1', val: 4},
+        {icon: 8, type: '1', val: 5},
+        {icon: 12, type: '1', val: 6},
+        {icon: 16, type: '1', val: 7},
+        {icon: 20, type: '1', val: 8},
+        {icon: 24, type: '1', val: 9},
+        {icon: 28, type: '1', val: 10},
+        {icon: 32, type: '1', val: 11},
+        {icon: 36, type: '1', val: 12},
+        {icon: 40, type: '1', val: 13},
+        {icon: 45, type: '2', val: 14},
+        {icon: 49, type: '2', val: 15},
+        {icon: 1, type: '2', val: 3},
+        {icon: 5, type: '2', val: 4},
+        {icon: 9, type: '2', val: 5},
+        {icon: 13, type: '2', val: 6},
+        {icon: 17, type: '2', val: 7},
+        {icon: 21, type: '2', val: 8},
+        {icon: 25, type: '2', val: 9},
+        {icon: 29, type: '2', val: 10},
+        {icon: 33, type: '2', val: 11},
+        {icon: 37, type: '2', val: 12},
+        {icon: 41, type: '2', val: 13},
+        {icon: 46, type: '3', val: 14},
+        {icon: 50, type: '3', val: 15},
+        {icon: 2, type: '3', val: 3},
+        {icon: 6, type: '3', val: 4},
+        {icon: 10, type: '3', val: 5},
+        {icon: 14, type: '3', val: 6},
+        {icon: 18, type: '3', val: 7},
+        {icon: 22, type: '3', val: 8},
+        {icon: 26, type: '3', val: 9},
+        {icon: 30, type: '3', val: 10},
+        {icon: 34, type: '3', val: 11},
+        {icon: 38, type: '3', val: 12},
+        {icon: 42, type: '3', val: 13},
+        {icon: 47, type: '4', val: 14},
+        {icon: 51, type: '4', val: 15},
+        {icon: 3, type: '4', val: 3},
+        {icon: 7, type: '4', val: 4},
+        {icon: 11, type: '4', val: 5},
+        {icon: 15, type: '4', val: 6},
+        {icon: 19, type: '4', val: 7},
+        {icon: 23, type: '4', val: 8},
+        {icon: 27, type: '4', val: 9},
+        {icon: 31, type: '4', val: 10},
+        {icon: 35, type: '4', val: 11},
+        {icon: 39, type: '4', val: 12},
+        {icon: 43, type: '4', val: 13}
     ];
 let cards = Cards.slice(0);
 let self = {
@@ -84,62 +89,207 @@ let one = [] , two = [] , three = [] , hiddenCards = [];
 exports.websocket = function websocket(socket) {
 
     console.log('websocket')
-    // socket.emit('news', {hello: 'world1'});
-    // socket.on('news', function (data) {
-    //     console.log(data);
-    //     //socket.emit('news', data);
+    var obj={
+        list:[],
+        myCard:[],
+        left:[],
+        right:[],
+        bottomCard:[]
+    };
+    socket.on('getCards',function(data){
+        if(obj.list.length<=0){
+            var list=[];
+            for(var i=0;i<54;i++){
+                list.push(i);
+            }
+            creatCard();
+        }
+        console.log(data);
+        //js 随机整数方法
+        function rnd(n, m){
+            return Math.floor(Math.random()*(m-n+1)+n)
+        }
+        function creatCard(){
+            for(var j=0;j<54;j++){
+                var index=rnd(0,53);
+                var one=list[j];
+                var two=list[index];
+                list[j]=two;
+                list[index]=one;
+            }
+            var myCard=list.slice(0,17);
+            myCard.sort(function(a,b){return b-a});
+            obj= {
+                list:list,
+                myCard:myCard,
+                left:obj.list.slice(17,34),
+                right:obj.list.slice(34,51),
+                bottomCard:obj.list.slice(51,54)
+            }
+        }
 
-    //     var  sql = 'SELECT * FROM users';
+        socket.emit('getCards', obj);
+    });
 
-    //     //查
-    //     connect.query(sql,function (err, result) {
-    //         console.log('------');
-    //         if(err){
-    //             console.log('[SELECT ERROR] - ',err.message);
-    //             return;
-    //         }
-    //         socket.emit('news', result);
-    //         console.log('--------------------------SELECT----------------------------');
-    //         console.log(result);
-    //         console.log('------------------------------------------------------------\n\n');
-    //     });
-
-    // });
-
+    //接收当前人出牌
+    socket.on('emitCard',function(data){
+        socket.emit('emitCard', {
+            code:'0000',
+            message:'出牌成功'
+        });
+        //向前端--发送最新的纸牌
+        socket.emit('getCards', obj);
+    });
     // 登录
-    // socket.on('login',(data)=> {
-    //     let sql = 'select * from users where account='+'"'+data.account+'"';
-    //     connect.query(sql,function (err, result) {
-    //         if(err){
-    //             console.log('[SELECT ERROR] - ',err.message);
-    //             return;
-    //         }
-    //         // let serverData = {...moduleData};
-    //         if(result.length) {
-    //             if(result[0].password===data.password) {
-    //                 serverData.data = result[0]
-    //                 socket.emit('login', serverData);
-    //                 return;
-    //             }else {
-    //                 serverData.code = 202;
-    //                 serverData.msg = '密码错误';
-    //                 socket.emit('login', serverData);
-    //                 return;
-    //             }
-                
-    //         }else {
-    //             serverData.code = 201;
-    //             serverData.msg = '用户不存在';
-    //             socket.emit('login', serverData);
-    //             return;
-    //         }
-            
-    //     });
-    // });
+    socket.on('login',(data)=> {
+        let num = parseInt(Math.random()*10000);
+        let sql = 'select * from t_player where player_name='+'"'+data.account+'"';
+        let insert = "INSERT INTO `test`.`t_player` (`party_id`, `player_name`, `player_card`, `room_id`, `player_pwd` ,`player_status`) VALUES ('YH"+num+"', '"+data.account+"', null, null, '"+data.password+"','Y')";
+        connect.query(sql,function (err, result) {
+            if(err){
+                console.log('[SELECT ERROR] - ',err.message);
+                return;
+            }            
+            if(result.length>0) {
+                if(result[0].player_pwd===data.password) {
+                    serverData.data = result[0]
+                    socket.emit('login', serverData);
+                    return;
+                }else {
+                    serverData.code = 202;
+                    serverData.msg = '密码错误';
+                    socket.emit('login', serverData);
+                    return;
+                }
+            }else{
+                connect.query(insert,function(err , result){
+                    if(err){
+                        console.log('[SELECT ERROR] - ',err.message);
+                        return;
+                    }else{
+                        serverData.data = 'YH'+num;                        
+                        socket.emit('login', serverData);
+                        return;
+                    }
+                })
+            }
+        })
+    });    
+    //创建房间
+    socket.on('hall',(data)=>{
+        let sql = 'select * from t_player where player_status = "Y"';
+        let length;
+        
+        connect.query(sql , function(err , result){
+            if(err){
+                console.log(err.message);
+                return
+            }else{
+                length = result.length;
+                roomNum(length);                
+            }
+        })
+    })
+    //查房间数
+    function roomNum(length){
+            let sql = 'select * from t_room';            
+            connect.query(sql , function(err , result){
+                if(err){
+                    console.log(err.message);
+                    return
+                }
+                if(length !== 'add'){
+                    if(length > result.length*3){                        
+                        addRoom();
+                    }else{
+                        socket.emit('hall',result);
+                    }                    
+                }else{                   
+                    socket.emit('hall',result);
+                }
+            })            
+    }
+
+    //增加房间(一次增加4个)
+    function addRoom(){
+            let sql = "INSERT INTO `test`.`t_room` (`room_title`, `room_status`) VALUES (NULL, NULL),(NULL, NULL),(NULL, NULL),(NULL, NULL)";
+            connect.query(sql , function(err , result){
+                if(err){
+                    console.log(err.message);
+                    return
+                }else{
+                    console.log(result);
+                    roomNum('add');
+                }
+            })
+    }
+
+    //查房间的具体明细
+    socket.on('hallDetail',(data)=>{
+        let sql = 'select * from t_player';       
+        connect.query(sql , function(err , result){
+            if(err){
+                console.log(err.message);
+                return
+            }else{
+                socket.emit('hallDetail',result);                
+            }
+        })
+    })
+
+    //用户进入房间
+    socket.on('room',(data)=>{
+        //let sql = 'select * from t_player where _id='+'"'+data.partyId+'"'; 
+        let sql = 'select * FROM t_room a INNER JOIN t_player b on a.room_id = b.room_id WHERE a.room_id = '+data.roomId;
+        connect.query(sql , (err , result)=>{
+            if(err){
+                console.log(err.message);
+                return;
+            }else{
+                if(result.length == 3){
+                    socket.emit('room','该房间已满员，请换房间游戏，谢谢！');
+                }else{
+                    intoRoom(data);
+                }
+                return;
+            }
+        })
+    })
+
+    function intoRoom(data){
+        let sql = "update t_player set room_id = "+data.roomId+" WHERE party_id = '"+data.partyId+"'"    
+        connect.query(sql , (err , result)=>{
+            if(err){
+                console.log(err.message);
+                return;
+            }else{
+                socket.emit('room',true);
+            }
+        })
+    }
+
+    //游戏界面
+    socket.on('gamePage',(data)=>{
+        let sql = 'select * FROM t_room a INNER JOIN t_player b on a.room_id = b.room_id WHERE a.room_id = '+data.roomId;
+        connect.query(sql , (err , result)=>{
+            if(err){
+                console.log(err.message);
+                return;
+            }else{
+                if(result.length == 3){
+                    socket.emit('room','该房间已满员，请换房间游戏，谢谢！');
+                }else{
+                    intoRoom(data);
+                }
+                return;
+            }
+        })
+    })
+
+    
    //发牌
    socket.on('dealCards',(data)=>{
-        let options = dealCards();
-        //let sql = 'SELECT * FROM detail';
+        let options = dealCards();        
         //let sql = 'select * FROM t_room a INNER JOIN t_player b on a.room_id = b.room_id WHERE a.room_id = '+data.room_id//查room_id=1的 
         //let sql = 'update t_player set player_name = 'QW2' WHERE player_id = 1' //改player_id = 1 的 数据
         let p1=JSON.stringify(one);
@@ -424,6 +574,7 @@ let typeJudge = function(cards){
     }
 
 };
+
 //比较出牌大小
 function thanCard(maxCard , playCard){
     let maxType = typeJudge(maxCard);
