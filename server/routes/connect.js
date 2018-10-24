@@ -4,12 +4,14 @@
 var mysql = require("mysql");
 
 var pool = mysql.createConnection({
-    // host     : 'localhost',
-    // port: '3306',
-    // user     : 'root',
-    // password : '123456',
-    // database: 'landlord',
-    // typeCast: true,             // 是否把结果值转换为原生的 javascript 类型*/
+    /*host     : 'localhost',
+    port: '3306',
+    user     : 'root',
+    password : '123',
+    database: 'test',
+    password : '123456',
+    database: 'landlord',
+    typeCast: true,             // 是否把结果值转换为原生的 javascript 类型*!/*/
 
 
     // host     : 'localhost',
@@ -19,12 +21,13 @@ var pool = mysql.createConnection({
     // database: 'wx',
     // typeCast: true,             // 是否把结果值转换为原生的 javascript 类型
 
-    host: '172.16.12.34',
+    host     : 'localhost',
     port: '3306',
-    user: 'root',
-    password: '123456',
-    database: 'userinfo',
-    typeCast: true, 
+    user     : 'root',
+    password : '123',
+    database: 'test',
+    typeCast: true,             // 是否把结果值转换为原生的 javascript 类型
+    
 });
 
 
@@ -40,8 +43,8 @@ pool.connect(function(err,connection){
 		//console.log(connection)
     }
 });
-function query(sql,values,callback){
-    pool.query(sql,values, function (err,rows) {
+function query(sql,callback){
+    pool.query(sql, function (err,rows) {
         callback(err,rows);
         //pool.end();
     });

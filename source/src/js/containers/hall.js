@@ -8,6 +8,7 @@ import {hallHandle} from '../actions/hall';
 
 const socket = require('socket.io-client')('http://localhost:3001');
 class HallMain extends React.Component {
+
     // constructor(props) {
     //     super(props);
         
@@ -27,11 +28,20 @@ class HallMain extends React.Component {
                 this.props.history.push("/login");
             }
         });
+
+
+    componentDidMount() {        
+        socket.emit('hall','');
+        socket.on('hall',(data)=>{
+            console.log(data);
+        })
+
     }
 
     action() {
         this.props.history.push("/room");
     }
+
 
 
     sitFun(param,data,sit){
@@ -98,6 +108,17 @@ class HallMain extends React.Component {
 
     }
 
+    intoRoom(){
+        let roomData = {
+            partyId : 'YH7403',
+            roomId : 3
+        }
+        socket.emit('room',roomData)
+        socket.on('room',(data)=>{
+            console.log(data);
+        })
+    }
+
     render() {
         return (
             <div id="landlord-hall">
@@ -130,7 +151,46 @@ class HallMain extends React.Component {
                     </div>
                     <div className="table-right">
                         <ul className="table-list clearfix">
+
                            {this.showHall(this.props.hall.hallInfo)}
+
+                            <li onClick={this.intoRoom.bind(this)}>
+                                <img src={require('../../images/player1.png')} className="player" alt="" />
+                                <span className="table">
+                                    <img src={require("../../images/one.png")} alt=""/>
+                                </span>
+                                <img src={require('../../images/player2.png')} className="player" alt="" />
+                                <span className="player-bottom">
+                                </span>
+                            </li>
+                            <li>
+                                <img src={require('../../images/player1.png')} className="player" alt="" />
+                                <span className="table">
+                                    <img src={require("../../images/two.png")} alt=""/>
+                                </span>
+                                <img src={require('../../images/player2.png')} className="player" alt="" />
+                                <span className="player-bottom">
+                                </span>
+                            </li>
+                            <li>
+                                <img src={require('../../images/player1.png')} className="player" alt="" />
+                                <span className="table">
+                                    <img src={require("../../images/three.png")} alt=""/>
+                                </span>
+                                <img src={require('../../images/player2.png')} className="player" alt="" />
+                                <span className="player-bottom">
+                                </span>
+                            </li>
+                            <li>
+                                 <img src={require('../../images/player1.png')} className="player" alt="" />
+                                <span className="table">
+                                    <img src={require("../../images/four.png")} alt=""/>
+                                </span>
+                                <img src={require('../../images/player2.png')} className="player" alt="" />
+                                <span className="player-bottom">
+                                </span>
+                            </li>
+
                         </ul>
                         <div className="fast-action" onClick={this.action.bind(this)}>
                             快速开始

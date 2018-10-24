@@ -82,7 +82,7 @@ export function cardType(list) {
                 return '四带二'
             }
         } else if (arrLen >= 4) {
-            if (arrLen % 2 == 0) {//牌型是2的倍数
+            if (0) {//牌型是2的倍数
                 let check = true;
                 for (let i = 0; i < arrLen / 2; i++) {
                     if (
@@ -102,6 +102,27 @@ export function cardType(list) {
                 let two=0;
                 let one=0;
                 let check=false;
+
+                let threeN=0;//三顺数量 111 222   2  或者 111 222 333  3
+                let tCount=1;
+
+                newData.threeScore.map((item,i)=>{
+                    if (i < listLen - 1) {
+                        if (newData.threeScore[i + 1] - item == 1&&newData.threeScore[i + 1]<12){
+                            tCount++;
+                            if(tCount>threeN){
+                                threeN=tCount;
+                            }
+                        }else{
+                            tCount=1;
+                        }
+                    }
+                    if(item>=12){
+                        check = false;
+                    }
+                });
+
+
                 arr.map((item,i)=>{
                     if(item==3){
                         three++;
@@ -114,11 +135,15 @@ export function cardType(list) {
                     }
                 });
                 if(one>0){
-                    if(three==one+two*2+four*4){
+                    if(threeN==one+two*2+four*4+(three-threeN)*3){
                         check=true;
                     }
                 }else if(two>0&&one==0){
-                    if(three==two+four*2){
+                    if(threeN==two+four*2+(three-threeN)*3){
+                        check=true;
+                    }
+                }else{
+                    if(threeN==two*2+four*2+(three-threeN)*3){
                         check=true;
                     }
                 }
@@ -144,7 +169,7 @@ export function compareCard(myList,upList){
     let upType=cardType(upList);//上家已经出的牌--牌型
     let upLen=upList.length;//上家已经出的牌--长度
     let upScore=upNewData.score;//上家已经出的牌--分值
-    let upArrScore=upNewData.score;//上家已经出的牌--牌分类对应的分值
+    let upArrScore=upNewData.arrScore;//上家已经出的牌--牌分类对应的分值
 
     if(myLen>0&&upLen>0){
         if(myType!=upType){//当前牌的类型不同
@@ -155,7 +180,7 @@ export function compareCard(myList,upList){
                 return false;
             }
         }else{//相同的牌型
-            if(myType == '单牌'||myType =='对牌'||myType=='三张'||myType=='炸弹'){
+            if(myType == '单牌'||myType =='对牌'||myType=='三牌'||myType=='炸弹'){
                 if(myScore[0]<=upScore[0]){
                     console.log('当前牌的分值小与上家已出牌的分值');
                     return false;
@@ -181,7 +206,11 @@ export function compareCard(myList,upList){
                         return false;
                     }
                 }else if(myType=='飞机带翅膀'){
-                    if(myNewData.threeScore[0]<=upNewData.threeScore[0]){
+                    if(myNewData.plane.length!=upNewData.plane.length){
+                        console.log('飞机带翅膀 -- 飞机数量不同');
+                        return false;
+                    }
+                    if(myNewData.plane[0]<=upNewData.plane[0]){
                         console.log('当前牌的分值小与上家已出牌的分值');
                         return false;
                     }
@@ -228,11 +257,24 @@ export function countScore(list){
             cnt = 1;
         }
     });
+
+    let checkThree=false;//判断三联是否为飞机
+    let plane=[];//飞机数组
+    //判断多个三张排除顺子
+    threeScore.map((item,i)=>{
+        if(i<threeScore.length-1&&item!=threeScore[i+1]-1){
+            clockwise=false;
+        }else{
+            plane.push(item);
+        }
+    });
+
     if(fourScore.length==2){
         clockwise=false;
     }
     newSort(arr);//对相同牌的张数排序
     newSort(threeScore);//飞机带翅膀的分值统计  都是三张的分值
+    newSort(plane);//飞机带翅膀的分值统计  都是三张的分值
     return {
         score,
         arr,
@@ -240,6 +282,7 @@ export function countScore(list){
         arrScore,
         threeScore,
         fourScore,
+        plane,//飞机  三牌大小分值
     }
 }
 
@@ -258,4 +301,8 @@ export function getVal(val) {
 //判断牌的长度
 export function len(list) {
     return len.length;
+}
+
+export function cloneFun(list){
+    return JSON.parse(JSON.stringify(list));
 }
