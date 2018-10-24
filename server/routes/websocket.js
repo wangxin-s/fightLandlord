@@ -174,7 +174,20 @@ exports.websocket = function websocket(socket) {
                 })
             }
         })
-    });    
+    });  
+    //登录用户的资料
+    socket.on('loginer',(data)=>{
+        let sql = "select * from t_player where party_id = '"+data.partyId+"'";
+        connect.query(sql , function(err , result){
+            if(err){
+                console.log(err.message);
+                return
+            }else{
+                socket.emit('loginer', result)              
+            }
+        })
+    })
+
     //创建房间
     socket.on('hall',(data)=>{
         let sql = 'select * from t_player where player_status = "Y"';
@@ -192,22 +205,72 @@ exports.websocket = function websocket(socket) {
     })
     //查房间数
     function roomNum(length){
-            let sql = 'select * from t_room';            
+            let sql = 'SELECT tr.room_id,tp.party_id,tp.player_beans,tp.player_img,tp.player_name FROM	t_room AS tr LEFT JOIN t_player AS tp ON tr.room_id = tp.room_id';   
+            let resultData = [];
+            let obj = {}
+            let newArr = [];
+            let markArr = [];
+            let arr,markId;
             connect.query(sql , function(err , result){
                 if(err){
                     console.log(err.message);
                     return
                 }
+                arr = result.sort(function (a, b) {
+                var s = a['room_id'],
+                    t = b['room_id'];
+
+                return s < t ? -1 : 1;
+                });
+                markId = arr[0].room_id;
                 if(length !== 'add'){
                     if(length > result.length*3){                        
                         addRoom();
-                    }else{
-                        socket.emit('hall',result);
+                    }else{  
+                        result.forEach((item , i)=>{
+
+                            if (item['room_id'] === markId) {                                
+                                markArr.push(item);                               
+                            } else {                                                                
+                                obj['id'] = markId; 
+                                obj['data'] = markArr;                                                             
+                                newArr.push(obj);
+                                obj = {};
+                                markId = item['room_id'];
+                                markArr = [item];                              
+                                                                
+                            }
+                        }) 
+                        obj['id'] = markId;
+                        obj['data'] = markArr;                                           
+                        newArr.push(obj) 
+                        newArr.forEach((item , i)=>{
+                            if(item.data.length == 1){
+                                if(item.data[0].party_id !== null && item.data[0].party_id !== undefined && item.data[0].party_id !== ''){                                    
+                                    return true;
+                                }else{                                    
+                                    item.data = [];
+                                }
+                            }
+                        })
+                        socket.emit('hall',newArr);
                     }                    
                 }else{                   
                     socket.emit('hall',result);
                 }
-            })            
+            })    
+              
+                          
+    }
+
+    function roomNumFun(result){
+        let data=[];
+        for(let i in result){
+             if(result[i].room_id == result[i+1].room_id){
+                  data.push(result[i]);
+               }
+          }
+          return data;
     }
 
     //增加房间(一次增加4个)
@@ -257,12 +320,13 @@ exports.websocket = function websocket(socket) {
     })
 
     function intoRoom(data){
-        let sql = "update t_player set room_id = "+data.roomId+" WHERE party_id = '"+data.partyId+"'"    
+        let sql = "update t_player set room_id = "+data.roomId+",player_seat = '"+data.playerSeat+"' WHERE party_id = '"+data.partyId+"'"    
         connect.query(sql , (err , result)=>{
             if(err){
                 console.log(err.message);
                 return;
             }else{
+                console.log(result);
                 socket.emit('room',true);
             }
         })

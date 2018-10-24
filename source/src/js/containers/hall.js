@@ -7,7 +7,14 @@ import { connect } from 'react-redux'
 const socket = require('socket.io-client')('http://localhost:3001');
 class HallMain extends React.Component {
 
-    componentDidMount() {        
+    componentDidMount() {
+        let options = {
+            partyId : 'YH005'
+        }
+        socket.emit('loginer',options);
+        socket.on('loginer',(data)=>{
+            console.log(data);
+        })       
         socket.emit('hall','');
         socket.on('hall',(data)=>{
             console.log(data);
@@ -21,7 +28,8 @@ class HallMain extends React.Component {
     intoRoom(){
         let roomData = {
             partyId : 'YH7403',
-            roomId : 3
+            playerSeat : 'left',
+            roomId : 4
         }
         socket.emit('room',roomData)
         socket.on('room',(data)=>{
