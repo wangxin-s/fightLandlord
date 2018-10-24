@@ -33,7 +33,7 @@ import {
     roomHandle,getCard
 } from '../actions/room';
 
-import {cardType,compareCard} from '../units/room';
+import {cardType,compareCard,cloneFun} from '../units/room';
 
 let timer;//玩家操作倒计时
 let timeTimer;//当前时间倒计时
@@ -206,11 +206,9 @@ class RoomMain extends React.Component {
     resetRedux(){
         this.props._roomHandle({
             myCard:[],//我的牌
-            left:[],//左侧玩家的牌
+            mySelectCard:{},//当前玩家选中的牌
+            left:[0,1,2],//左侧玩家的牌
             right:[],//右侧玩家的牌
-
-            leftList:[0],//左侧玩家出的牌
-            rightList:[],//右侧玩家出的牌
         })
 
         this.setState({
@@ -237,8 +235,6 @@ class RoomMain extends React.Component {
             this.props._roomHandle({
                 bottomCard: data.bottomCard,//顶部中间的底牌
                 myCard: data.myCard,//我的牌
-                left: data.left,//左侧玩家的牌
-                right: data.right,//右侧玩家的牌
             })
         });
         //左侧玩家出牌接口
@@ -299,15 +295,7 @@ class RoomMain extends React.Component {
         let myCard = this.props.room.myCard;
         let mySelectCard=this.props.room.mySelectCard;
         let check=false;
-        mySelectCard.map((item,i)=>{
-            if(item==myCard[index]){
-                mySelectCard.splice(index,1);
-                check=true;
-            }
-        });
-        if(!check){
-            mySelectCard.push(myCard[index])
-        }
+        mySelectCard[myCard[index]]=mySelectCard[myCard[index]]?false:true;
         this.props._roomHandle({
             mySelectCard
         })
@@ -328,44 +316,44 @@ class RoomMain extends React.Component {
 
     // 出牌
     playCard() {
-        let state = this.state.imgArr;
-        state.forEach((item, index) => {
-            if (state[index]) {
-                state[index] = 'out'
+        let room=this.props.room;
+        let mySelectCard=room.mySelectCard;
+        let myCard=cloneFun(room.myCard);//去掉玩家已出的牌后玩家现有的牌
+        let list=[];//当前玩家出的牌
+        for(let key in mySelectCard){
+            if(mySelectCard[key]){
+                list.push(key);
+                myCard.splice(myCard.findIndex(item =>item == key), 1)
             }
-        });
+        }
+        if(list.length<=0){
+            alert('请选择要出的牌');
+        }
+        console.log(list,myCard);
+        //判断牌型
+        console.log('上家的牌',cardType(cloneFun(room.left)));
+        console.log('玩家选中的牌',cardType(cloneFun(list)));
 
+        //比较牌的大小
+        let check=compareCard(list,room.left);
+        console.log('上家和当前玩家出的牌--比较',check);
+        if(!check){return false}
+
+        this.props._roomHandle({
+            myCard,myCardOut:list,mySelectCard:{}
+        });
+        this.setState({
+            isShow_playCard:false,
+            isTimer:2,
+            isShow_beenOut:true,
+        },()=>{
+            this.playCardTimer();
+        });
+        return false;
         //调用接口出牌
         socket.emit('emitCard',{
             message:'发送消息--出牌'
         });
-
-        this.setState({
-            imgArr: state,
-            isShow_playCard: false,
-        }, () => {
-            let updateState = this.state.imgArr;
-            updateState.forEach((item, index) => {
-                if (item == 'out') {
-                    this.state.outData.push(this.state.brandArr[index])
-                }
-            })
-            this.setState({
-                isShow_beenOut: true
-            })
-
-            //模拟出牌 
-            setTimeout(() => {
-                this.setState({
-                    playerOneData: [card1, card2, card3, card4, card5, card6, card7, card8, card9,]
-                })
-            }, 1000)
-            setTimeout(() => {
-                this.setState({
-                    playerTwoData: [card1, card2, card3, card4, card5]
-                })
-            }, 2000)
-        })
     }
 
     // 不抢
@@ -423,6 +411,8 @@ class RoomMain extends React.Component {
 
     //出牌定时器
     playCardTimer(){
+        let count=5;
+        clearInterval(timer);
         timer = setInterval(() => {
             let obj=this.state;
             if(this.state.count<=1){
@@ -430,20 +420,20 @@ class RoomMain extends React.Component {
                     this.setState({
                         isShow_playCard: false,
                         isTimer: obj.isTimer+1,
-                        count: 20,
+                        count: count,
+                        isShow_beenOut:true,
                     })
                 }else if(obj.isTimer>=3){
-                    clearInterval(timer);
                     this.setState({
                         isShow_playCard: true,
                         isTimer: 1,
-                        count: 20,
+                        count: count,
+                        isShow_beenOut:false,
                     })
                 }else{
                     this.setState({
-                        count: 20,
+                        count: count,
                         isTimer: obj.isTimer+1,
-
                     })
                 }
             }else{
@@ -453,7 +443,6 @@ class RoomMain extends React.Component {
             }
         }, 1000)
     }
-
 
     //地主牌翻转 
     revers() {
@@ -466,7 +455,6 @@ class RoomMain extends React.Component {
             })
         })
     }
-
 
     //开始发牌点击事件
     startCard=()=>{
@@ -495,8 +483,8 @@ class RoomMain extends React.Component {
                 <div className="room-container">
                     {/*其他玩家区域 start*/}
                     <LeftPlay
-                        leftList={this.state.playerTwoData}
-                        rightList={this.state.playerOneData}
+                        leftList={room.left}
+                        rightList={room.right}
                         isTimer={this.state.isTimer}
                         count={this.state.count}
                     />
@@ -526,7 +514,7 @@ class RoomMain extends React.Component {
                         {/* 已出的牌  start*/}
                         <MyBeenOutCard
                             show={this.state.isShow_beenOut}
-                            list={this.state.outData}
+                            list={room.myCardOut}
                         />
                         {/* 已出的牌  end*/}
 

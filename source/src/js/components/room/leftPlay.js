@@ -18,15 +18,29 @@ class MyBeenOutCard extends React.Component {
     // 左边玩家出牌展示
     leftCardData(list) {
         return list.map((item, index) => {
-            return <img key={index} src={item} alt="" />
+            return <img key={index} src={this.getSrc(item)} alt="" />
         })
     }
 
     // 右边玩家出牌展示
     rightCardData(list) {
         return list.map((item, index) => {
-            return <img key={index} src={item} alt="" />
+            return <img key={index} src={this.getSrc(item)} alt="" />
         })
+    }
+
+    getSrc(item){
+        let i=1061;
+        if(item*1==51||item*1==50||item*1==49||item*1==48){
+            i=1061+item*1-48
+        }else if(item*1==52){
+            i=1114;
+        }else if(item*1==53){
+            i=1113;
+        }else{
+            i=(1065+item*1);
+        }
+        return require('../../../images/card/card_'+i+'@2x.png');
     }
 
     render() {

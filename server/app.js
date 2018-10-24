@@ -38,7 +38,9 @@ var port = 3001;
 app.set('port', port);
 server.listen(port);
 //建立socket连接
-io.on('connection', require('./routes/websocket').websocket);
+io.on('connection', (socket)=>{
+  require('./routes/websocket').websocket(socket,io);
+});
 /*io.on('connection', function (socket) {
   socket.emit('news', { hello: 'world1' });
   socket.on('news', function (data) {
