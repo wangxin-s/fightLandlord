@@ -155,7 +155,7 @@ class HallMain extends React.Component {
 
                            {this.showHall(this.props.hall.hallInfo)}
 
-                            <li onClick={this.intoRoom.bind(this)}>
+                            {/*<li onClick={this.intoRoom.bind(this)}>
                                 <img src={require('../../images/player1.png')} className="player" alt="" />
                                 <span className="table">
                                     <img src={require("../../images/one.png")} alt=""/>
@@ -190,7 +190,7 @@ class HallMain extends React.Component {
                                 <img src={require('../../images/player2.png')} className="player" alt="" />
                                 <span className="player-bottom">
                                 </span>
-                            </li>
+                            </li>*/}
 
                         </ul>
                         <div className="fast-action" onClick={this.action.bind(this)}>

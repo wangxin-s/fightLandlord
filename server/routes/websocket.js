@@ -7,14 +7,6 @@ var moduleData = {
     msg: '成功'
 }
 
-exports.websocket = function websocket(socket,io) {
-    console.log('websocket')
-    // socket.emit('news', {hello: 'world1'});
-    socket.on('news', function (data) {
-        console.log(data);
-        //socket.emit('news', data);
-
-        var  sql = 'SELECT * FROM users';
 var serverData = {
     code: 200,
     msg: '成功'
@@ -151,6 +143,7 @@ exports.websocket = function websocket(socket) {
     });
     // 登录
     socket.on('login',(data)=> {
+        console.log(data);
         let num = parseInt(Math.random()*10000);
         let sql = 'select * from t_player where player_name='+'"'+data.account+'"';
         let insert = "INSERT INTO `test`.`t_player` (`party_id`, `player_name`, `player_card`, `room_id`, `player_pwd` ,`player_status`) VALUES ('YH"+num+"', '"+data.account+"', null, null, '"+data.password+"','Y')";
@@ -158,7 +151,8 @@ exports.websocket = function websocket(socket) {
             if(err){
                 console.log('[SELECT ERROR] - ',err.message);
                 return;
-            }            
+            }  
+            console.log(result);          
             if(result.length>0) {
                 if(result[0].player_pwd===data.password) {
                     serverData.data = result[0]
@@ -465,10 +459,7 @@ exports.websocket = function websocket(socket) {
             
         });
     });
-};
 
-        
-   });
    //判断牌型
    socket.on('typeJudge',(data)=>{
        let options = typeJudge(data);
