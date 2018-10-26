@@ -24,6 +24,7 @@ class HallMain extends React.Component {
     //         hallInfo:[],//房间信息
     //     }
     // }
+
     componentDidMount() {
         socket.emit('getHallInfo', {});
         socket.on('getHallInfo',(data)=>{
@@ -57,17 +58,17 @@ class HallMain extends React.Component {
                 console.log(val);
                 let leftPic='',rightPic='',bottomPic="";
                 if(val.leftSit!==''){
-                    leftPic=JSON.parse(val.leftSit).headImg;
+                    leftPic=val.leftSit.headImg;
                 }else{
                     leftPic='';
                 }
                 if(val.rightSit!==''){
-                    rightPic=JSON.parse(val.rightSit).headImg;
+                    rightPic=val.rightSit.headImg;
                 }else{
                     rightPic='';
                 }
                 if(val.bottomSit!==''){
-                    bottomPic=JSON.parse(val.bottomSit).headImg;
+                    bottomPic=val.bottomSit.headImg;
                 }else{
                     bottomPic='';
                 }
@@ -75,7 +76,7 @@ class HallMain extends React.Component {
                 if(leftPic!=="" && rightPic!=="" && bottomPic!==''){
                     
                     let id=Number(this.props.match.params.id);
-                    if(id===JSON.parse(val.leftSit).id||id===JSON.parse(val.rightSit).id||id===JSON.parse(val.bottomSit).id){
+                    if(id===val.leftSit.id||id===val.rightSit.id||id===val.bottomSit.id){
                         this.props.history.push("/room");
                     }
                     

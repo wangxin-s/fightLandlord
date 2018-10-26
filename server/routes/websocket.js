@@ -88,8 +88,8 @@ let self = {
 let maxCard = [];//当前牌面上最大的牌
 let one = [] , two = [] , three = [] , hiddenCards = [];
 exports.websocket = function websocket(socket) {
-
-    console.log('websocket')
+    let data={};
+    console.log('websocket');
     var obj={
         list:[],
         myCard:[],
@@ -145,16 +145,16 @@ exports.websocket = function websocket(socket) {
     socket.on('login',(data)=> {
         console.log(data);
         let num = parseInt(Math.random()*10000);
-        let sql = 'select * from t_player where player_name='+'"'+data.account+'"';
-        let insert = "INSERT INTO `test`.`t_player` (`party_id`, `player_name`, `player_card`, `room_id`, `player_pwd` ,`player_status`) VALUES ('YH"+num+"', '"+data.account+"', null, null, '"+data.password+"','Y')";
+        let sql = 'select * from users where account='+'"'+data.account+'"';
+        let insert = "INSERT INTO `users`(`account`, `password`) VALUES ('"+data.account+"','"+data.password+"')";
         connect.query(sql,function (err, result) {
             if(err){
                 console.log('[SELECT ERROR] - ',err.message);
                 return;
             }  
-            console.log(result);          
+            console.log(result[0].account);
             if(result.length>0) {
-                if(result[0].player_pwd===data.password) {
+                if(result[0].password==data.password) {
                     serverData.data = result[0]
                     socket.emit('login', serverData);
                     return;
@@ -353,7 +353,6 @@ exports.websocket = function websocket(socket) {
         })
     })
 
-    
    //发牌
    socket.on('dealCards',(data)=>{
         let options = dealCards();        
@@ -377,12 +376,48 @@ exports.websocket = function websocket(socket) {
             
         });
     })
+
     //获取大厅数据
     socket.on('getHallInfo',(data)=>{
         let roomSql='SELECT * FROM gamehall';
         connect.query(roomSql,(err, result)=> {
+            let roomList=[
+                {
+                    "roomId":2,
+                    "roomNum":"room1",
+                    "leftSit":{
+                        id:'0',
+                        account:'admin',
+                        isLogin:false,
+                        roomId:'1',
+                        locationSit:'p1',
+                        password:'000000',
+                        headImg:'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg'
 
-            socket.emit('getHallInfo',result); 
+                    },
+                    "rightSit":{
+                        id:'1',
+                        account:'admin',
+                        isLogin:false,
+                        roomId:'1',
+                        locationSit:'p3',
+                        password:'000000',
+                        headImg:'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg'
+
+                    },
+                    "bottomSit":{
+                        id:'2',
+                        account:'admin',
+                        isLogin:false,
+                        roomId:'1',
+                        locationSit:'p2',
+                        password:'000000',
+                        headImg:'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg'
+
+                    },
+                },
+            ];
+            socket.emit('getHallInfo',roomList);
         });
     });
 
