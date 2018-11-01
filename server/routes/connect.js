@@ -51,6 +51,7 @@ function query(sql,params,callback){
 }
 function selectQuery(sql,params,callback){
     pool.query(sql,params, function (err,rows) {
+        console.log(rows)
         callback(err,JSON.parse(JSON.stringify(rows)));
         //pool.end();
     });

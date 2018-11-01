@@ -11,6 +11,7 @@ class LoginMain extends React.Component {
 
     componentDidMount() {
         socket.on('login',(data)=> {
+            console.log(data);
             if(data.code==200) {
                 alert(data.msg)
                 this.props.history.push("/hall/"+data.data.id);

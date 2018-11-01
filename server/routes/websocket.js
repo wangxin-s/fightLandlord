@@ -97,6 +97,11 @@ exports.websocket = function websocket(socket,io) {
         right:[],
         bottomCard:[]
     };
+    function User(){
+        this.id=id;
+        this.account=account;
+
+    }
     socket.on('getCards',function(data){
         if(obj.list.length<=0){
             var list=[];
@@ -145,8 +150,8 @@ exports.websocket = function websocket(socket,io) {
     socket.on('login',(data)=> {
         console.log(data);
         let num = parseInt(Math.random()*10000);
-        let selectSql = 'select player_name id,player_pwd pwd,player_grade grade from t_player where player_name=?';
-        let insertSql = "INSERT INTO test.t_player (player_name, player_pwd,player_grade) VALUES (?,?,?)";
+        let selectSql = 'select player_id id,player_name pname,player_pwd pwd,player_grade grade from t_player where player_name=?';
+        let insertSql = "INSERT INTO test.t_player (player_name, player_pwd,player_grade) VALUES (?,?,0)";
         connect.selectQuery(selectSql,[data.account],function (err, result) {
             if(err){
                 console.log('[SELECT ERROR] - ',err.message);
@@ -172,12 +177,12 @@ exports.websocket = function websocket(socket,io) {
                         console.log('[INSERT ERROR] - ',err.message);
                         return;
                     }else{
-                        serverData.data = {
-                            id:data.account,
-                            pwd:data.password
-                        }
-                        socket.emit('login', serverData);
-                        return;
+                        connect.selectQuery(selectSql,[data.account],function(err,result){
+                            serverData.data = result[0];
+                            console.log(serverData);
+                            socket.emit('login', serverData);
+                            return;
+                        })
                     }
                 })
             }
@@ -384,11 +389,44 @@ exports.websocket = function websocket(socket,io) {
     })
     //获取大厅数据
     socket.on('getHallInfo',(data)=>{
-        let roomSql='SELECT * FROM gamehall';
-        connect.query(roomSql,(err, result)=> {
+            let roomList=[
+                {
+                    "roomId":2,
+                    "roomNum":"room1",
+                    "leftSit":{
+                        id:'0',
+                        account:'12',
+                        isLogin:false,
+                        roomId:'1',
+                        locationSit:'p1',
+                        password:'12',
+                        headImg:'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg'
 
-            socket.emit('getHallInfo',result); 
-        });
+                    },
+                    "rightSit":{
+                        id:'1',
+                        account:'admin',
+                        isLogin:false,
+                        roomId:'1',
+                        locationSit:'p3',
+                        password:'000000',
+                        headImg:'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg'
+
+                    },
+                    "bottomSit":{
+                        id:'2',
+                        account:'admin',
+                        isLogin:false,
+                        roomId:'1',
+                        locationSit:'p2',
+                        password:'000000',
+                        headImg:'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg'
+
+                    },
+                }
+            ];
+        socket.emit('getHallInfo',roomList);
+
     });
 
     //选择房间座位
