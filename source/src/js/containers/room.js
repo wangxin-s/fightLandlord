@@ -34,8 +34,9 @@ import {
     roomHandle, getCard
 } from '../actions/room';
 
-import {socket} from '../units/socketListen';
-import {cardType, compareCard, cloneFun} from '../units/room';
+import { socket, outRoomObject } from '../units/socketListen';
+
+import { cardType, compareCard, cloneFun } from '../units/room';
 
 //排序算法测试
 import {
@@ -87,22 +88,9 @@ class RoomMain extends React.Component {
         }
     }
 
-    componentWillMount() {
-        socket.on('outRoom', (data) => {
-            console.log(data)
-            if(data.code==200) {
-                this.props.history.push("/hall")
-            }else {
-                alert(data.msg)
-                return;
-            }
-        });
-    }
-
     componentWillUnmount() {
         clearInterval(timeTimer);
         clearInterval(timer);
-        
     }
 
     //判断牌型 牌分值大小比较测试
@@ -320,7 +308,7 @@ class RoomMain extends React.Component {
          }, 1000)*/
     }
 
-   
+
 
     //当牌被点击时
     imgClick = (index) => {
@@ -355,7 +343,7 @@ class RoomMain extends React.Component {
         for (let key in mySelectCard) {
             if (mySelectCard[key]) {
                 list.push(key);
-                myCard.splice(myCard.findIndex(item =>item == key), 1)
+                myCard.splice(myCard.findIndex(item => item == key), 1)
             }
         }
         if (list.length <= 0) {
@@ -380,7 +368,7 @@ class RoomMain extends React.Component {
             isShow_playCard: false,
             isTimer: 2,
             isShow_beenOut: true,
-        }, ()=> {
+        }, () => {
             this.playCardTimer();
         });
         return false;
@@ -482,7 +470,7 @@ class RoomMain extends React.Component {
     revers() {
         this.setState({
             isRevers: true,
-        }, ()=> {
+        }, () => {
             this.setState({
                 list: [card4, card5, card6],
                 brandArr: this.state.brandArr.concat([card4, card5, card6]),
@@ -500,10 +488,19 @@ class RoomMain extends React.Component {
             userInfo,//当前用户信息
             seat,//位置
         });
+        outRoomObject.callBack = (data) => {
+            console.log(data)
+            if (data.code == 200) {
+                this.props.history.push("/hall")
+            } else {
+                alert(data.msg)
+                return;
+            }
+        }
     }
 
     //开始发牌点击事件
-    startCard = ()=> {
+    startCard = () => {
         socket.emit('getCards', '发送消息--发牌');
         this.setState({
             isShow_playCard: true,

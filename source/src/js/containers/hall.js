@@ -6,20 +6,18 @@ import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
 import { loginAllHandle } from '../actions/login'
 import { hallHandle } from '../actions/hall';
-import { socket, goRoomObject } from '../units/socketListen';
+import { socket, getHallInfoObject, goRoomObject } from '../units/socketListen';
 
 
 // 获取大厅房间最新实时数据
 class HallMain extends React.Component {
     componentDidMount() {
-        if (this.props.hall.isGetHallInfo) {
-            socket.emit('getHallInfo', {});
-            socket.on('getHallInfo', (data) => {
-                console.log(data)
-                this.props._hallHandle({
-                    hallInfo: data.data,
-                    isGetHallInfo: false
-                });
+        socket.emit('getHallInfo', {});
+        getHallInfoObject.callBack = (data) => {
+            console.log(data)
+            this.props._hallHandle({
+                hallInfo: data.data,
+                isGetHallInfo: false
             });
         }
     }
@@ -72,12 +70,12 @@ class HallMain extends React.Component {
         });
 
         // goRoom请求  后端返回回调
-        goRoomObject.callBack = (data)=> {
+        goRoomObject.callBack = (data) => {
             if (data.code == 200) {
                 this.props._loginAllHandle({
                     userInfo: data.data
                 })
-                this.props.history.push("/room/"+roomId);
+                this.props.history.push("/room/" + roomId);
             } else {
                 alert(data.msg)
                 return;
@@ -132,33 +130,6 @@ class HallMain extends React.Component {
                                 <img src={require('../../images/Vacancy.png')} className="player" alt="" />
                                 <img src={require('../../images/Vacancy.png')} className="player-bottom">
                                 </img>
-                            </li>
-                            <li>
-                                <img src={require('../../images/player1.png')} className="player" alt="" />
-                                <span className="table">
-                                    <img src={require("../../images/room2.png")} alt="" />
-                                </span>
-                                <img src={require('../../images/player2.png')} className="player" alt="" />
-                                <span className="player-bottom">
-                                </span>
-                            </li>
-                            <li>
-                                <img src={require('../../images/player1.png')} className="player" alt="" />
-                                <span className="table">
-                                    <img src={require("../../images/room3.png")} alt="" />
-                                </span>
-                                <img src={require('../../images/player2.png')} className="player" alt="" />
-                                <span className="player-bottom">
-                                </span>
-                            </li>
-                            <li>
-                                <img src={require('../../images/player1.png')} className="player" alt="" />
-                                <span className="table">
-                                    <img src={require("../../images/room4.png")} alt="" />
-                                </span>
-                                <img src={require('../../images/player2.png')} className="player" alt="" />
-                                <span className="player-bottom">
-                                </span>
                             </li> */}
 
                         </ul>

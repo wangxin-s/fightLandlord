@@ -3,26 +3,13 @@
  */
 import React from 'react';
 import { connect } from 'react-redux'
-import {loginAllHandle} from '../actions/login'
-import {withRouter} from "react-router-dom";
-import {socket} from '../units/socketListen';
+import { loginAllHandle } from '../actions/login'
+import { withRouter } from "react-router-dom";
+import { socket, loginObject } from '../units/socketListen';
 class LoginMain extends React.Component {
 
     componentDidMount() {
-        socket.on('login',(data)=> {
-            console.log(data)
-            if(data.code==200) {
-                alert('登陆成功')
-                this.props._loginAllHandle({
-                    userInfo: data.data
-                })
-                this.props.history.push("/hall");
-                return;
-            }else {
-                alert(data.msg)
-                return;
-            }
-        })
+
     }
 
     componentWillUnmount() {
@@ -43,13 +30,26 @@ class LoginMain extends React.Component {
     //点击登陆按钮
     loginBtn() {
         let loginData = {
-            account:this.props.login.account,
+            account: this.props.login.account,
             password: this.props.login.password
         }
         socket.emit('login', loginData);
+        loginObject.callBack = (data) => {
+            if(data.code==200) {
+                alert('登陆成功')
+                this.props._loginAllHandle({
+                    userInfo: data.data
+                })
+                this.props.history.push("/hall");
+                return;
+            }else {
+                alert(data.msg)
+                return;
+            }
+        }
     }
     // 账号密码填写
-    inputChange(type,name,event) {
+    inputChange(type, name, event) {
         let obj = [];
         if (type == '1') {//1 直接取 event 0 取event.target.value
             obj[name] = event;
@@ -62,32 +62,32 @@ class LoginMain extends React.Component {
     render() {
         return (
             <div id='landlord-login'>
-                
-                {this.props.login.isShow_dialog?
+
+                {this.props.login.isShow_dialog ?
                     <div className='login-dialog'>
                         <div className='login-dialog-body'>
                             <div className='mt10'>
                                 <img src={require('../../images/account.png')} alt="" />
-                                <input type="text" onChange={this.inputChange.bind(this,0,'account')} />
+                                <input type="text" onChange={this.inputChange.bind(this, 0, 'account')} />
                             </div>
                             <div className='mt20'>
                                 <img src={require('../../images/password.png')} alt="" />
-                                <input type="password" onChange={this.inputChange.bind(this,0,'password')} />
+                                <input type="password" onChange={this.inputChange.bind(this, 0, 'password')} />
                             </div>
-                            <div className='login-btn mt30' onClick={()=> this.loginBtn()}>
+                            <div className='login-btn mt30' onClick={() => this.loginBtn()}>
                                 <img src={require('../../images/login-btn.png')} alt="" />
                             </div>
                         </div>
-                        <div className='login-dialog-close mt10' onClick={()=> this.closeDialog()}>
+                        <div className='login-dialog-close mt10' onClick={() => this.closeDialog()}>
                             <img src={require('../../images/close.png')} alt="" />
                         </div>
                     </div>
                     :
-                    <div className='action-btn' onClick={()=> this.actionBtn()}>
+                    <div className='action-btn' onClick={() => this.actionBtn()}>
                         <img src={require('../../images/action-btn.png')} alt="" />
                     </div>
                 }
-                
+
             </div>
         )
     }
