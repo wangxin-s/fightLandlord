@@ -7,6 +7,7 @@ let loginObject = {
 socket.on('login',(data)=> {
     loginObject.callBack(data)
 })
+
 // 获取大厅房间最新实时数据
 let getHallInfoObject = {
     callBack:function() {}
