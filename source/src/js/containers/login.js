@@ -11,9 +11,8 @@ class LoginMain extends React.Component {
 
     componentDidMount() {
         socket.on('login',(data)=> {
-            console.log(data)
             if(data.code==200) {
-                alert('登陆成功')
+                alert(data.msg)
                 this.props.history.push("/hall/"+data.data.id);
                 //this.props.history.push("/hall/"+12);
                 return;
@@ -42,6 +41,7 @@ class LoginMain extends React.Component {
             account:this.props.login.account,
             password: this.props.login.password
         }
+        console.log(loginData)
         socket.emit('login', loginData);
     }
     // 账号密码填写

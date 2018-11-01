@@ -87,7 +87,7 @@ let self = {
 }
 let maxCard = [];//当前牌面上最大的牌
 let one = [] , two = [] , three = [] , hiddenCards = [];
-exports.websocket = function websocket(socket) {
+exports.websocket = function websocket(socket,io) {
 
     console.log('websocket')
     var obj={
@@ -145,17 +145,19 @@ exports.websocket = function websocket(socket) {
     socket.on('login',(data)=> {
         console.log(data);
         let num = parseInt(Math.random()*10000);
-        let sql = 'select * from t_player where player_name='+'"'+data.account+'"';
-        let insert = "INSERT INTO `test`.`t_player` (`party_id`, `player_name`, `player_card`, `room_id`, `player_pwd` ,`player_status`) VALUES ('YH"+num+"', '"+data.account+"', null, null, '"+data.password+"','Y')";
-        connect.query(sql,function (err, result) {
+        let selectSql = 'select player_name id,player_pwd pwd,player_grade grade from t_player where player_name=?';
+        let insertSql = "INSERT INTO test.t_player (player_name, player_pwd,player_grade) VALUES (?,?,?)";
+        connect.selectQuery(selectSql,[data.account],function (err, result) {
             if(err){
                 console.log('[SELECT ERROR] - ',err.message);
                 return;
             }  
-            console.log(result);          
+            console.log(result);
+
             if(result.length>0) {
-                if(result[0].player_pwd===data.password) {
-                    serverData.data = result[0]
+                if(result[0].pwd===data.password) {
+                    serverData.data = result[0];
+                    console.log(serverData);
                     socket.emit('login', serverData);
                     return;
                 }else {
@@ -165,12 +167,15 @@ exports.websocket = function websocket(socket) {
                     return;
                 }
             }else{
-                connect.query(insert,function(err , result){
+                connect.query(insertSql,[data.account,data.password],function(err , result){
                     if(err){
-                        console.log('[SELECT ERROR] - ',err.message);
+                        console.log('[INSERT ERROR] - ',err.message);
                         return;
                     }else{
-                        serverData.data = 'YH'+num;                        
+                        serverData.data = {
+                            id:data.account,
+                            pwd:data.password
+                        }
                         socket.emit('login', serverData);
                         return;
                     }
@@ -178,7 +183,7 @@ exports.websocket = function websocket(socket) {
             }
         })
     });  
-    //登录用户的资料
+    /*//登录用户的资料
     socket.on('loginer',(data)=>{
         let sql = "select * from t_player where party_id = '"+data.partyId+"'";
         connect.query(sql , function(err , result){
@@ -186,10 +191,10 @@ exports.websocket = function websocket(socket) {
                 console.log(err.message);
                 return
             }else{
-                socket.emit('loginer', result)              
+                socket.emit('loginer', result)
             }
         })
-    })
+    })*/
 
     //创建房间
     socket.on('hall',(data)=>{
