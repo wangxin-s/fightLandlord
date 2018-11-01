@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux'
+import { withRouter } from "react-router-dom";
 import card1 from '../../images/card/card_1061@2x.png';
 import card2 from '../../images/card/card_1062@2x.png';
 import card3 from '../../images/card/card_1063@2x.png';
@@ -33,6 +34,7 @@ import {
     roomHandle, getCard
 } from '../actions/room';
 
+import {socket} from '../units/socketListen';
 import {cardType, compareCard, cloneFun} from '../units/room';
 
 //排序算法测试
@@ -50,7 +52,7 @@ import {
 let timer;//玩家操作倒计时
 let timeTimer;//当前时间倒计时
 
-const socket = require('socket.io-client')('http://localhost:3001');
+// const socket = require('socket.io-client')('http://localhost:3001');
 
 class RoomMain extends React.Component {
     constructor(props) {
@@ -83,6 +85,24 @@ class RoomMain extends React.Component {
             //地主牌数据源
             list: [card_back, card_back, card_back]
         }
+    }
+
+    componentWillMount() {
+        socket.on('outRoom', (data) => {
+            console.log(data)
+            if(data.code==200) {
+                this.props.history.push("/hall")
+            }else {
+                alert(data.msg)
+                return;
+            }
+        });
+    }
+
+    componentWillUnmount() {
+        clearInterval(timeTimer);
+        clearInterval(timer);
+        
     }
 
     //判断牌型 牌分值大小比较测试
@@ -300,10 +320,7 @@ class RoomMain extends React.Component {
          }, 1000)*/
     }
 
-    componentWillUnmount() {
-        clearInterval(timeTimer);
-        clearInterval(timer);
-    }
+   
 
     //当牌被点击时
     imgClick = (index) => {
@@ -473,6 +490,18 @@ class RoomMain extends React.Component {
         })
     }
 
+    // 退出房间
+    exit() {
+        let roomId = this.props.match.params.id;
+        let userInfo = this.props.login.userInfo;
+        let seat = userInfo.seat;
+        socket.emit('outRoom', {
+            roomId,//房间号
+            userInfo,//当前用户信息
+            seat,//位置
+        });
+    }
+
     //开始发牌点击事件
     startCard = ()=> {
         socket.emit('getCards', '发送消息--发牌');
@@ -494,6 +523,7 @@ class RoomMain extends React.Component {
                     newTime={this.state.newTime}
                     isRevers={this.state.isRevers}
                     revers={this.revers.bind(this)}
+                    exit={this.exit.bind(this)}
                 />
                 {/*顶部展示区域 end*/}
 
@@ -560,7 +590,6 @@ class RoomMain extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state);
     return state;
 };
 
@@ -580,4 +609,4 @@ const Room = connect(
     mapDispatchToProps
 )(RoomMain);
 
-export default Room;
+export default withRouter(Room);

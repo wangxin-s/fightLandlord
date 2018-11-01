@@ -2,7 +2,7 @@
  * Created by ex-wangxin on 2018/9/12.
  */
 import React from 'react';
-const socket = require('socket.io-client')('http://localhost:3001');
+// const socket = require('socket.io-client')('http://localhost:3001');
 
 class ProductDetail extends React.Component {
     constructor(props) {

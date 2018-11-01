@@ -41,6 +41,8 @@ server.listen(port);
 io.on('connection', (socket)=>{
   require('./routes/websocket').websocket(socket,io);
 });
+
+
 /*io.on('connection', function (socket) {
   socket.emit('news', { hello: 'world1' });
   socket.on('news', function (data) {
@@ -67,4 +69,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+exports.app = app;
+exports.io = io;

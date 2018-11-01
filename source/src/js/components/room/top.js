@@ -27,7 +27,7 @@ class BottomCard extends React.Component {
         return (
             <div className="room-header">
                 <div className="room-header-left">
-                    <img src={require('../../../images/exit.png')} alt=""/>
+                    <img src={require('../../../images/exit.png')} alt="" onClick={this.props.exit} />
                     <span className="time">{this.props.newTime}</span>
                 </div>
                 {/*三张底牌 start*/}

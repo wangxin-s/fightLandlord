@@ -19,7 +19,9 @@ import About from './containers/about';
 import Login from './containers/login';
 import Hall from './containers/hall';
 import Room from './containers/room';
+// const socket = require('socket.io-client')('http://localhost:3001');//{'reconnect':false,'auto connect':false}
 
+// export default socket;
 //redux 传入中间件
 const store = createStore(Reducer, compose(
     applyMiddleware(ReduxThunk),
@@ -37,8 +39,9 @@ ReactDom.render(
                     <Route path="/about" component={About}/>
                     <Route path="/ProductDetail" component={ProductDetail}/>
                     <Route path="/login" component={Login}/>
-                    <Route path="/hall/:id" component={Hall}/>
-                    <Route path="/room" component={Room}/>
+                    {/* <Route path="/hall/:id" component={Hall}/> */}
+                    <Route path="/hall" component={Hall}/>
+                    <Route path="/room/:id" component={Room}/>
                 </div>
             </BrowserRouter>
         </Router>

@@ -3,134 +3,103 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from "react-router-dom";
+import { loginAllHandle } from '../actions/login'
+import { hallHandle } from '../actions/hall';
+import { socket, goRoomObject } from '../units/socketListen';
 
-import {hallHandle} from '../actions/hall';
 
-const socket = require('socket.io-client')('http://localhost:3001');
+// 获取大厅房间最新实时数据
 class HallMain extends React.Component {
-    // componentDidMount() {
-    //     let options = {
-    //         partyId : 'YH005'
-    //     }
-    //     socket.emit('loginer',options);
-    //     socket.on('loginer',(data)=>{
-    //         console.log(data);
-    //     }) 
-    // }      
-    // constructor(props) {
-    //     super(props);
-        
-    //     this.state={
-    //         hallInfo:[],//房间信息
-    //     }
-    // }
     componentDidMount() {
-        socket.emit('getHallInfo', {});
-        socket.on('getHallInfo',(data)=>{
-            this.props._hallHandle({
-                hallInfo:data,
+        if (this.props.hall.isGetHallInfo) {
+            socket.emit('getHallInfo', {});
+            socket.on('getHallInfo', (data) => {
+                console.log(data)
+                this.props._hallHandle({
+                    hallInfo: data.data,
+                    isGetHallInfo: false
+                });
             });
-        });
-        socket.on('exitHall',(data)=>{
-            if(Number(this.props.match.params.id)===data){
-                this.props.history.push("/login");
-            }
-        });
-    }
-
-    action() {
-        this.props.history.push("/room");
-    }
-
-
-
-    sitFun(param,data,sit){
-        if(param!==""){
-            alert('此位置已有人');
-        }else{
-            socket.emit('sit',{id:data.roomId,roomNum:1,location:sit,userId:this.props.match.params.id});
         }
     }
-    showHall(data){
-        if(data.length>0){
-            return data.map((val,i)=>{
-                console.log(val);
-                let leftPic='',rightPic='',bottomPic="";
-                if(val.leftSit!==''){
-                    leftPic=JSON.parse(val.leftSit).headImg;
-                }else{
-                    leftPic='';
-                }
-                if(val.rightSit!==''){
-                    rightPic=JSON.parse(val.rightSit).headImg;
-                }else{
-                    rightPic='';
-                }
-                if(val.bottomSit!==''){
-                    bottomPic=JSON.parse(val.bottomSit).headImg;
-                }else{
-                    bottomPic='';
-                }
 
-                if(leftPic!=="" && rightPic!=="" && bottomPic!==''){
-                    
-                    let id=Number(this.props.match.params.id);
-                    if(id===JSON.parse(val.leftSit).id||id===JSON.parse(val.rightSit).id||id===JSON.parse(val.bottomSit).id){
-                        this.props.history.push("/room");
-                    }
-                    
-                }
+    componentWillUnmount() {
 
-                let roomNumImg=require('../../images/room'+(i+1)+'.png');
-                
-                return(
+    }
+    // 大厅房间展示
+    showHall(data) {
+        if (data.length > 0) {
+            return data.map((item, index) => {
+                return (
+                    <li key={index}>
+                        <img
+                            src={item.leftPlayer.id ? require("../../images/" + item.leftPlayer.headImg + ".png") : require('../../images/Vacancy.png')}
+                            onClick={this.goRoom.bind(this, item.roomId, 'leftPlayer', item.leftPlayer.id)}
+                            className="player" alt="" />
 
-                    <li key={i}>
-                        <img src={leftPic===""?require('../../images/Vacancy.png'):leftPic} className="player" alt="" 
-                            onClick={this.sitFun.bind(this,leftPic,val,'p1')}/>
                         <span className="table">
-                            <img src={roomNumImg} alt=""/>
+                            <span style={{ "fontSize": ".5rem" }}>{item.roomId}</span>
                         </span>
-                        <img src={rightPic===""?require('../../images/Vacancy.png'):rightPic} className="player" alt="" 
-                            onClick={this.sitFun.bind(this,rightPic,val,'p3')}/>
 
-                        <img src={bottomPic===""?require('../../images/Vacancy.png'):bottomPic} className="player player-bottom" alt="" 
-                            onClick={this.sitFun.bind(this,bottomPic,val,'p2')}/>
+                        <img
+                            src={item.rightPlayer.id ? require("../../images/" + item.rightPlayer.headImg + ".png") : require('../../images/Vacancy.png')}
+                            onClick={this.goRoom.bind(this, item.roomId, 'rightPlayer', item.rightPlayer.id)}
+                            className="player" alt="" />
+
+                        <img
+                            src={item.bottomPlayer.id ? require("../../images/" + item.bottomPlayer.headImg + ".png") : require('../../images/Vacancy.png')}
+                            onClick={this.goRoom.bind(this, item.roomId, 'bottomPlayer', item.bottomPlayer.id)}
+                            className="player-bottom">
+                        </img>
                     </li>
                 );
             });
         }
     }
 
-
-    exitHall(){
-        socket.emit('exitHall',{userId:this.props.match.params.id});
-
-    }
-
-    intoRoom(){
-        let roomData = {
-            partyId : 'YH7403',
-            playerSeat : 'left',
-            roomId : 4
+    // 玩家点击进入房间
+    goRoom(roomId, seat, is_player) {
+        if (is_player) {
+            alert("当前位置已经有其他玩家了 换个位置试试")
+            return;
         }
-        socket.emit('room',roomData)
-        socket.on('room',(data)=>{
-            console.log(data);
-        })
+        // 申请进入房间发送给后端
+        socket.emit('goRoom', {
+            roomId,//房间号
+            seat,//位置
+            userInfo: this.props.login.userInfo,//玩家信息
+        });
+
+        // goRoom请求  后端返回回调
+        goRoomObject.callBack = (data)=> {
+            if (data.code == 200) {
+                this.props._loginAllHandle({
+                    userInfo: data.data
+                })
+                this.props.history.push("/room/"+roomId);
+            } else {
+                alert(data.msg)
+                return;
+            }
+            return;
+        }
     }
+
+
 
     render() {
+        let userInfo = this.props.login.userInfo;
         return (
             <div id="landlord-hall">
                 <div className="header">
                     <div className="header-left">
                         <div className="head">
-                            <img src={require('../../images/head.png')} alt="" />
+                            <img src={require("../../images/" + userInfo.headImg + ".png")} alt="" />
                         </div>
 
                         <div className="userName">
-                            fuyf
+                            {userInfo.account}
                         </div>
                         <div className="beans">
                             <img src={require('../../images/beans2.png')} alt="" />
@@ -142,23 +111,32 @@ class HallMain extends React.Component {
                         <img src={require('../../images/store.png')} alt="" />
                         <img src={require('../../images/info.png')} alt="" />
                         <img src={require('../../images/setting.png')} alt="" />
-                        <img src={require('../../images/exit.png')} alt="" onClick={this.exitHall.bind(this)}/>
+                        <img src={require('../../images/exit.png')} alt="" />
                     </div>
                     <div className="clear"></div>
                 </div>
                 <div className="container">
                     <div className="character-left">
-                        <img src={require('../../images/character5.png')} alt=""/>
+                        <img src={require('../../images/character5.png')} alt="" />
                     </div>
                     <div className="table-right">
                         <ul className="table-list clearfix">
 
-                           {this.showHall(this.props.hall.hallInfo)}
+                            {this.showHall(this.props.hall.hallInfo)}
 
-                            {/*<li onClick={this.intoRoom.bind(this)}>
+                            {/* <li onClick={this.intoRoom.bind(this)}>
+                                <img src={require('../../images/Vacancy.png')} className="player" alt="" />
+                                <span className="table">
+                                    <img src={require("../../images/room1.png")} alt="" />
+                                </span>
+                                <img src={require('../../images/Vacancy.png')} className="player" alt="" />
+                                <img src={require('../../images/Vacancy.png')} className="player-bottom">
+                                </img>
+                            </li>
+                            <li>
                                 <img src={require('../../images/player1.png')} className="player" alt="" />
                                 <span className="table">
-                                    <img src={require("../../images/one.png")} alt=""/>
+                                    <img src={require("../../images/room2.png")} alt="" />
                                 </span>
                                 <img src={require('../../images/player2.png')} className="player" alt="" />
                                 <span className="player-bottom">
@@ -167,7 +145,7 @@ class HallMain extends React.Component {
                             <li>
                                 <img src={require('../../images/player1.png')} className="player" alt="" />
                                 <span className="table">
-                                    <img src={require("../../images/two.png")} alt=""/>
+                                    <img src={require("../../images/room3.png")} alt="" />
                                 </span>
                                 <img src={require('../../images/player2.png')} className="player" alt="" />
                                 <span className="player-bottom">
@@ -176,24 +154,15 @@ class HallMain extends React.Component {
                             <li>
                                 <img src={require('../../images/player1.png')} className="player" alt="" />
                                 <span className="table">
-                                    <img src={require("../../images/three.png")} alt=""/>
+                                    <img src={require("../../images/room4.png")} alt="" />
                                 </span>
                                 <img src={require('../../images/player2.png')} className="player" alt="" />
                                 <span className="player-bottom">
                                 </span>
-                            </li>
-                            <li>
-                                 <img src={require('../../images/player1.png')} className="player" alt="" />
-                                <span className="table">
-                                    <img src={require("../../images/four.png")} alt=""/>
-                                </span>
-                                <img src={require('../../images/player2.png')} className="player" alt="" />
-                                <span className="player-bottom">
-                                </span>
-                            </li>*/}
+                            </li> */}
 
                         </ul>
-                        <div className="fast-action" onClick={this.action.bind(this)}>
+                        <div className="fast-action">
                             快速开始
                         </div>
                     </div>
@@ -204,15 +173,17 @@ class HallMain extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state);
     return state;
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-         _hallHandle: (options) => {
+        _hallHandle: (options) => {
             dispatch(hallHandle(options))
         },
+        _loginAllHandle: (options) => {
+            dispatch(loginAllHandle(options))
+        }
     }
 };
 
@@ -221,4 +192,4 @@ const Hall = connect(
     mapDispatchToProps
 )(HallMain);
 
-export default Hall;
+export default withRouter(Hall);

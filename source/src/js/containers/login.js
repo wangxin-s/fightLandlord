@@ -5,8 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import {loginAllHandle} from '../actions/login'
 import {withRouter} from "react-router-dom";
-
-const socket = require('socket.io-client')('http://localhost:3001');
+import {socket} from '../units/socketListen';
 class LoginMain extends React.Component {
 
     componentDidMount() {
@@ -14,14 +13,19 @@ class LoginMain extends React.Component {
             console.log(data)
             if(data.code==200) {
                 alert('登陆成功')
-                this.props.history.push("/hall/"+data.data.id);
-                //this.props.history.push("/hall/"+12);
+                this.props._loginAllHandle({
+                    userInfo: data.data
+                })
+                this.props.history.push("/hall");
                 return;
             }else {
                 alert(data.msg)
                 return;
             }
         })
+    }
+
+    componentWillUnmount() {
     }
 
     //点击 开始游戏
