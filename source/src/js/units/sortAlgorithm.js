@@ -15,7 +15,7 @@ export function sortBubble(list){
             }
         }
     }
-    console.log(list);
+    // console.log(list);
 }
 
 //排序算法----定向冒泡排序
@@ -41,7 +41,7 @@ export function orientSortBubble(list){
         }
         left++;
     }
-    console.log(list);
+    // console.log(list);
 }
 
 //排序算法----选择排序
@@ -60,7 +60,7 @@ export function sortSelect(list){
             list[min]=list[min]-list[i];
         }
     }
-    console.log(list);
+    // console.log(list);
 }
 
 //排序算法--插入排序
@@ -74,7 +74,7 @@ export function sortInsert(list){
         }
         list[j+1]=get;
     }
-    console.log(list);
+    // console.log(list);
 }
 
 //排序算法--二分插入排序
@@ -96,7 +96,7 @@ export function sortHalfInsert(list){
         }
         list[left]=get;
     }
-    console.log(list);
+    // console.log(list);
 }
 
 //排序算法--希尔排序（递减增量排序  不稳定排序  插入排序的一种）
@@ -113,7 +113,7 @@ export function sortShell(list){
         }
         gap=parseInt(gap/2);
     }
-    console.log(list);
+    // console.log(list);
 }
 
 //排序算法--归并排序
@@ -148,7 +148,7 @@ export function sortMerge(list){
         merge(list,left,mid,right)
     }
     mergeSortRec(list,0,len-1);
-    console.log(list);
+    // console.log(list);
 }
 
 //排序方法--堆排序()
@@ -169,7 +169,7 @@ export function sortHeap(list){
 
 //计算排序算法--用时方法
 export function countTime(fun,log,list){
-    console.time(log);
+    // console.time(log);
     fun(list);
-    console.timeEnd(log);
+    // console.timeEnd(log);
 }

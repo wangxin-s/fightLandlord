@@ -19,7 +19,7 @@ class Bottom extends React.Component {
         return (
             <div className="room-container-footer">
                 <div className="footer-left">
-                    <p>平安是福</p>
+                    <p>{this.props.userInfo.account}</p>
                     <p className="color-y"><img className="beans" src={require('../../../images/beans2.png')}></img>9999</p>
                 </div>
                 <div className="footer-right">

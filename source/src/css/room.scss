@@ -1,12 +1,15 @@
 #landlord-room {
+    .hidden {
+        visibility: hidden;
+    }
     .color-y {
         color: #F5CD95;
     }
     .text-l {
-        text-align: left;
+        text-align: center;
     }
     .text-r {
-        text-align: right;
+        text-align: center;
     }
     .clear {
         clear: both;
@@ -338,11 +341,15 @@
             .my-head {
                 width: 1.2rem;
                 height: 1.2rem;
-                background: url('../images/player8.png') no-repeat;
-                background-size: 100% 100%;
+                // background: url('../images/player8.png') no-repeat;
+                // background-size: 100% 100%;
                 position: absolute;
                 left: .58rem;
                 bottom: 0;
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
             }
 
             .my-identity {

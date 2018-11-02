@@ -10,10 +10,33 @@ class MyBeenOutCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            count: 30
+            count: 30,
+            // 左边位置 玩家
+            leftSeat: this.props.userInfo.seat == 'leftPlayer' ? 'rightPlayer' : this.props.userInfo.seat == 'rightPlayer' ? 'bottomPlayer' : 'leftPlayer',
+            // 右边位置 玩家
+            rightSeat: this.props.userInfo.seat == 'leftPlayer' ? 'bottomPlayer' : this.props.userInfo.seat == 'rightPlayer' ? 'leftPlayer' : 'rightPlayer',
         };
 
     }
+
+    // leftShow(userInfo, roomPlayerInfo) {
+    //     console.log("leftShow")
+    //     if (userInfo.seat == 'leftPlayer') {
+    //         return (
+    //             <div>
+    //                 <img
+    //                     src={require('../../../images/player3.png')}
+    //                     alt="" />
+    //                 <p>平安是福</p>
+    //                 <p className="color-y"><img className="beans"
+    //                     src={require('../../../images/beans2.png')}></img>9999</p>
+    //             </div>
+    //         )
+    //     }
+
+
+
+    // }
 
     // 左边玩家出牌展示
     leftCardData(list) {
@@ -29,39 +52,49 @@ class MyBeenOutCard extends React.Component {
         })
     }
 
-    getSrc(item){
-        let i=1061;
-        if(item*1==51||item*1==50||item*1==49||item*1==48){
-            i=1061+item*1-48
-        }else if(item*1==52){
-            i=1114;
-        }else if(item*1==53){
-            i=1113;
-        }else{
-            i=(1065+item*1);
+    getSrc(item) {
+        let i = 1061;
+        if (item * 1 == 51 || item * 1 == 50 || item * 1 == 49 || item * 1 == 48) {
+            i = 1061 + item * 1 - 48
+        } else if (item * 1 == 52) {
+            i = 1114;
+        } else if (item * 1 == 53) {
+            i = 1113;
+        } else {
+            i = (1065 + item * 1);
         }
-        return require('../../../images/card/card_'+i+'@2x.png');
+        return require('../../../images/card/card_' + i + '@2x.png');
     }
 
     render() {
+        let leftSeat = this.state.leftSeat;
+        let rightSeat = this.state.rightSeat;
         return (
             <div className="room-container-player">
                 <div className="room-container-player-left">
                     <div className="player">
                         <div className="player-head text-r">
-                            <img src={require('../../../images/player8.png')} alt="" />
-                            <p>平安是福</p>
-                            <p className="color-y"><img className="beans"
-                                src={require('../../../images/beans2.png')}></img>9999</p>
+                            {/* 左边玩家 */}
+                            <img
+                                src={this.props.roomPlayerInfo[leftSeat]&&this.props.roomPlayerInfo[leftSeat].headImg ? require('../../../images/' + this.props.roomPlayerInfo[leftSeat].headImg + '.png') :
+                                    require('../../../images/head-border.png')}
+                                alt="" />
+                            <p>{this.props.roomPlayerInfo[leftSeat]&&this.props.roomPlayerInfo[leftSeat].account}</p>
+                            {this.props.roomPlayerInfo[leftSeat]&&this.props.roomPlayerInfo[leftSeat].id?
+                                <p className="color-y"><img className="beans"
+                                src={require('../../../images/beans2.png')}></img>9999</p>:
+                                ''
+                            }
+                            
                         </div>
-                        <div className="player-identity">
-                            <img className="farmer" src={require('../../../images/farmer.png')} alt="" />
+                        <div className="player-identity hidden">
+                            <img className="farmer hidden" src={require('../../../images/farmer.png')} alt="" />
                             <div className="card-back">
                                 17
                             </div>
                         </div>
                     </div>
-                    <div className="out-brand">
+                    <div className="out-brand hidden">
                         {/* 左边玩家出牌区 */}
                         {this.leftCardData(this.props.leftList)}
                         {/* 提示 title */}
@@ -73,7 +106,7 @@ class MyBeenOutCard extends React.Component {
                     </div>
                 </div>
                 <div className="room-container-player-right">
-                    <div className="out-brand">
+                    <div className="out-brand hidden">
                         {/* 右边玩家出牌区 */}
                         {this.rightCardData(this.props.rightList)}
                         {/* 提示 title */}
@@ -84,17 +117,24 @@ class MyBeenOutCard extends React.Component {
                         </div>
                     </div>
                     <div className="player">
-                        <div className="player-identity">
-                            <img className="farmer" src={require('../../../images/farmer.png')} alt="" />
+                        {/* 右边玩家 */}
+                        <div className="player-identity hidden">
+                            <img className="farmer hidden" src={require('../../../images/farmer.png')} alt="" />
                             <div className="card-back">
                                 17
                             </div>
                         </div>
                         <div className="player-head text-l">
-                            <img src={require('../../../images/player8.png')} alt="" />
-                            <p>平安是福</p>
-                            <p className="color-y"><img className="beans"
-                                src={require('../../../images/beans2.png')}></img>9999</p>
+                            <img
+                                src={this.props.roomPlayerInfo[rightSeat]&&this.props.roomPlayerInfo[rightSeat].headImg ? require('../../../images/' + this.props.roomPlayerInfo[rightSeat].headImg + '.png') :
+                                    require('../../../images/head-border.png')}
+                                alt="" />
+                            <p>{this.props.roomPlayerInfo[rightSeat]&&this.props.roomPlayerInfo[rightSeat].account}</p>
+                            {this.props.roomPlayerInfo[rightSeat]&&this.props.roomPlayerInfo[rightSeat].id?
+                                <p className="color-y"><img className="beans"
+                                src={require('../../../images/beans2.png')}></img>9999</p>:
+                                ''
+                            }
                         </div>
 
                     </div>

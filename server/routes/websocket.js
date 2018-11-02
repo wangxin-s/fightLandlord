@@ -285,19 +285,6 @@ exports.websocket = function websocket(socket) {
                 socket.emit('login', sendData);
                 return;
             }
-
-            // else{
-            //     connect.query(insert,function(err , result){
-            //         if(err){
-            //             console.log('[SELECT ERROR] - ',err.message);
-            //             return;
-            //         }else{
-            //             sendData.data = 'YH'+num;                        
-            //             socket.emit('login', sendData);
-            //             return;
-            //         }
-            //     })
-            // }
         })
     });
 
@@ -327,21 +314,56 @@ exports.websocket = function websocket(socket) {
                     socket.emit('goRoom', sendData);
                     break;
                 }
+
+                // 存储当前玩家进入房间信息
                 hallData[i][data.seat] = data.userInfo;//存储当前用户信息
                 hallData[i][data.seat].seat = data.seat;//存储当前用户在房间中的位置
+                socket.join(data.roomId)//给当前玩家所在房间  添加标记
                 sendData.code = 200;
                 sendData.msg = '进入房间成功';
                 sendData.data = hallData[i][data.seat];
                 socket.emit('goRoom', sendData);
 
+                // 全局发送最新大厅房间数据
                 let serverData = getHallData();
                 sendData.code = 200;
                 sendData.msg = '全局 进入房间=> 大厅房间数据请求成功';
                 sendData.data = serverData;
                 io.sockets.emit('getHallInfo', sendData);
+
+                // 任一用户进出房间 通过进入房间添加的标记给只在当前房间的所有用户发送  最新房间玩家数据
+                sendData.code = 200;
+                sendData.msg = '全局 (当前房间内有玩家进入)=> 当前房间玩家数据信息获取成功';
+                sendData.data = hallData[i];
+                socket.to(data.roomId).emit('getRoomPlayerInfo', sendData);
+                break;
+
             }
         }
     });
+
+    // 进入房间获取当前房间玩家数据
+    socket.on('getRoomPlayerInfo', (data) => {
+        let is_getRoomPlayerInfo = true;
+        for (let i = 0; i < hallData.length; i++) {
+            if (hallData[i].roomId == data.roomId) {//当前房间存在
+                if (hallData[i][data.seat].id == data.userInfo.id) {//当前房间内 当前位置 确实是当前用户
+                    sendData.code = 200;
+                    sendData.msg = '当前房间玩家数据信息获取成功';
+                    sendData.data = hallData[i];
+                    socket.emit('getRoomPlayerInfo', sendData);
+                    is_getRoomPlayerInfo = false;
+                    break;
+                }
+            }
+        }
+        if (is_getRoomPlayerInfo) {
+            sendData.code = 201;
+            sendData.msg = '异常错误';
+            sendData.data = {};
+            socket.emit('getRoomPlayerInfo', sendData);
+        }
+    })
 
     //退出房间
     socket.on('outRoom', (data) => {
@@ -349,7 +371,8 @@ exports.websocket = function websocket(socket) {
         for (let i = 0; i < hallData.length; i++) {
             if (hallData[i].roomId == data.roomId) {//当前房间存在
                 if (hallData[i][data.seat].id == data.userInfo.id) {//当前房间内 当前位置 确实是当前用户
-                    hallData[i][data.seat] = {//清除当前用户  进入房间信息数据
+                    //清除当前用户在当前房间信息数据
+                    hallData[i][data.seat] = {
                         id: '',
                         account: '',
                         password: '',
@@ -357,6 +380,24 @@ exports.websocket = function websocket(socket) {
                         creation_date: '',
                         seat: '',
                     }
+                    socket.leave(data.roomId)//给当前玩家  移除进入房间时添加的标记
+                    sendData.code = 200;
+                    sendData.msg = '退出成功';
+                    sendData.data = {};
+                    socket.emit('outRoom', sendData);
+
+                    // 全局发送最新大厅房间数据
+                    let serverData = getHallData();
+                    sendData.code = 200;
+                    sendData.msg = '全局 退出房间=> 大厅房间数据请求成功';
+                    sendData.data = serverData;
+                    io.sockets.emit('getHallInfo', sendData);
+
+                    // 任一用户进出房间 给只在当前房间的所有用户发送  最新房间玩家数据
+                    sendData.code = 200;
+                    sendData.msg = '全局 (当前房间内有玩家退出)=> 当前房间玩家数据信息获取成功';
+                    sendData.data = hallData[i];
+                    socket.to(data.roomId).emit('getRoomPlayerInfo', sendData);
                     is_outRoom = false;
                     break;
                 }
@@ -368,19 +409,12 @@ exports.websocket = function websocket(socket) {
             sendData.msg = '异常错误';
             sendData.data = {};
             socket.emit('outRoom', sendData);
-        }else {
-            sendData.code = 200;
-            sendData.msg = '退出成功';
-            sendData.data = {};
-            socket.emit('outRoom', sendData);
+        } else {
 
-            let serverData = getHallData();
-            sendData.code = 200;
-            sendData.msg = '全局 退出房间=> 大厅房间数据请求成功';
-            sendData.data = serverData;
-            io.sockets.emit('getHallInfo', sendData);
         }
     });
+
+
 
 
 

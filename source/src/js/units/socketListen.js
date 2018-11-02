@@ -36,6 +36,15 @@ socket.on('outRoom', (data) => {
 });
 
 
+// 进入房间获取当前房间玩家数据  后端返回数据
+let getRoomPlayerInfoObject = {
+    callBack:function() {}
+}
+socket.on('getRoomPlayerInfo',(data) => {
+    getRoomPlayerInfoObject.callBack(data)
+})
+
+
 
 
 
@@ -55,4 +64,5 @@ export {
     getHallInfoObject,
     goRoomObject,
     outRoomObject,
+    getRoomPlayerInfoObject,
 }

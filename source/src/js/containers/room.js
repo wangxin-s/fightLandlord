@@ -34,7 +34,7 @@ import {
     roomHandle, getCard
 } from '../actions/room';
 
-import { socket, outRoomObject } from '../units/socketListen';
+import { socket, outRoomObject, getRoomPlayerInfoObject } from '../units/socketListen';
 
 import { cardType, compareCard, cloneFun } from '../units/room';
 
@@ -88,159 +88,31 @@ class RoomMain extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        clearInterval(timeTimer);
-        clearInterval(timer);
-    }
-
-    //判断牌型 牌分值大小比较测试
-    scoreComparisonTest() {
-        console.log('单牌', cardType([53]));
-        console.log('火箭', cardType([52, 53]));
-        console.log('单顺', cardType([1, 5, 9, 13, 17, 21, 25]));
-        console.log('单顺', cardType([30, 34, 38, 42, 46, 50]));
-        console.log('双顺', cardType([0, 1, 5, 6, 9, 10, 13, 15, 16, 19]));
-        console.log('三顺', cardType([0, 1, 2, 5, 6, 7, 9, 10, 11, 12, 14, 15]));
-        console.log('三顺', cardType([47, 46, 45, 43, 42, 41, 39, 38, 37, 33, 35, 34]));
-        console.log('对牌', cardType([0, 2]));
-        console.log('三牌', cardType([0, 3, 2]));
-        console.log('炸弹', cardType([8, 10, 11, 9]));
-        console.log('三带一', cardType([0, 1, 2, 12]));
-        console.log('三带二', cardType([16, 17, 19, 20, 21]));
-        console.log('四带二', cardType([24, 25, 26, 27, 28, 31]));
-        console.log('四带二', cardType([24, 25, 26, 27, 28, 29, 30, 31]));
-        console.log('飞机带翅膀 true', cardType([0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23, 45]));
-        console.log('飞机带翅膀 false', cardType([0, 1, 2, 5, 6, 7, 16, 17, 18, 20, 23, 45]));
-        console.log('飞机带翅膀 false', cardType([0, 1, 2, 5, 6, 7, 12, 14, 15, 20, 23, 22]));
-        console.log('飞机带翅膀  333 444 555 999 true', cardType([0, 1, 2, 5, 6, 7, 8, 10, 9, 20, 23, 22]));
-        console.log('飞机带翅膀 true', cardType([0, 1, 2, 5, 6, 7, 8, 10, 9, 20, 23, 28]));
-
-
-        //牌大小比较测试
-
-        //单牌比较
-        console.log('单牌', compareCard([53],
-            [12]));
-        console.log('单牌', compareCard([12],
-            [13]));
-
-        //火箭与其他牌比较
-        console.log('火箭--单牌', compareCard([52, 53],
-            [12]));
-        console.log('火箭--对牌', compareCard([52, 53],
-            [12, 13]));
-        console.log('火箭--三牌', compareCard([52, 53],
-            [12, 13, 14]));
-        console.log('火箭--炸弹', compareCard([52, 53],
-            [12, 13, 14, 15]));
-        console.log('火箭--单顺', compareCard([52, 53],
-            [12, 16, 20, 24, 28]));
-        console.log('火箭--双顺', compareCard([52, 53],
-            [16, 17, 20, 21, 24, 25, 28, 29]));
-        console.log('火箭--三顺', compareCard([52, 53],
-            [16, 17, 18, 20, 21, 22, 24, 25, 26]));
-        console.log('火箭--三带一', compareCard([52, 53],
-            [12, 13, 14, 30]));
-        console.log('火箭--三带二', compareCard([52, 53],
-            [12, 13, 14, 20, 21]));
-        console.log('火箭--四带二', compareCard([52, 53],
-            [12, 13, 14, 15, 0, 48]));
-        console.log('火箭--四带二', compareCard([52, 53],
-            [12, 13, 14, 15, 16, 17]));
-        console.log('火箭--飞机带翅膀', compareCard([52, 53],
-            [12, 13, 14, 16, 17, 18, 20, 21, 20, 4, 8, 39]));
-
-
-        //单顺比较
-        console.log('单顺--单顺', compareCard([6, 10, 14, 18, 22, 26, 28],
-            [1, 5, 9, 13, 17, 21, 25]));
-
-        //双顺比较
-        console.log('双顺', compareCard([4, 7, 8, 11, 12, 14, 17, 18, 20, 21],
-            [0, 1, 5, 6, 9, 10, 13, 15, 16, 19]));
-
-        //三顺比较
-        console.log('三顺', compareCard([16, 17, 18, 20, 21, 22, 24, 25, 26, 28, 29, 30],
-            [0, 1, 2, 5, 6, 7, 9, 10, 11, 12, 14, 15]));
-
-        //对牌比较
-        console.log('对牌', compareCard([13, 14],
-            [0, 2]));
-
-        //三牌比较
-        console.log('三牌--三牌', compareCard([12, 13, 14],
-            [0, 3, 2]));
-
-        //炸弹比较
-        console.log('炸弹--火箭', compareCard([0, 1, 2, 3],
-            [52, 53]));
-        console.log('炸弹--炸弹', compareCard([12, 13, 14, 15],
-            [0, 1, 2, 3]));
-        console.log('炸弹--单牌', compareCard([0, 1, 2, 3],
-            [12]));
-        console.log('炸弹--对牌', compareCard([0, 1, 2, 3],
-            [12, 13]));
-        console.log('炸弹--三牌', compareCard([0, 1, 2, 3],
-            [12, 13, 14]));
-        console.log('炸弹--单顺', compareCard([0, 1, 2, 3],
-            [12, 16, 20, 24, 28]));
-        console.log('炸弹--双顺', compareCard([0, 1, 2, 3],
-            [16, 17, 20, 21, 24, 25, 28, 29]));
-        console.log('炸弹--三顺', compareCard([0, 1, 2, 3],
-            [16, 17, 18, 20, 21, 22, 24, 25, 26]));
-        console.log('炸弹--三带一', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 30]));
-        console.log('炸弹--三带二', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 20, 21]));
-        console.log('炸弹--四带二', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 15, 0, 48]));
-        console.log('炸弹--四带二', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 15, 16, 17]));
-        console.log('炸弹--飞机带翅膀', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 16, 17, 18, 20, 21, 20, 4, 8, 39]));
-
-        //三带一比较
-        console.log('三带一', compareCard([12, 13, 14, 45],
-            [0, 1, 2, 12]));
-        /*console.log('三带一--三带二', compareCard([12,13,14,45],
-         [0, 1, 2, 12,13]));*/
-
-        //三带二比较
-        console.log('三带二--三带二', compareCard([16, 17, 19, 20, 21],
-            [0, 1, 2, 23, 22]));
-
-        //四带二比较
-        console.log('四带二--四带二', compareCard([24, 25, 26, 27, 28, 31],
-            [4, 5, 6, 7, 45, 34]));
-
-        //飞机带翅膀比较--
-        console.log('飞机带翅膀 -- 三飞带翅膀', compareCard([12, 13, 14, 16, 17, 19, 20, 21, 22, 34, 35, 36],
-            [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23, 45]));
-        /*console.log('飞机带翅膀 -- (三飞带单--三飞带双)', compareCard([12,13,14,16,17,19,20,21,22,34,35,36],
-         [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23,24,45,46]));
-         console.log('飞机带翅膀 -- (三飞带单--双飞带单)', compareCard([12,13,14,16,17,19,20,21,22,34,35,36],
-         [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23,24,45,46]));*/
-    }
-
-    // redux 参数重置
-    resetRedux() {
-        this.props._roomHandle({
-            myCard: [],//我的牌
-            mySelectCard: {},//当前玩家选中的牌
-            left: [0, 1, 2],//左侧玩家的牌
-            right: [],//右侧玩家的牌
-        })
-
-        this.setState({
-            // 出牌&不出  控制隐藏显示
-            isShow_playCard: false,
-            // 抢地主&不抢  控制隐藏显示
-            isShow_playLandlord: false,
-        })
-    }
-
     //初始化生命周期函数
     componentDidMount() {
+        // 进入房间 获取当前房间玩家信息
+        let roomId = this.props.match.params.id;
+        let userInfo = this.props.login.userInfo;
+        let seat = userInfo.seat;
+        socket.emit('getRoomPlayerInfo', {
+            roomId,//房间号
+            userInfo,//当前用户信息
+            seat,//位置
+        });
+        // 获取当前房间玩家信息  服务端返回监听
+        getRoomPlayerInfoObject.callBack = (data)=> {
+            console.log(data)
+            if(data.code==200) {
+                this.props._roomHandle({
+                    roomPlayerInfo: data.data
+                })
+            }else {
+                alert(data.msg)
+                return;
+            }
+        }
+
+
         //排序算法时间测试
         let list = [23, 21, 23, 4, 35, 9, 54, 40, 39, 2, 49, 30, 59, 34, 28];
         countTime(sortBubble, '冒泡排序', [23, 21, 23, 4, 35, 9, 54, 40, 39, 2, 49, 30, 59, 34, 28]);
@@ -308,6 +180,159 @@ class RoomMain extends React.Component {
          }, 1000)*/
     }
 
+    componentWillUnmount() {
+        clearInterval(timeTimer);
+        clearInterval(timer);
+    }
+
+    //判断牌型 牌分值大小比较测试
+    scoreComparisonTest() {
+        // console.log('单牌', cardType([53]));
+        // console.log('火箭', cardType([52, 53]));
+        // console.log('单顺', cardType([1, 5, 9, 13, 17, 21, 25]));
+        // console.log('单顺', cardType([30, 34, 38, 42, 46, 50]));
+        // console.log('双顺', cardType([0, 1, 5, 6, 9, 10, 13, 15, 16, 19]));
+        // console.log('三顺', cardType([0, 1, 2, 5, 6, 7, 9, 10, 11, 12, 14, 15]));
+        // console.log('三顺', cardType([47, 46, 45, 43, 42, 41, 39, 38, 37, 33, 35, 34]));
+        // console.log('对牌', cardType([0, 2]));
+        // console.log('三牌', cardType([0, 3, 2]));
+        // console.log('炸弹', cardType([8, 10, 11, 9]));
+        // console.log('三带一', cardType([0, 1, 2, 12]));
+        // console.log('三带二', cardType([16, 17, 19, 20, 21]));
+        // console.log('四带二', cardType([24, 25, 26, 27, 28, 31]));
+        // console.log('四带二', cardType([24, 25, 26, 27, 28, 29, 30, 31]));
+        // console.log('飞机带翅膀 true', cardType([0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23, 45]));
+        // console.log('飞机带翅膀 false', cardType([0, 1, 2, 5, 6, 7, 16, 17, 18, 20, 23, 45]));
+        // console.log('飞机带翅膀 false', cardType([0, 1, 2, 5, 6, 7, 12, 14, 15, 20, 23, 22]));
+        // console.log('飞机带翅膀  333 444 555 999 true', cardType([0, 1, 2, 5, 6, 7, 8, 10, 9, 20, 23, 22]));
+        // console.log('飞机带翅膀 true', cardType([0, 1, 2, 5, 6, 7, 8, 10, 9, 20, 23, 28]));
+
+
+        //牌大小比较测试
+
+        //单牌比较
+        // console.log('单牌', compareCard([53],
+        //     [12]));
+        // console.log('单牌', compareCard([12],
+        //     [13]));
+
+        // //火箭与其他牌比较
+        // console.log('火箭--单牌', compareCard([52, 53],
+        //     [12]));
+        // console.log('火箭--对牌', compareCard([52, 53],
+        //     [12, 13]));
+        // console.log('火箭--三牌', compareCard([52, 53],
+        //     [12, 13, 14]));
+        // console.log('火箭--炸弹', compareCard([52, 53],
+        //     [12, 13, 14, 15]));
+        // console.log('火箭--单顺', compareCard([52, 53],
+        //     [12, 16, 20, 24, 28]));
+        // console.log('火箭--双顺', compareCard([52, 53],
+        //     [16, 17, 20, 21, 24, 25, 28, 29]));
+        // console.log('火箭--三顺', compareCard([52, 53],
+        //     [16, 17, 18, 20, 21, 22, 24, 25, 26]));
+        // console.log('火箭--三带一', compareCard([52, 53],
+        //     [12, 13, 14, 30]));
+        // console.log('火箭--三带二', compareCard([52, 53],
+        //     [12, 13, 14, 20, 21]));
+        // console.log('火箭--四带二', compareCard([52, 53],
+        //     [12, 13, 14, 15, 0, 48]));
+        // console.log('火箭--四带二', compareCard([52, 53],
+        //     [12, 13, 14, 15, 16, 17]));
+        // console.log('火箭--飞机带翅膀', compareCard([52, 53],
+        //     [12, 13, 14, 16, 17, 18, 20, 21, 20, 4, 8, 39]));
+
+
+        //单顺比较
+        // console.log('单顺--单顺', compareCard([6, 10, 14, 18, 22, 26, 28],
+        //     [1, 5, 9, 13, 17, 21, 25]));
+
+        // //双顺比较
+        // console.log('双顺', compareCard([4, 7, 8, 11, 12, 14, 17, 18, 20, 21],
+        //     [0, 1, 5, 6, 9, 10, 13, 15, 16, 19]));
+
+        // //三顺比较
+        // console.log('三顺', compareCard([16, 17, 18, 20, 21, 22, 24, 25, 26, 28, 29, 30],
+        //     [0, 1, 2, 5, 6, 7, 9, 10, 11, 12, 14, 15]));
+
+        // //对牌比较
+        // console.log('对牌', compareCard([13, 14],
+        //     [0, 2]));
+
+        // //三牌比较
+        // console.log('三牌--三牌', compareCard([12, 13, 14],
+        //     [0, 3, 2]));
+
+        // //炸弹比较
+        // console.log('炸弹--火箭', compareCard([0, 1, 2, 3],
+        //     [52, 53]));
+        // console.log('炸弹--炸弹', compareCard([12, 13, 14, 15],
+        //     [0, 1, 2, 3]));
+        // console.log('炸弹--单牌', compareCard([0, 1, 2, 3],
+        //     [12]));
+        // console.log('炸弹--对牌', compareCard([0, 1, 2, 3],
+        //     [12, 13]));
+        // console.log('炸弹--三牌', compareCard([0, 1, 2, 3],
+        //     [12, 13, 14]));
+        // console.log('炸弹--单顺', compareCard([0, 1, 2, 3],
+        //     [12, 16, 20, 24, 28]));
+        // console.log('炸弹--双顺', compareCard([0, 1, 2, 3],
+        //     [16, 17, 20, 21, 24, 25, 28, 29]));
+        // console.log('炸弹--三顺', compareCard([0, 1, 2, 3],
+        //     [16, 17, 18, 20, 21, 22, 24, 25, 26]));
+        // console.log('炸弹--三带一', compareCard([0, 1, 2, 3],
+        //     [12, 13, 14, 30]));
+        // console.log('炸弹--三带二', compareCard([0, 1, 2, 3],
+        //     [12, 13, 14, 20, 21]));
+        // console.log('炸弹--四带二', compareCard([0, 1, 2, 3],
+        //     [12, 13, 14, 15, 0, 48]));
+        // console.log('炸弹--四带二', compareCard([0, 1, 2, 3],
+        //     [12, 13, 14, 15, 16, 17]));
+        // console.log('炸弹--飞机带翅膀', compareCard([0, 1, 2, 3],
+        //     [12, 13, 14, 16, 17, 18, 20, 21, 20, 4, 8, 39]));
+
+        // //三带一比较
+        // console.log('三带一', compareCard([12, 13, 14, 45],
+        //     [0, 1, 2, 12]));
+        // /*console.log('三带一--三带二', compareCard([12,13,14,45],
+        //  [0, 1, 2, 12,13]));*/
+
+        // //三带二比较
+        // console.log('三带二--三带二', compareCard([16, 17, 19, 20, 21],
+        //     [0, 1, 2, 23, 22]));
+
+        // //四带二比较
+        // console.log('四带二--四带二', compareCard([24, 25, 26, 27, 28, 31],
+        //     [4, 5, 6, 7, 45, 34]));
+
+        // //飞机带翅膀比较--
+        // console.log('飞机带翅膀 -- 三飞带翅膀', compareCard([12, 13, 14, 16, 17, 19, 20, 21, 22, 34, 35, 36],
+        //     [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23, 45]));
+        // /*console.log('飞机带翅膀 -- (三飞带单--三飞带双)', compareCard([12,13,14,16,17,19,20,21,22,34,35,36],
+        //  [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23,24,45,46]));
+        //  console.log('飞机带翅膀 -- (三飞带单--双飞带单)', compareCard([12,13,14,16,17,19,20,21,22,34,35,36],
+        //  [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23,24,45,46]));*/
+    }
+
+    // redux 参数重置
+    resetRedux() {
+        this.props._roomHandle({
+            myCard: [],//我的牌
+            mySelectCard: {},//当前玩家选中的牌
+            left: [0, 1, 2],//左侧玩家的牌
+            right: [],//右侧玩家的牌
+        })
+
+        this.setState({
+            // 出牌&不出  控制隐藏显示
+            isShow_playCard: false,
+            // 抢地主&不抢  控制隐藏显示
+            isShow_playLandlord: false,
+        })
+    }
+
+    
+
 
 
     //当牌被点击时
@@ -349,14 +374,14 @@ class RoomMain extends React.Component {
         if (list.length <= 0) {
             alert('请选择要出的牌');
         }
-        console.log(list, myCard);
+        // console.log(list, myCard);
         //判断牌型
-        console.log('上家的牌', cardType(cloneFun(room.left)));
-        console.log('玩家选中的牌', cardType(cloneFun(list)));
+        // console.log('上家的牌', cardType(cloneFun(room.left)));
+        // console.log('玩家选中的牌', cardType(cloneFun(list)));
 
         //比较牌的大小
         let check = compareCard(list, room.left);
-        console.log('上家和当前玩家出的牌--比较', check);
+        // console.log('上家和当前玩家出的牌--比较', check);
         if (!check) {
             return false
         }
@@ -489,8 +514,11 @@ class RoomMain extends React.Component {
             seat,//位置
         });
         outRoomObject.callBack = (data) => {
-            console.log(data)
             if (data.code == 200) {
+                // 清除本地存储的房间玩家信息
+                this.props._roomHandle({
+                    roomPlayerInfo: {}
+                })
                 this.props.history.push("/hall")
             } else {
                 alert(data.msg)
@@ -527,6 +555,8 @@ class RoomMain extends React.Component {
                 <div className="room-container">
                     {/*其他玩家区域 start*/}
                     <LeftPlay
+                        userInfo={this.props.login.userInfo}
+                        roomPlayerInfo={this.props.room.roomPlayerInfo}
                         leftList={room.left}
                         rightList={room.right}
                         isTimer={this.state.isTimer}
@@ -571,14 +601,18 @@ class RoomMain extends React.Component {
                         {/* 我的卡牌  end*/}
 
                         {/* 我的头像 */}
-                        <div className="my-head" title="点击头像发牌" onClick={this.startCard}></div>
+                        <div className="my-head" title="点击头像发牌" onClick={this.startCard}>
+                            <img src={this.props.login.userInfo.headImg?require('../../images/'+this.props.login.userInfo.headImg+'.png'):require('../../images/head-border.png')} alt=""/>
+                        </div>
 
                         {/* 地主农民身份 */}
-                        <div className="my-identity"></div>
+                        <div className="my-identity hidden"></div>
                     </div>
 
                     {/*底部静态文件 start*/}
-                    <Bottom />
+                    <Bottom 
+                        userInfo={this.props.login.userInfo}
+                    />
                     {/*底部静态文件 end*/}
                 </div>
             </div>

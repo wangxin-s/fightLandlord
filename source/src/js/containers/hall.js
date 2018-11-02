@@ -14,7 +14,6 @@ class HallMain extends React.Component {
     componentDidMount() {
         socket.emit('getHallInfo', {});
         getHallInfoObject.callBack = (data) => {
-            console.log(data)
             this.props._hallHandle({
                 hallInfo: data.data,
                 isGetHallInfo: false
