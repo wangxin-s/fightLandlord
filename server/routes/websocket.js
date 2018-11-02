@@ -105,6 +105,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         },
         rightPlayer: {
             id: '',
@@ -113,6 +114,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         },
         bottomPlayer: {
             id: '',
@@ -121,6 +123,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         }
     },
     {
@@ -132,6 +135,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         },
         rightPlayer: {
             id: '',
@@ -140,6 +144,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         },
         bottomPlayer: {
             id: '',
@@ -148,6 +153,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         }
     },
     {
@@ -159,6 +165,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         },
         rightPlayer: {
             id: '',
@@ -167,6 +174,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         },
         bottomPlayer: {
             id: '',
@@ -175,6 +183,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         }
     },
     {
@@ -186,6 +195,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         },
         rightPlayer: {
             id: '',
@@ -194,6 +204,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         },
         bottomPlayer: {
             id: '',
@@ -202,6 +213,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
+            is_ready:'',
         }
     },
 ]
@@ -379,6 +391,7 @@ exports.websocket = function websocket(socket) {
                         headImg: '',
                         creation_date: '',
                         seat: '',
+                        is_ready:'',
                     }
                     socket.leave(data.roomId)//给当前玩家  移除进入房间时添加的标记
                     sendData.code = 200;

@@ -24,6 +24,7 @@ import card17 from '../../images/card/card_1066@2x.png';
 import card_back from '../../images/card_back.png';
 
 import Top from '../components/room/top';
+import Ready from '../components/room/ready';
 import MyCard from '../components/room/myCard';
 import MyPlayButton from '../components/room/myPlayButton';
 import PlayLandlordButton from '../components/room/playLandlordButton';
@@ -84,7 +85,9 @@ class RoomMain extends React.Component {
             // 地主牌  翻转控制
             isRevers: false,
             //地主牌数据源
-            list: [card_back, card_back, card_back]
+            list: [card_back, card_back, card_back],
+            // "我"  =>玩家位置
+            mySeat: this.props.login.userInfo.seat,
         }
     }
 
@@ -100,13 +103,13 @@ class RoomMain extends React.Component {
             seat,//位置
         });
         // 获取当前房间玩家信息  服务端返回监听
-        getRoomPlayerInfoObject.callBack = (data)=> {
+        getRoomPlayerInfoObject.callBack = (data) => {
             console.log(data)
-            if(data.code==200) {
+            if (data.code == 200) {
                 this.props._roomHandle({
                     roomPlayerInfo: data.data
                 })
-            }else {
+            } else {
                 alert(data.msg)
                 return;
             }
@@ -331,7 +334,7 @@ class RoomMain extends React.Component {
         })
     }
 
-    
+
 
 
 
@@ -517,7 +520,37 @@ class RoomMain extends React.Component {
             if (data.code == 200) {
                 // 清除本地存储的房间玩家信息
                 this.props._roomHandle({
-                    roomPlayerInfo: {}
+                    // 空字段先定义  为了防止各个页面在引用数据嵌套过深字段时 报undefined 未定义
+                    roomPlayerInfo: {
+                        roomId: '',
+                        leftPlayer: {
+                            id: '',
+                            account: '',
+                            password: '',
+                            headImg: '',
+                            creation_date: '',
+                            seat: '',
+                            is_ready: '',
+                        },
+                        rightPlayer: {
+                            id: '',
+                            account: '',
+                            password: '',
+                            headImg: '',
+                            creation_date: '',
+                            seat: '',
+                            is_ready: '',
+                        },
+                        bottomPlayer: {
+                            id: '',
+                            account: '',
+                            password: '',
+                            headImg: '',
+                            creation_date: '',
+                            seat: '',
+                            is_ready: '',
+                        }
+                    }
                 })
                 this.props.history.push("/hall")
             } else {
@@ -540,6 +573,7 @@ class RoomMain extends React.Component {
 
     render() {
         let room = this.props.room;
+        let mySeat = this.state.mySeat;
         return (
             <div id="landlord-room">
                 {/*顶部展示区域 start*/}
@@ -556,7 +590,7 @@ class RoomMain extends React.Component {
                     {/*其他玩家区域 start*/}
                     <LeftPlay
                         userInfo={this.props.login.userInfo}
-                        roomPlayerInfo={this.props.room.roomPlayerInfo}
+                        roomPlayerInfo={room.roomPlayerInfo}
                         leftList={room.left}
                         rightList={room.right}
                         isTimer={this.state.isTimer}
@@ -565,6 +599,13 @@ class RoomMain extends React.Component {
                     {/*其他玩家区域 end*/}
 
                     <div className="my-show-brand">
+                        {/* 准备 && 已准备 */}
+                        <Ready
+                            roomPlayerInfo={room.roomPlayerInfo}
+                            mySeat={mySeat}
+                        />
+
+
                         {/* 不出&出牌 按钮 start */}
                         <MyPlayButton
                             show={this.state.isShow_playCard}
@@ -602,7 +643,8 @@ class RoomMain extends React.Component {
 
                         {/* 我的头像 */}
                         <div className="my-head" title="点击头像发牌" onClick={this.startCard}>
-                            <img src={this.props.login.userInfo.headImg?require('../../images/'+this.props.login.userInfo.headImg+'.png'):require('../../images/head-border.png')} alt=""/>
+                            {/* <img src={room.roomPlayerInfo&&room.roomPlayerInfo[mySeat]&&room.roomPlayerInfo[mySeat].headImg ? require('../../images/' + room.roomPlayerInfo[mySeat].headImg + '.png') : require('../../images/head-border.png')} alt="" /> */}
+                            <img src={room.roomPlayerInfo[mySeat].headImg ? require('../../images/' + room.roomPlayerInfo[mySeat].headImg + '.png') : require('../../images/head-border.png')} alt="" />
                         </div>
 
                         {/* 地主农民身份 */}
@@ -610,7 +652,7 @@ class RoomMain extends React.Component {
                     </div>
 
                     {/*底部静态文件 start*/}
-                    <Bottom 
+                    <Bottom
                         userInfo={this.props.login.userInfo}
                     />
                     {/*底部静态文件 end*/}

@@ -13,7 +13,36 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
     rightList:[],//右侧玩家出的牌
 
 
-    roomPlayerInfo: {},//当前房间玩家信息
+    roomPlayerInfo: {
+        roomId: '',
+        leftPlayer: {
+            id: '',
+            account: '',
+            password: '',
+            headImg: '',
+            creation_date: '',
+            seat: '',
+            is_ready:'',
+        },
+        rightPlayer: {
+            id: '',
+            account: '',
+            password: '',
+            headImg: '',
+            creation_date: '',
+            seat: '',
+            is_ready:'',
+        },
+        bottomPlayer: {
+            id: '',
+            account: '',
+            password: '',
+            headImg: '',
+            creation_date: '',
+            seat: '',
+            is_ready:'',
+        }
+    },//当前房间玩家信息
 };
 const room=(state=roomState,action)=>{
     switch (action.type){
