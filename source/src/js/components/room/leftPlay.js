@@ -76,16 +76,16 @@ class MyBeenOutCard extends React.Component {
                         <div className="player-head text-r">
                             {/* 左边玩家 */}
                             <img
-                                src={this.props.roomPlayerInfo[leftSeat]&&this.props.roomPlayerInfo[leftSeat].headImg ? require('../../../images/' + this.props.roomPlayerInfo[leftSeat].headImg + '.png') :
+                                src={this.props.roomPlayerInfo[leftSeat] && this.props.roomPlayerInfo[leftSeat].headImg ? require('../../../images/' + this.props.roomPlayerInfo[leftSeat].headImg + '.png') :
                                     require('../../../images/head-border.png')}
                                 alt="" />
-                            <p>{this.props.roomPlayerInfo[leftSeat]&&this.props.roomPlayerInfo[leftSeat].account}</p>
-                            {this.props.roomPlayerInfo[leftSeat]&&this.props.roomPlayerInfo[leftSeat].id?
+                            <p>{this.props.roomPlayerInfo[leftSeat] && this.props.roomPlayerInfo[leftSeat].account}</p>
+                            {this.props.roomPlayerInfo[leftSeat] && this.props.roomPlayerInfo[leftSeat].id ?
                                 <p className="color-y"><img className="beans"
-                                src={require('../../../images/beans2.png')}></img>9999</p>:
+                                    src={require('../../../images/beans2.png')}></img>9999</p> :
                                 ''
                             }
-                            
+
                         </div>
                         <div className="player-identity hidden">
                             <img className="farmer hidden" src={require('../../../images/farmer.png')} alt="" />
@@ -94,11 +94,18 @@ class MyBeenOutCard extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="out-brand hidden">
+                    <div className="out-brand">
                         {/* 左边玩家出牌区 */}
-                        {this.leftCardData(this.props.leftList)}
-                        {/* 提示 title */}
-                        <div className="is-landlord" style={{ display: this.props.isTimer == 3 ? 'none' : 'block' }}></div>
+                        {/* {this.leftCardData(this.props.leftList)} */}
+
+                        {/* 叫地主 */}
+                        {/* <div className="is-landlord" style={{ display: this.props.isTimer == 3 ? 'none' : 'block' }}></div> */}
+
+                        {/* 准备 */}
+                        <div className="isReady" style={{display:this.props.roomPlayerInfo[leftSeat].is_ready=='true'?'block':'none'}}>
+                            已准备
+                        </div>
+
                         {/* 倒计时 */}
                         <div className="timer" style={{ display: this.props.isTimer == 3 ? 'block' : 'none' }}>
                             {this.props.count}
@@ -106,11 +113,19 @@ class MyBeenOutCard extends React.Component {
                     </div>
                 </div>
                 <div className="room-container-player-right">
-                    <div className="out-brand hidden">
+                    <div className="out-brand">
                         {/* 右边玩家出牌区 */}
-                        {this.rightCardData(this.props.rightList)}
-                        {/* 提示 title */}
-                        <div className="is-landlord" style={{ display: this.props.isTimer == 2 ? 'none' : 'block' }}></div>
+                        {/* {this.rightCardData(this.props.rightList)} */}
+
+                        {/* 叫地主 */}
+                        {/* <div className="is-landlord" style={{ display: this.props.isTimer == 2 ? 'none' : 'block' }}></div> */}
+
+                        {/* 准备 */}
+                        
+                        <div className="isReady" style={{display:this.props.roomPlayerInfo[rightSeat].is_ready=='true'?'block':'none'}}>
+                            已准备
+                        </div>
+
                         {/* 倒计时 */}
                         <div className="timer" style={{ display: this.props.isTimer == 2 ? 'block' : 'none' }}>
                             {this.props.count}
@@ -126,13 +141,13 @@ class MyBeenOutCard extends React.Component {
                         </div>
                         <div className="player-head text-l">
                             <img
-                                src={this.props.roomPlayerInfo[rightSeat]&&this.props.roomPlayerInfo[rightSeat].headImg ? require('../../../images/' + this.props.roomPlayerInfo[rightSeat].headImg + '.png') :
+                                src={this.props.roomPlayerInfo[rightSeat] && this.props.roomPlayerInfo[rightSeat].headImg ? require('../../../images/' + this.props.roomPlayerInfo[rightSeat].headImg + '.png') :
                                     require('../../../images/head-border.png')}
                                 alt="" />
-                            <p>{this.props.roomPlayerInfo[rightSeat]&&this.props.roomPlayerInfo[rightSeat].account}</p>
-                            {this.props.roomPlayerInfo[rightSeat]&&this.props.roomPlayerInfo[rightSeat].id?
+                            <p>{this.props.roomPlayerInfo[rightSeat] && this.props.roomPlayerInfo[rightSeat].account}</p>
+                            {this.props.roomPlayerInfo[rightSeat] && this.props.roomPlayerInfo[rightSeat].id ?
                                 <p className="color-y"><img className="beans"
-                                src={require('../../../images/beans2.png')}></img>9999</p>:
+                                    src={require('../../../images/beans2.png')}></img>9999</p> :
                                 ''
                             }
                         </div>

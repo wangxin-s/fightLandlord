@@ -45,6 +45,14 @@ socket.on('getRoomPlayerInfo',(data) => {
 })
 
 
+// 当前房间玩家操作  准备  后端返回数据
+let readyObject = {
+    callBack:function() {}
+}
+socket.on('ready',(data) => {
+    readyObject.callBack(data)
+})
+
 
 
 
@@ -65,4 +73,5 @@ export {
     goRoomObject,
     outRoomObject,
     getRoomPlayerInfoObject,
+    readyObject,
 }

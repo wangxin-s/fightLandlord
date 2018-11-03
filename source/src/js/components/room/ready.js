@@ -2,6 +2,7 @@
  * Created by ex-fuyunfeng on 2018/11/2.
  */
 import React from 'react';
+import {socket} from '../../units/socketListen'
 
 class Ready extends React.PureComponent {
     constructor(props) {
@@ -16,14 +17,26 @@ class Ready extends React.PureComponent {
     }
 
     ready() {
+        if(this.props.roomPlayerInfo[this.props.mySeat].is_ready=='true') {
+            return;
+        }
         
+        // 当前玩家准备
+        let roomId = this.props.roomId;
+        let seat = this.props.mySeat;
+        let userInfo = this.props.userInfo;
+        socket.emit('ready', {
+            roomId,//房间号
+            seat,//位置
+            userInfo,
+        });
     }
 
     render() {
         return (
             <div className="my-operating">
                 <div className="ready" onClick={this.ready.bind(this)}>
-                    {this.props.roomPlayerInfo[this.props.mySeat].is_ready ? '已准备' : '准备'}
+                    {this.props.roomPlayerInfo[this.props.mySeat].is_ready=='true' ? '已准备' : '准备'}
                 </div>
             </div>
         );

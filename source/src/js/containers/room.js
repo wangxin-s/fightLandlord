@@ -35,7 +35,7 @@ import {
     roomHandle, getCard
 } from '../actions/room';
 
-import { socket, outRoomObject, getRoomPlayerInfoObject } from '../units/socketListen';
+import { socket, outRoomObject, getRoomPlayerInfoObject, readyObject } from '../units/socketListen';
 
 import { cardType, compareCard, cloneFun } from '../units/room';
 
@@ -104,6 +104,18 @@ class RoomMain extends React.Component {
         });
         // 获取当前房间玩家信息  服务端返回监听
         getRoomPlayerInfoObject.callBack = (data) => {
+            console.log(data)
+            if (data.code == 200) {
+                this.props._roomHandle({
+                    roomPlayerInfo: data.data
+                })
+            } else {
+                alert(data.msg)
+                return;
+            }
+        }
+        // 当前房间玩家操作  准备  服务端返回监听
+        readyObject.callBack = (data)=> {
             console.log(data)
             if (data.code == 200) {
                 this.props._roomHandle({
@@ -523,6 +535,7 @@ class RoomMain extends React.Component {
                     // 空字段先定义  为了防止各个页面在引用数据嵌套过深字段时 报undefined 未定义
                     roomPlayerInfo: {
                         roomId: '',
+                        status: 'ready',
                         leftPlayer: {
                             id: '',
                             account: '',
@@ -600,10 +613,15 @@ class RoomMain extends React.Component {
 
                     <div className="my-show-brand">
                         {/* 准备 && 已准备 */}
-                        <Ready
-                            roomPlayerInfo={room.roomPlayerInfo}
-                            mySeat={mySeat}
-                        />
+                        {room.roomPlayerInfo.status == 'ready' ?
+                            <Ready
+                                roomPlayerInfo={room.roomPlayerInfo}
+                                userInfo={this.props.login.userInfo}
+                                roomId={this.props.match.params.id}
+                                mySeat={mySeat}
+                            />:''
+                        }
+
 
 
                         {/* 不出&出牌 按钮 start */}

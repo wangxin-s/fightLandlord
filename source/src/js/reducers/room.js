@@ -15,6 +15,7 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
 
     roomPlayerInfo: {
         roomId: '',
+        status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
             account: '',

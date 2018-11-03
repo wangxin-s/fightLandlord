@@ -98,6 +98,7 @@ let one = [], two = [], three = [], hiddenCards = [];
 var hallData = [
     {
         roomId: 1,
+        status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
             account: '',
@@ -105,7 +106,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         },
         rightPlayer: {
             id: '',
@@ -114,7 +115,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         },
         bottomPlayer: {
             id: '',
@@ -123,11 +124,12 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         }
     },
     {
         roomId: 2,
+        status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
             account: '',
@@ -135,7 +137,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         },
         rightPlayer: {
             id: '',
@@ -144,7 +146,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         },
         bottomPlayer: {
             id: '',
@@ -153,11 +155,12 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         }
     },
     {
         roomId: 3,
+        status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
             account: '',
@@ -165,7 +168,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         },
         rightPlayer: {
             id: '',
@@ -174,7 +177,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         },
         bottomPlayer: {
             id: '',
@@ -183,11 +186,12 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         }
     },
     {
         roomId: 4,
+        status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
             account: '',
@@ -195,7 +199,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         },
         rightPlayer: {
             id: '',
@@ -204,7 +208,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         },
         bottomPlayer: {
             id: '',
@@ -213,7 +217,7 @@ var hallData = [
             headImg: '',
             creation_date: '',
             seat: '',
-            is_ready:'',
+            is_ready: '',
         }
     },
 ]
@@ -242,20 +246,33 @@ function getHallData() {
         if (newHallData.length < 4) {
             var addRoom = {
                 roomId: hallData.length + 1,
+                status: 'ready',//房间内当前进行到哪一步 状态
                 leftPlayer: {
                     id: '',
-                    name: '',
+                    account: '',
+                    password: '',
                     headImg: '',
+                    creation_date: '',
+                    seat: '',
+                    is_ready: '',
                 },
                 rightPlayer: {
                     id: '',
-                    name: '',
+                    account: '',
+                    password: '',
                     headImg: '',
+                    creation_date: '',
+                    seat: '',
+                    is_ready: '',
                 },
                 bottomPlayer: {
                     id: '',
-                    name: '',
+                    account: '',
+                    password: '',
                     headImg: '',
+                    creation_date: '',
+                    seat: '',
+                    is_ready: '',
                 }
             }
             hallData.push(addRoom)
@@ -343,11 +360,11 @@ exports.websocket = function websocket(socket) {
                 sendData.data = serverData;
                 io.sockets.emit('getHallInfo', sendData);
 
-                // 任一用户进出房间 通过进入房间添加的标记给只在当前房间的所有用户发送  最新房间玩家数据
+                // 任一用户进出房间 通过进入房间添加的标记给只在当前房间的所有用户发送(不包括当前客户端玩家)  最新房间玩家数据
                 sendData.code = 200;
                 sendData.msg = '全局 (当前房间内有玩家进入)=> 当前房间玩家数据信息获取成功';
                 sendData.data = hallData[i];
-                socket.to(data.roomId).emit('getRoomPlayerInfo', sendData);
+                socket.broadcast.to(data.roomId).emit('getRoomPlayerInfo', sendData);
                 break;
 
             }
@@ -391,7 +408,7 @@ exports.websocket = function websocket(socket) {
                         headImg: '',
                         creation_date: '',
                         seat: '',
-                        is_ready:'',
+                        is_ready: '',
                     }
                     socket.leave(data.roomId)//给当前玩家  移除进入房间时添加的标记
                     sendData.code = 200;
@@ -406,11 +423,11 @@ exports.websocket = function websocket(socket) {
                     sendData.data = serverData;
                     io.sockets.emit('getHallInfo', sendData);
 
-                    // 任一用户进出房间 给只在当前房间的所有用户发送  最新房间玩家数据
+                    // 任一用户进出房间 给只在当前房间的所有用户发送(不包括当前客户端玩家)  最新房间玩家数据
                     sendData.code = 200;
                     sendData.msg = '全局 (当前房间内有玩家退出)=> 当前房间玩家数据信息获取成功';
                     sendData.data = hallData[i];
-                    socket.to(data.roomId).emit('getRoomPlayerInfo', sendData);
+                    socket.broadcast.to(data.roomId).emit('getRoomPlayerInfo', sendData);
                     is_outRoom = false;
                     break;
                 }
@@ -422,12 +439,42 @@ exports.websocket = function websocket(socket) {
             sendData.msg = '异常错误';
             sendData.data = {};
             socket.emit('outRoom', sendData);
-        } else {
-
-        }
+        } 
     });
 
+    // 房间内玩家 操作 准备
+    socket.on('ready', (data)=> {
+        let isReady = true;
+        for (let i = 0; i < hallData.length; i++) {
+            if (hallData[i].roomId == data.roomId) {//当前房间存在
+                if (hallData[i][data.seat].id == data.userInfo.id) {//当前房间内 当前位置 确实是当前用户
+                    //当前玩家已准备 标记
+                    hallData[i][data.seat].is_ready = 'true'
+                    
+                    // 任一用户准备 给只在当前房间的所有用户发送   最新房间玩家数据
+                    sendData.code = 200;
+                    sendData.msg = data.seat+'=>准备ok';
+                    sendData.data = hallData[i];
+                    io.sockets.in(data.roomId).emit('ready', sendData);
+                    isReady = false;
 
+                    // 当前房间内三人 都准备了
+                    if(hallData[i].leftPlayer.is_ready=='true' && hallData[i].rightPlayer.is_ready=='true' && hallData[i].bottomPlayer.is_ready=='true') {
+                        
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        if (isReady) {
+            sendData.code = 201;
+            sendData.msg = '异常错误';
+            sendData.data = {};
+            socket.emit('outRoom', sendData);
+        } 
+    })
 
 
 
