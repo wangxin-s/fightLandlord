@@ -4,23 +4,23 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { withRouter } from "react-router-dom";
-import card1 from '../../images/card/card_1061@2x.png';
-import card2 from '../../images/card/card_1062@2x.png';
-import card3 from '../../images/card/card_1063@2x.png';
-import card4 from '../../images/card/card_1064@2x.png';
-import card5 from '../../images/card/card_1065@2x.png';
-import card6 from '../../images/card/card_1066@2x.png';
-import card7 from '../../images/card/card_1066@2x.png';
-import card8 from '../../images/card/card_1066@2x.png';
-import card9 from '../../images/card/card_1066@2x.png';
-import card10 from '../../images/card/card_1066@2x.png';
-import card11 from '../../images/card/card_1066@2x.png';
-import card12 from '../../images/card/card_1066@2x.png';
-import card13 from '../../images/card/card_1066@2x.png';
-import card14 from '../../images/card/card_1066@2x.png';
-import card15 from '../../images/card/card_1066@2x.png';
-import card16 from '../../images/card/card_1066@2x.png';
-import card17 from '../../images/card/card_1066@2x.png';
+import card1 from '../../images/card/card_11.png';
+import card2 from '../../images/card/card_11.png';
+import card3 from '../../images/card/card_11.png';
+import card4 from '../../images/card/card_11.png';
+import card5 from '../../images/card/card_11.png';
+import card6 from '../../images/card/card_11.png';
+import card7 from '../../images/card/card_11.png';
+import card8 from '../../images/card/card_11.png';
+import card9 from '../../images/card/card_11.png';
+import card10 from '../../images/card/card_1.png';
+import card11 from '../../images/card/card_1.png';
+import card12 from '../../images/card/card_1.png';
+import card13 from '../../images/card/card_1.png';
+import card14 from '../../images/card/card_1.png';
+import card15 from '../../images/card/card_1.png';
+import card16 from '../../images/card/card_1.png';
+import card17 from '../../images/card/card_1.png';
 import card_back from '../../images/card_back.png';
 
 import Top from '../components/room/top';
@@ -35,7 +35,7 @@ import {
     roomHandle, getCard
 } from '../actions/room';
 
-import { socket, outRoomObject, getRoomPlayerInfoObject, readyObject } from '../units/socketListen';
+import { socket, outRoomObject, getRoomPlayerInfoObject, readyObject, LicensingObject } from '../units/socketListen';
 
 import { cardType, compareCard, cloneFun } from '../units/room';
 
@@ -104,7 +104,6 @@ class RoomMain extends React.Component {
         });
         // 获取当前房间玩家信息  服务端返回监听
         getRoomPlayerInfoObject.callBack = (data) => {
-            console.log(data)
             if (data.code == 200) {
                 this.props._roomHandle({
                     roomPlayerInfo: data.data
@@ -116,6 +115,17 @@ class RoomMain extends React.Component {
         }
         // 当前房间玩家操作  准备  服务端返回监听
         readyObject.callBack = (data)=> {
+            if (data.code == 200) {
+                this.props._roomHandle({
+                    roomPlayerInfo: data.data
+                })
+            } else {
+                alert(data.msg)
+                return;
+            }
+        }
+
+        LicensingObject.callBack = (data)=> {
             console.log(data)
             if (data.code == 200) {
                 this.props._roomHandle({

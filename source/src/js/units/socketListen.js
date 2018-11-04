@@ -53,6 +53,13 @@ socket.on('ready',(data) => {
     readyObject.callBack(data)
 })
 
+// 所有玩家都已准备 发牌数据更新 给只在当前房间的所有用户发送  后端返回数据
+let LicensingObject = {
+    callBack:function() {}
+}
+socket.on('Licensing',(data) => {
+    LicensingObject.callBack(data)
+})
 
 
 
@@ -74,4 +81,5 @@ export {
     outRoomObject,
     getRoomPlayerInfoObject,
     readyObject,
+    LicensingObject,
 }

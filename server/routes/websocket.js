@@ -9,81 +9,81 @@ var sendData = {
     msg: '登录成功'
 }
 
-let Cards = [
-    { icon: 53, type: '0', val: 17 },
-    { icon: 52, type: '0', val: 16 },
-    { icon: 44, type: '1', val: 14 },
-    { icon: 48, type: '1', val: 15 },
-    { icon: 0, type: '1', val: 3 },
-    { icon: 4, type: '1', val: 4 },
-    { icon: 8, type: '1', val: 5 },
-    { icon: 12, type: '1', val: 6 },
-    { icon: 16, type: '1', val: 7 },
-    { icon: 20, type: '1', val: 8 },
-    { icon: 24, type: '1', val: 9 },
-    { icon: 28, type: '1', val: 10 },
-    { icon: 32, type: '1', val: 11 },
-    { icon: 36, type: '1', val: 12 },
-    { icon: 40, type: '1', val: 13 },
-    { icon: 45, type: '2', val: 14 },
-    { icon: 49, type: '2', val: 15 },
-    { icon: 1, type: '2', val: 3 },
-    { icon: 5, type: '2', val: 4 },
-    { icon: 9, type: '2', val: 5 },
-    { icon: 13, type: '2', val: 6 },
-    { icon: 17, type: '2', val: 7 },
-    { icon: 21, type: '2', val: 8 },
-    { icon: 25, type: '2', val: 9 },
-    { icon: 29, type: '2', val: 10 },
-    { icon: 33, type: '2', val: 11 },
-    { icon: 37, type: '2', val: 12 },
-    { icon: 41, type: '2', val: 13 },
-    { icon: 46, type: '3', val: 14 },
-    { icon: 50, type: '3', val: 15 },
-    { icon: 2, type: '3', val: 3 },
-    { icon: 6, type: '3', val: 4 },
-    { icon: 10, type: '3', val: 5 },
-    { icon: 14, type: '3', val: 6 },
-    { icon: 18, type: '3', val: 7 },
-    { icon: 22, type: '3', val: 8 },
-    { icon: 26, type: '3', val: 9 },
-    { icon: 30, type: '3', val: 10 },
-    { icon: 34, type: '3', val: 11 },
-    { icon: 38, type: '3', val: 12 },
-    { icon: 42, type: '3', val: 13 },
-    { icon: 47, type: '4', val: 14 },
-    { icon: 51, type: '4', val: 15 },
-    { icon: 3, type: '4', val: 3 },
-    { icon: 7, type: '4', val: 4 },
-    { icon: 11, type: '4', val: 5 },
-    { icon: 15, type: '4', val: 6 },
-    { icon: 19, type: '4', val: 7 },
-    { icon: 23, type: '4', val: 8 },
-    { icon: 27, type: '4', val: 9 },
-    { icon: 31, type: '4', val: 10 },
-    { icon: 35, type: '4', val: 11 },
-    { icon: 39, type: '4', val: 12 },
-    { icon: 43, type: '4', val: 13 }
-];
-let cards = Cards.slice(0);
-let self = {
-    ONE: 1,
-    PAIRS: 2,
-    THREE: 3,
-    THREE_WITH_ONE: 4,
-    THREE_WITH_PAIRS: 5,
-    PROGRESSION: 6,
-    PROGRESSION_PAIRS: 7,
-    PLANE: 8,
-    PLANE_WITH_ONE: 9,
-    PLANE_WITH_PAIRS: 10,
-    FOUR_WITH_TWO: 11,
-    FOUR_WITH_TWO_PAIRS: 12,
-    BOMB: 13,
-    KING_BOMB: 14,
-}
-let maxCard = [];//当前牌面上最大的牌
-let one = [], two = [], three = [], hiddenCards = [];
+// let Cards = [
+//     { icon: 53, type: '0', val: 17 },
+//     { icon: 52, type: '0', val: 16 },
+//     { icon: 44, type: '1', val: 14 },
+//     { icon: 48, type: '1', val: 15 },
+//     { icon: 0, type: '1', val: 3 },
+//     { icon: 4, type: '1', val: 4 },
+//     { icon: 8, type: '1', val: 5 },
+//     { icon: 12, type: '1', val: 6 },
+//     { icon: 16, type: '1', val: 7 },
+//     { icon: 20, type: '1', val: 8 },
+//     { icon: 24, type: '1', val: 9 },
+//     { icon: 28, type: '1', val: 10 },
+//     { icon: 32, type: '1', val: 11 },
+//     { icon: 36, type: '1', val: 12 },
+//     { icon: 40, type: '1', val: 13 },
+//     { icon: 45, type: '2', val: 14 },
+//     { icon: 49, type: '2', val: 15 },
+//     { icon: 1, type: '2', val: 3 },
+//     { icon: 5, type: '2', val: 4 },
+//     { icon: 9, type: '2', val: 5 },
+//     { icon: 13, type: '2', val: 6 },
+//     { icon: 17, type: '2', val: 7 },
+//     { icon: 21, type: '2', val: 8 },
+//     { icon: 25, type: '2', val: 9 },
+//     { icon: 29, type: '2', val: 10 },
+//     { icon: 33, type: '2', val: 11 },
+//     { icon: 37, type: '2', val: 12 },
+//     { icon: 41, type: '2', val: 13 },
+//     { icon: 46, type: '3', val: 14 },
+//     { icon: 50, type: '3', val: 15 },
+//     { icon: 2, type: '3', val: 3 },
+//     { icon: 6, type: '3', val: 4 },
+//     { icon: 10, type: '3', val: 5 },
+//     { icon: 14, type: '3', val: 6 },
+//     { icon: 18, type: '3', val: 7 },
+//     { icon: 22, type: '3', val: 8 },
+//     { icon: 26, type: '3', val: 9 },
+//     { icon: 30, type: '3', val: 10 },
+//     { icon: 34, type: '3', val: 11 },
+//     { icon: 38, type: '3', val: 12 },
+//     { icon: 42, type: '3', val: 13 },
+//     { icon: 47, type: '4', val: 14 },
+//     { icon: 51, type: '4', val: 15 },
+//     { icon: 3, type: '4', val: 3 },
+//     { icon: 7, type: '4', val: 4 },
+//     { icon: 11, type: '4', val: 5 },
+//     { icon: 15, type: '4', val: 6 },
+//     { icon: 19, type: '4', val: 7 },
+//     { icon: 23, type: '4', val: 8 },
+//     { icon: 27, type: '4', val: 9 },
+//     { icon: 31, type: '4', val: 10 },
+//     { icon: 35, type: '4', val: 11 },
+//     { icon: 39, type: '4', val: 12 },
+//     { icon: 43, type: '4', val: 13 }
+// ];
+// let cards = Cards.slice(0);
+// let self = {
+//     ONE: 1,
+//     PAIRS: 2,
+//     THREE: 3,
+//     THREE_WITH_ONE: 4,
+//     THREE_WITH_PAIRS: 5,
+//     PROGRESSION: 6,
+//     PROGRESSION_PAIRS: 7,
+//     PLANE: 8,
+//     PLANE_WITH_ONE: 9,
+//     PLANE_WITH_PAIRS: 10,
+//     FOUR_WITH_TWO: 11,
+//     FOUR_WITH_TWO_PAIRS: 12,
+//     BOMB: 13,
+//     KING_BOMB: 14,
+// }
+// let maxCard = [];//当前牌面上最大的牌
+// let one = [], two = [], three = [], hiddenCards = [];
 
 
 
@@ -98,6 +98,8 @@ let one = [], two = [], three = [], hiddenCards = [];
 var hallData = [
     {
         roomId: 1,
+        FieldMark: '',//字段标记  便于再有新增或删除字段ctrl+D统一增减 无实质意义
+        landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
@@ -105,8 +107,9 @@ var hallData = [
             password: '',
             headImg: '',
             creation_date: '',
-            seat: '',
-            is_ready: '',
+            seat: '',//当前玩家的位置  进入大厅赋值 返回给前端缓存
+            is_ready: '',//当前玩家是否准备
+            cardData: [],//当前玩家  卡牌数据源
         },
         rightPlayer: {
             id: '',
@@ -116,6 +119,7 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         },
         bottomPlayer: {
             id: '',
@@ -125,10 +129,13 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         }
     },
     {
         roomId: 2,
+        FieldMark: '',
+        landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
@@ -138,6 +145,7 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         },
         rightPlayer: {
             id: '',
@@ -147,6 +155,7 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         },
         bottomPlayer: {
             id: '',
@@ -156,10 +165,13 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         }
     },
     {
         roomId: 3,
+        FieldMark: '',
+        landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
@@ -169,6 +181,7 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         },
         rightPlayer: {
             id: '',
@@ -178,6 +191,7 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         },
         bottomPlayer: {
             id: '',
@@ -187,10 +201,13 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         }
     },
     {
         roomId: 4,
+        FieldMark: '',
+        landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
@@ -200,6 +217,7 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         },
         rightPlayer: {
             id: '',
@@ -209,6 +227,7 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         },
         bottomPlayer: {
             id: '',
@@ -218,6 +237,7 @@ var hallData = [
             creation_date: '',
             seat: '',
             is_ready: '',
+            cardData: [],
         }
     },
 ]
@@ -246,6 +266,8 @@ function getHallData() {
         if (newHallData.length < 4) {
             var addRoom = {
                 roomId: hallData.length + 1,
+                FieldMark: '',
+                landlordCard: [],//地主牌数据源
                 status: 'ready',//房间内当前进行到哪一步 状态
                 leftPlayer: {
                     id: '',
@@ -255,6 +277,7 @@ function getHallData() {
                     creation_date: '',
                     seat: '',
                     is_ready: '',
+                    cardData: [],
                 },
                 rightPlayer: {
                     id: '',
@@ -264,6 +287,7 @@ function getHallData() {
                     creation_date: '',
                     seat: '',
                     is_ready: '',
+                    cardData: [],
                 },
                 bottomPlayer: {
                     id: '',
@@ -273,6 +297,7 @@ function getHallData() {
                     creation_date: '',
                     seat: '',
                     is_ready: '',
+                    cardData: [],
                 }
             }
             hallData.push(addRoom)
@@ -282,6 +307,81 @@ function getHallData() {
     }
     is_newHallData()
     return newHallData;
+}
+
+// 所有卡牌 数据源 
+let Cards = [
+    { icon: 53, val: 16 },//小王
+    { icon: 54, val: 17 },//大王
+
+    { icon: 1, val: 14 },
+    { icon: 2, val: 15 },
+    { icon: 3, val: 3 },
+    { icon: 4, val: 4 },
+    { icon: 5, val: 5 },
+    { icon: 6, val: 6 },
+    { icon: 7, val: 7 },
+    { icon: 8, val: 8 },
+    { icon: 9, val: 9 },
+    { icon: 10, val: 10 },
+    { icon: 11, val: 11 },
+    { icon: 12, val: 12 },
+    { icon: 13, val: 13 },
+
+    { icon: 14, val: 14 },
+    { icon: 15, val: 15 },
+    { icon: 16, val: 3 },
+    { icon: 17, val: 4 },
+    { icon: 18, val: 5 },
+    { icon: 19, val: 6 },
+    { icon: 20, val: 7 },
+    { icon: 21, val: 8 },
+    { icon: 22, val: 9 },
+    { icon: 23, val: 10 },
+    { icon: 24, val: 11 },
+    { icon: 25, val: 12 },
+    { icon: 26, val: 13 },
+
+    { icon: 27, val: 14 },
+    { icon: 28, val: 15 },
+    { icon: 29, val: 3 },
+    { icon: 30, val: 4 },
+    { icon: 31, val: 5 },
+    { icon: 32, val: 6 },
+    { icon: 33, val: 7 },
+    { icon: 34, val: 8 },
+    { icon: 35, val: 9 },
+    { icon: 36, val: 10 },
+    { icon: 37, val: 11 },
+    { icon: 38, val: 12 },
+    { icon: 39, val: 13 },
+
+    { icon: 40, val: 14 },
+    { icon: 41, val: 15 },
+    { icon: 42, val: 3 },
+    { icon: 43, val: 4 },
+    { icon: 44, val: 5 },
+    { icon: 45, val: 6 },
+    { icon: 46, val: 7 },
+    { icon: 47, val: 8 },
+    { icon: 48, val: 9 },
+    { icon: 49, val: 10 },
+    { icon: 50, val: 11 },
+    { icon: 51, val: 12 },
+    { icon: 52, val: 13 },
+];
+
+// 洗牌
+function actionLicensing() {
+    // //洗牌即是打乱数组顺序
+    let len = Cards.length;
+    for (let i = 0; i < len - 1; i++) {
+        let index = Math.floor(Math.random() * (len - i));
+        let temp = Cards[index];
+        Cards[index] = Cards[len - i - 1];
+        Cards[len - i - 1] = temp;
+    }
+    return Cards;
 }
 
 exports.websocket = function websocket(socket) {
@@ -328,7 +428,7 @@ exports.websocket = function websocket(socket) {
 
     //玩家点击进入房间
     socket.on('goRoom', (data) => {
-        for (let i = 0; i < hallData.length; i++) {
+        for (let i = 0; i < hallData.length - 1; i++) {
             if (hallData[i].roomId == data.roomId) {
                 if (hallData[i].leftPlayer.id && hallData[i].rightPlayer.id && hallData[i].bottomPlayer.id) {
                     sendData.code = 201;
@@ -374,7 +474,7 @@ exports.websocket = function websocket(socket) {
     // 进入房间获取当前房间玩家数据
     socket.on('getRoomPlayerInfo', (data) => {
         let is_getRoomPlayerInfo = true;
-        for (let i = 0; i < hallData.length; i++) {
+        for (let i = 0; i < hallData.length - 1; i++) {
             if (hallData[i].roomId == data.roomId) {//当前房间存在
                 if (hallData[i][data.seat].id == data.userInfo.id) {//当前房间内 当前位置 确实是当前用户
                     sendData.code = 200;
@@ -397,7 +497,7 @@ exports.websocket = function websocket(socket) {
     //退出房间
     socket.on('outRoom', (data) => {
         let is_outRoom = true;
-        for (let i = 0; i < hallData.length; i++) {
+        for (let i = 0; i < hallData.length - 1; i++) {
             if (hallData[i].roomId == data.roomId) {//当前房间存在
                 if (hallData[i][data.seat].id == data.userInfo.id) {//当前房间内 当前位置 确实是当前用户
                     //清除当前用户在当前房间信息数据
@@ -409,6 +509,7 @@ exports.websocket = function websocket(socket) {
                         creation_date: '',
                         seat: '',
                         is_ready: '',
+                        cardData: [],
                     }
                     socket.leave(data.roomId)//给当前玩家  移除进入房间时添加的标记
                     sendData.code = 200;
@@ -439,28 +540,40 @@ exports.websocket = function websocket(socket) {
             sendData.msg = '异常错误';
             sendData.data = {};
             socket.emit('outRoom', sendData);
-        } 
+        }
     });
 
     // 房间内玩家 操作 准备
-    socket.on('ready', (data)=> {
+    socket.on('ready', (data) => {
         let isReady = true;
-        for (let i = 0; i < hallData.length; i++) {
+        for (let i = 0; i < hallData.length - 1; i++) {
             if (hallData[i].roomId == data.roomId) {//当前房间存在
                 if (hallData[i][data.seat].id == data.userInfo.id) {//当前房间内 当前位置 确实是当前用户
                     //当前玩家已准备 标记
                     hallData[i][data.seat].is_ready = 'true'
-                    
+
                     // 任一用户准备 给只在当前房间的所有用户发送   最新房间玩家数据
                     sendData.code = 200;
-                    sendData.msg = data.seat+'=>准备ok';
+                    sendData.msg = data.seat + '=>准备ok';
                     sendData.data = hallData[i];
                     io.sockets.in(data.roomId).emit('ready', sendData);
                     isReady = false;
 
                     // 当前房间内三人 都准备了
-                    if(hallData[i].leftPlayer.is_ready=='true' && hallData[i].rightPlayer.is_ready=='true' && hallData[i].bottomPlayer.is_ready=='true') {
-                        
+                    if (hallData[i].leftPlayer.is_ready == 'true' && hallData[i].rightPlayer.is_ready == 'true' && hallData[i].bottomPlayer.is_ready == 'true') {
+                        hallData[i].status = 'Licensing';//进入发牌阶段
+                        // 给玩家随机分牌赋值
+                        let roomCardData = actionLicensing();
+                        hallData[i].leftPlayer.cardData = roomCardData.slice(0, 17);
+                        hallData[i].rightPlayer.cardData = roomCardData.slice(17, 34);
+                        hallData[i].bottomPlayer.cardData = roomCardData.slice(34, 51);
+                        hallData[i].landlordCard = roomCardData.slice(51)// 地主牌
+
+                        // 所有玩家都已准备 发牌数据更新 给只在当前房间的所有用户发送  最新房间玩家数据
+                        sendData.code = 200;
+                        sendData.msg = '所有玩家都已准备 发牌数据更新';
+                        sendData.data = hallData[i];
+                        io.sockets.in(data.roomId).emit('Licensing', sendData);
                     }
 
                     break;
@@ -473,7 +586,7 @@ exports.websocket = function websocket(socket) {
             sendData.msg = '异常错误';
             sendData.data = {};
             socket.emit('outRoom', sendData);
-        } 
+        }
     })
 
 

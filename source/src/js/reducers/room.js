@@ -15,6 +15,7 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
 
     roomPlayerInfo: {
         roomId: '',
+        landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
         leftPlayer: {
             id: '',
@@ -24,6 +25,7 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
             creation_date: '',
             seat: '',
             is_ready:'',
+            cardData: [],//当前玩家  卡牌数据源
         },
         rightPlayer: {
             id: '',
