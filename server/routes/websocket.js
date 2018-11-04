@@ -101,6 +101,8 @@ var hallData = [
         FieldMark: '',//字段标记  便于再有新增或删除字段ctrl+D统一增减 无实质意义
         landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
+        status_is_playLandlord: 'false',//子状态=> 抢地主
+        is_playLandlord: [],//谁是地主  
         leftPlayer: {
             id: '',
             account: '',
@@ -110,6 +112,7 @@ var hallData = [
             seat: '',//当前玩家的位置  进入大厅赋值 返回给前端缓存
             is_ready: '',//当前玩家是否准备
             cardData: [],//当前玩家  卡牌数据源
+            playLandlord: 'false',//当前谁在抢地主
         },
         rightPlayer: {
             id: '',
@@ -120,6 +123,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         },
         bottomPlayer: {
             id: '',
@@ -130,6 +134,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         }
     },
     {
@@ -137,6 +142,8 @@ var hallData = [
         FieldMark: '',
         landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
+        status_is_playLandlord: 'false',
+        is_playLandlord: [],
         leftPlayer: {
             id: '',
             account: '',
@@ -146,6 +153,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         },
         rightPlayer: {
             id: '',
@@ -156,6 +164,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         },
         bottomPlayer: {
             id: '',
@@ -166,6 +175,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         }
     },
     {
@@ -173,6 +183,8 @@ var hallData = [
         FieldMark: '',
         landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
+        status_is_playLandlord: 'false',
+        is_playLandlord: [],
         leftPlayer: {
             id: '',
             account: '',
@@ -182,6 +194,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         },
         rightPlayer: {
             id: '',
@@ -192,6 +205,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         },
         bottomPlayer: {
             id: '',
@@ -202,6 +216,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         }
     },
     {
@@ -209,6 +224,8 @@ var hallData = [
         FieldMark: '',
         landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
+        status_is_playLandlord: 'false',
+        is_playLandlord: [],
         leftPlayer: {
             id: '',
             account: '',
@@ -218,6 +235,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         },
         rightPlayer: {
             id: '',
@@ -228,6 +246,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         },
         bottomPlayer: {
             id: '',
@@ -238,6 +257,7 @@ var hallData = [
             seat: '',
             is_ready: '',
             cardData: [],
+            playLandlord: 'false',
         }
     },
 ]
@@ -250,7 +270,7 @@ function getHallData() {
     // 先清空数据源
     newHallData.length = 0;
     // 循环判断  返回前4个有空位的房间
-    for (var i = 0; i < hallData.length-1; i++) {
+    for (var i = 0; i < hallData.length - 1; i++) {
         if (newHallData.length >= 4) {
             break;
         }
@@ -269,6 +289,8 @@ function getHallData() {
                 FieldMark: '',
                 landlordCard: [],//地主牌数据源
                 status: 'ready',//房间内当前进行到哪一步 状态
+                status_is_playLandlord: 'false',
+                is_playLandlord: [],
                 leftPlayer: {
                     id: '',
                     account: '',
@@ -278,6 +300,7 @@ function getHallData() {
                     seat: '',
                     is_ready: '',
                     cardData: [],
+                    playLandlord: 'false',
                 },
                 rightPlayer: {
                     id: '',
@@ -288,6 +311,7 @@ function getHallData() {
                     seat: '',
                     is_ready: '',
                     cardData: [],
+                    playLandlord: 'false',
                 },
                 bottomPlayer: {
                     id: '',
@@ -298,6 +322,7 @@ function getHallData() {
                     seat: '',
                     is_ready: '',
                     cardData: [],
+                    playLandlord: 'false',
                 }
             }
             hallData.push(addRoom)
@@ -385,8 +410,8 @@ function actionLicensing() {
 }
 
 // 卡牌  排序
-function cardSort(a,b) {
-    return b.val-a.val;
+function cardSort(a, b) {
+    return b.val - a.val;
 }
 
 exports.websocket = function websocket(socket) {
@@ -450,7 +475,7 @@ exports.websocket = function websocket(socket) {
                 }
 
                 // 存储当前玩家进入房间信息
-                hallData[i][data.seat] = data.userInfo;//存储当前用户信息
+                hallData[i][data.seat] = {...hallData[i][data.seat],...data.userInfo,};//存储当前用户信息
                 hallData[i][data.seat].seat = data.seat;//存储当前用户在房间中的位置
                 socket.join(data.roomId)//给当前玩家所在房间  添加标记
                 sendData.code = 200;
@@ -515,6 +540,7 @@ exports.websocket = function websocket(socket) {
                         seat: '',
                         is_ready: '',
                         cardData: [],
+                        playLandlord: 'false',
                     }
                     socket.leave(data.roomId)//给当前玩家  移除进入房间时添加的标记
                     sendData.code = 200;
@@ -574,9 +600,17 @@ exports.websocket = function websocket(socket) {
                         hallData[i].bottomPlayer.cardData = roomCardData.slice(34, 51).sort(cardSort);
                         hallData[i].landlordCard = roomCardData.slice(51).sort(cardSort)// 地主牌
 
-                        // 所有玩家都已准备 发牌数据更新 给只在当前房间的所有用户发送  最新房间玩家数据
+                        //当前房间 抢地主 子状态 设置
+                        hallData[i].status_is_playLandlord = 'true';
+
+                        //随机一个玩家叫地主
+                        let randomis_playLandlord = ['leftPlayer', 'rightPlayer', 'bottomPlayer'];
+                        let randomIndex = Math.floor(Math.random() * 3);
+                        hallData[i][randomis_playLandlord[randomIndex]].playLandlord = 'true';
+
+                        // 所有玩家都已准备 发牌数据更新  开始抢地主 给只在当前房间的所有用户发送  最新房间玩家数据
                         sendData.code = 200;
-                        sendData.msg = '所有玩家都已准备 发牌数据更新';
+                        sendData.msg = '所有玩家都已准备 发牌数据更新 开始抢地主';
                         sendData.data = hallData[i];
                         io.sockets.in(data.roomId).emit('Licensing', sendData);
                     }
@@ -593,6 +627,7 @@ exports.websocket = function websocket(socket) {
             socket.emit('outRoom', sendData);
         }
     })
+
 
 
 
