@@ -250,7 +250,7 @@ function getHallData() {
     // 先清空数据源
     newHallData.length = 0;
     // 循环判断  返回前4个有空位的房间
-    for (var i = 0; i < hallData.length; i++) {
+    for (var i = 0; i < hallData.length-1; i++) {
         if (newHallData.length >= 4) {
             break;
         }

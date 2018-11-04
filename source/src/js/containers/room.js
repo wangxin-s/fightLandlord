@@ -104,6 +104,7 @@ class RoomMain extends React.Component {
         });
         // 获取当前房间玩家信息  服务端返回监听
         getRoomPlayerInfoObject.callBack = (data) => {
+            console.log(data)
             if (data.code == 200) {
                 this.props._roomHandle({
                     roomPlayerInfo: data.data
@@ -611,7 +612,7 @@ class RoomMain extends React.Component {
                     revers={this.revers.bind(this)}
                     exit={this.exit.bind(this)}
                 />
-                {/*顶部展示区域 end*/}
+
 
                 <div className="room-container">
                     {/*其他玩家区域 start*/}
@@ -623,7 +624,6 @@ class RoomMain extends React.Component {
                         isTimer={this.state.isTimer}
                         count={this.state.count}
                     />
-                    {/*其他玩家区域 end*/}
 
                     <div className="my-show-brand">
                         {/* 准备 && 已准备 */}
@@ -646,7 +646,6 @@ class RoomMain extends React.Component {
                             notOut={this.notOut.bind(this)}
                             playCard={this.playCard.bind(this)}
                         />
-                        {/* 不出&出牌 按钮 end */}
 
                         {/* 不抢&抢地主 按钮 start */}
                         <PlayLandlordButton
@@ -656,14 +655,12 @@ class RoomMain extends React.Component {
                             isTimer={this.state.isTimer}
                             count={this.state.count}
                         />
-                        {/* 不抢&抢地主 按钮 end */}
 
                         {/* 已出的牌  start*/}
                         <MyBeenOutCard
                             show={this.state.isShow_beenOut}
                             list={room.myCardOut}
                         />
-                        {/* 已出的牌  end*/}
 
                         {/* 我的卡牌  start*/}
                         {room.roomPlayerInfo.status == 'Licensing' ?
@@ -674,8 +671,6 @@ class RoomMain extends React.Component {
                                 imgClick={this.imgClick}
                             />:''
                         }
-
-                        {/* 我的卡牌  end*/}
 
                         {/* 我的头像 */}
                         <div className="my-head" title="点击头像发牌" onClick={this.startCard}>
@@ -691,7 +686,6 @@ class RoomMain extends React.Component {
                     <Bottom
                         userInfo={this.props.login.userInfo}
                     />
-                    {/*底部静态文件 end*/}
                 </div>
             </div>
         )
