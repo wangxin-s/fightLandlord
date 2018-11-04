@@ -114,7 +114,7 @@ class RoomMain extends React.Component {
             }
         }
         // 当前房间玩家操作  准备  服务端返回监听
-        readyObject.callBack = (data)=> {
+        readyObject.callBack = (data) => {
             if (data.code == 200) {
                 this.props._roomHandle({
                     roomPlayerInfo: data.data
@@ -125,7 +125,7 @@ class RoomMain extends React.Component {
             }
         }
 
-        LicensingObject.callBack = (data)=> {
+        LicensingObject.callBack = (data) => {
             console.log(data)
             if (data.code == 200) {
                 this.props._roomHandle({
@@ -546,6 +546,7 @@ class RoomMain extends React.Component {
                     roomPlayerInfo: {
                         roomId: '',
                         status: 'ready',
+                        landlordCard: [],//地主牌数据源
                         leftPlayer: {
                             id: '',
                             account: '',
@@ -554,6 +555,7 @@ class RoomMain extends React.Component {
                             creation_date: '',
                             seat: '',
                             is_ready: '',
+                            cardData: [],//当前玩家  卡牌数据源
                         },
                         rightPlayer: {
                             id: '',
@@ -563,6 +565,7 @@ class RoomMain extends React.Component {
                             creation_date: '',
                             seat: '',
                             is_ready: '',
+                            cardData: [],//当前玩家  卡牌数据源
                         },
                         bottomPlayer: {
                             id: '',
@@ -572,6 +575,7 @@ class RoomMain extends React.Component {
                             creation_date: '',
                             seat: '',
                             is_ready: '',
+                            cardData: [],//当前玩家  卡牌数据源
                         }
                     }
                 })
@@ -629,7 +633,7 @@ class RoomMain extends React.Component {
                                 userInfo={this.props.login.userInfo}
                                 roomId={this.props.match.params.id}
                                 mySeat={mySeat}
-                            />:''
+                            /> : ''
                         }
 
 
@@ -662,11 +666,15 @@ class RoomMain extends React.Component {
                         {/* 已出的牌  end*/}
 
                         {/* 我的卡牌  start*/}
-                        <MyCard
-                            list={room.myCard}
-                            imgArr={room.mySelectCard}
-                            imgClick={this.imgClick}
-                        />
+                        {room.roomPlayerInfo.status == 'Licensing' ?
+                            <MyCard
+                                status={room.roomPlayerInfo.status}
+                                list={room.roomPlayerInfo[mySeat].cardData}
+                                imgArr={room.mySelectCard}
+                                imgClick={this.imgClick}
+                            />:''
+                        }
+
                         {/* 我的卡牌  end*/}
 
                         {/* 我的头像 */}
