@@ -384,6 +384,11 @@ function actionLicensing() {
     return Cards;
 }
 
+// 卡牌  排序
+function cardSort(a,b) {
+    return b.val-a.val;
+}
+
 exports.websocket = function websocket(socket) {
     // 用户登录
     socket.on('login', (data) => {
@@ -564,10 +569,10 @@ exports.websocket = function websocket(socket) {
                         hallData[i].status = 'Licensing';//进入发牌阶段
                         // 给玩家随机分牌赋值
                         let roomCardData = actionLicensing();
-                        hallData[i].leftPlayer.cardData = roomCardData.slice(0, 17);
-                        hallData[i].rightPlayer.cardData = roomCardData.slice(17, 34);
-                        hallData[i].bottomPlayer.cardData = roomCardData.slice(34, 51);
-                        hallData[i].landlordCard = roomCardData.slice(51)// 地主牌
+                        hallData[i].leftPlayer.cardData = roomCardData.slice(0, 17).sort(cardSort);
+                        hallData[i].rightPlayer.cardData = roomCardData.slice(17, 34).sort(cardSort);
+                        hallData[i].bottomPlayer.cardData = roomCardData.slice(34, 51).sort(cardSort);
+                        hallData[i].landlordCard = roomCardData.slice(51).sort(cardSort)// 地主牌
 
                         // 所有玩家都已准备 发牌数据更新 给只在当前房间的所有用户发送  最新房间玩家数据
                         sendData.code = 200;

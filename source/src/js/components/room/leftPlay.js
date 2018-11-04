@@ -69,6 +69,7 @@ class MyBeenOutCard extends React.Component {
     render() {
         let leftSeat = this.state.leftSeat;
         let rightSeat = this.state.rightSeat;
+        let status = this.props.roomPlayerInfo.status;//当前房间  进行到哪一步状态
         return (
             <div className="room-container-player">
                 <div className="room-container-player-left">
@@ -87,10 +88,10 @@ class MyBeenOutCard extends React.Component {
                             }
 
                         </div>
-                        <div className="player-identity hidden">
+                        <div className="player-identity">
                             <img className="farmer hidden" src={require('../../../images/farmer.png')} alt="" />
-                            <div className="card-back">
-                                17
+                            <div className="card-back" style={{display:status=='Licensing'?'block':'none'}}>
+                            {this.props.roomPlayerInfo[leftSeat].cardData.length}
                             </div>
                         </div>
                     </div>
@@ -102,7 +103,7 @@ class MyBeenOutCard extends React.Component {
                         {/* <div className="is-landlord" style={{ display: this.props.isTimer == 3 ? 'none' : 'block' }}></div> */}
 
                         {/* 准备 */}
-                        <div className="isReady" style={{display:this.props.roomPlayerInfo[leftSeat].is_ready=='true'?'block':'none'}}>
+                        <div className="isReady" style={{display:this.props.roomPlayerInfo.status=='ready' && this.props.roomPlayerInfo[leftSeat].is_ready=='true'?'block':'none'}}>
                             已准备
                         </div>
 
@@ -122,7 +123,7 @@ class MyBeenOutCard extends React.Component {
 
                         {/* 准备 */}
                         
-                        <div className="isReady" style={{display:this.props.roomPlayerInfo[rightSeat].is_ready=='true'?'block':'none'}}>
+                        <div className="isReady" style={{display:this.props.roomPlayerInfo.status=='ready' && this.props.roomPlayerInfo[rightSeat].is_ready=='true'?'block':'none'}}>
                             已准备
                         </div>
 
@@ -133,10 +134,10 @@ class MyBeenOutCard extends React.Component {
                     </div>
                     <div className="player">
                         {/* 右边玩家 */}
-                        <div className="player-identity hidden">
+                        <div className="player-identity">
                             <img className="farmer hidden" src={require('../../../images/farmer.png')} alt="" />
-                            <div className="card-back">
-                                17
+                            <div className="card-back" style={{display:status=='Licensing'?'block':'none'}}>
+                                {this.props.roomPlayerInfo[rightSeat].cardData.length}
                             </div>
                         </div>
                         <div className="player-head text-l">

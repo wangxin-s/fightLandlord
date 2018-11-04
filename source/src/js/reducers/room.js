@@ -35,6 +35,7 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
             creation_date: '',
             seat: '',
             is_ready:'',
+            cardData: [],//当前玩家  卡牌数据源
         },
         bottomPlayer: {
             id: '',
@@ -44,6 +45,7 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
             creation_date: '',
             seat: '',
             is_ready:'',
+            cardData: [],//当前玩家  卡牌数据源
         }
     },//当前房间玩家信息
 };
