@@ -35,7 +35,7 @@ import {
     roomHandle, getCard
 } from '../actions/room';
 
-import { socket, outRoomObject, getRoomPlayerInfoObject, readyObject, LicensingObject } from '../units/socketListen';
+import { socket, outRoomObject, getRoomPlayerInfoObject, readyObject, LicensingObject, isPlayLandlordObject } from '../units/socketListen';
 
 import { cardType, compareCard, cloneFun } from '../units/room';
 
@@ -60,6 +60,9 @@ class RoomMain extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            // 玩家操作倒计时 (抢地主)
+            count: 50,
+
             // 卡牌是否选择 及出牌控制  true：选中  'out'：出牌
             imgArr: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
             // 出牌&不出  控制隐藏显示
@@ -78,8 +81,7 @@ class RoomMain extends React.Component {
             playerTwoData: [],
             // 玩家操作倒计时  控制隐藏显示
             isTimer: 1,
-            // 玩家操作倒计时 时间
-            count: 10,
+            
             // 当前时间
             newTime: '',
             // 地主牌  翻转控制
@@ -125,13 +127,45 @@ class RoomMain extends React.Component {
                 return;
             }
         }
-        // 所有玩家都已准备 发牌数据更新
+        // 所有玩家都已准备 发牌数据更新  开始抢地主
         LicensingObject.callBack = (data) => {
-            console.log(data)
             if (data.code == 200) {
                 this.props._roomHandle({
                     roomPlayerInfo: data.data
                 })
+                // 启动抢地主定时
+                this.playLandlordTimer()
+            } else {
+                alert(data.msg)
+                return;
+            }
+        }
+
+        // 玩家是否抢地主 后端返回监听
+        isPlayLandlordObject.callBack = (data)=> {
+            console.log(data)
+            clearInterval(timer)
+            this.setState({
+                count: 50,
+            })
+            
+
+            if (data.code == 200) {
+                this.props._roomHandle({
+                    roomPlayerInfo: data.data
+                })
+                if(data.data.subStatus!='playCard') {
+                    timer = setInterval(() => {
+                        console.log('timer1')
+                        if (this.state.count <= 0) {
+                            clearInterval(timer);
+                        } else {
+                            this.setState({
+                                count: this.state.count - 1,
+                            })
+                        }
+                    }, 1000)
+                }
             } else {
                 alert(data.msg)
                 return;
@@ -210,6 +244,75 @@ class RoomMain extends React.Component {
     componentWillUnmount() {
         clearInterval(timeTimer);
         clearInterval(timer);
+    }
+
+    // 启动抢地主定时
+    playLandlordTimer() {
+        timer = setInterval(() => {
+            console.log("timer")
+            if (this.state.count <= 0) {
+                this.setState({
+                    count: 50
+                })
+                clearInterval(timer);
+            } else {
+                this.setState({
+                    count: this.state.count - 1,
+                })
+            }
+        }, 1000)
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //抢地主定时器
+    robTimer() {
+        timer = setInterval(() => {
+            let obj = this.state;
+            if (this.state.count <= 1) {
+                if (obj.isTimer == 1) {
+                    this.setState({
+                        isShow_is_playLandlord: false,
+                        isTimer: obj.isTimer + 1,
+                        count: 20,
+                    })
+                } else if (obj.isTimer >= 3) {
+                    clearInterval(timer);
+                    this.setState({
+                        isShow_playCard: true,
+                        isTimer: 1,
+                        count: 20,
+                    })
+                } else {
+                    this.setState({
+                        count: 20,
+                        isTimer: obj.isTimer + 1,
+
+                    })
+                }
+            } else {
+                this.setState({
+                    count: this.state.count - 1,
+                })
+            }
+        }, 1000)
     }
 
     //判断牌型 牌分值大小比较测试
@@ -450,38 +553,7 @@ class RoomMain extends React.Component {
         })
     }
 
-    //抢地主定时器
-    robTimer() {
-        timer = setInterval(() => {
-            let obj = this.state;
-            if (this.state.count <= 1) {
-                if (obj.isTimer == 1) {
-                    this.setState({
-                        isShow_is_playLandlord: false,
-                        isTimer: obj.isTimer + 1,
-                        count: 20,
-                    })
-                } else if (obj.isTimer >= 3) {
-                    clearInterval(timer);
-                    this.setState({
-                        isShow_playCard: true,
-                        isTimer: 1,
-                        count: 20,
-                    })
-                } else {
-                    this.setState({
-                        count: 20,
-                        isTimer: obj.isTimer + 1,
-
-                    })
-                }
-            } else {
-                this.setState({
-                    count: this.state.count - 1,
-                })
-            }
-        }, 1000)
-    }
+    
 
     //出牌定时器
     playCardTimer() {
@@ -548,9 +620,10 @@ class RoomMain extends React.Component {
                     roomPlayerInfo: {
                         roomId: '',
                         landlordCard: [],//地主牌数据源
-                        status_is_playLandlord: 'false',//子状态=> 抢地主
+                        subStatus: '',//子状态=> 抢地主
                         status: 'ready',
                         is_playLandlord: [],//谁是地主
+                        playerLandlordNum:0,//叫地主 抢地主次数
                         leftPlayer: {
                             id: '',
                             account: '',
@@ -655,11 +728,19 @@ class RoomMain extends React.Component {
 
                         {/* 不抢&抢地主 按钮 start */}
                         <PlayLandlordButton
+                            roomPlayerInfo={room.roomPlayerInfo}
+                            userInfo={this.props.login.userInfo}
+                            count={this.state.count}
+                            roomId={this.props.match.params.id}
+                            mySeat={mySeat}
+
+
+
                             show={this.state.isShow_is_playLandlord}
                             noLandlord={this.noLandlord.bind(this)}
                             is_playLandlord={this.is_playLandlord.bind(this)}
                             isTimer={this.state.isTimer}
-                            count={this.state.count}
+                            
                         />
 
                         {/* 已出的牌  start*/}

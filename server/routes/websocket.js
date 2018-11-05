@@ -101,8 +101,9 @@ var hallData = [
         FieldMark: '',//字段标记  便于再有新增或删除字段ctrl+D统一增减 无实质意义
         landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
-        status_is_playLandlord: 'false',//子状态=> 抢地主
+        subStatus: '',//子状态=> 抢地主
         is_playLandlord: [],//谁是地主  
+        playerLandlordNum: 0,//叫地主 抢地主次数
         leftPlayer: {
             id: '',
             account: '',
@@ -142,8 +143,9 @@ var hallData = [
         FieldMark: '',
         landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
-        status_is_playLandlord: 'false',
+        subStatus: '',
         is_playLandlord: [],
+        playerLandlordNum: 0,
         leftPlayer: {
             id: '',
             account: '',
@@ -183,8 +185,9 @@ var hallData = [
         FieldMark: '',
         landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
-        status_is_playLandlord: 'false',
+        subStatus: '',
         is_playLandlord: [],
+        playerLandlordNum: 0,
         leftPlayer: {
             id: '',
             account: '',
@@ -224,8 +227,9 @@ var hallData = [
         FieldMark: '',
         landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
-        status_is_playLandlord: 'false',
+        subStatus: '',
         is_playLandlord: [],
+        playerLandlordNum: 0,
         leftPlayer: {
             id: '',
             account: '',
@@ -289,8 +293,9 @@ function getHallData() {
                 FieldMark: '',
                 landlordCard: [],//地主牌数据源
                 status: 'ready',//房间内当前进行到哪一步 状态
-                status_is_playLandlord: 'false',
+                subStatus: '',
                 is_playLandlord: [],
+                playerLandlordNum: 0,
                 leftPlayer: {
                     id: '',
                     account: '',
@@ -475,7 +480,7 @@ exports.websocket = function websocket(socket) {
                 }
 
                 // 存储当前玩家进入房间信息
-                hallData[i][data.seat] = {...hallData[i][data.seat],...data.userInfo,};//存储当前用户信息
+                hallData[i][data.seat] = { ...hallData[i][data.seat], ...data.userInfo, };//存储当前用户信息
                 hallData[i][data.seat].seat = data.seat;//存储当前用户在房间中的位置
                 socket.join(data.roomId)//给当前玩家所在房间  添加标记
                 sendData.code = 200;
@@ -601,7 +606,7 @@ exports.websocket = function websocket(socket) {
                         hallData[i].landlordCard = roomCardData.slice(51).sort(cardSort)// 地主牌
 
                         //当前房间 抢地主 子状态 设置
-                        hallData[i].status_is_playLandlord = 'true';
+                        hallData[i].subStatus = 'playLandlord';
 
                         //随机一个玩家叫地主
                         let randomis_playLandlord = ['leftPlayer', 'rightPlayer', 'bottomPlayer'];
@@ -621,6 +626,117 @@ exports.websocket = function websocket(socket) {
         }
 
         if (isReady) {
+            sendData.code = 201;
+            sendData.msg = '异常错误';
+            sendData.data = {};
+            socket.emit('outRoom', sendData);
+        }
+    })
+
+    // 是否抢地主
+    socket.on('isPlayLandlord', (data) => {
+        let isPlayLandlord = true;
+        for (let i = 0; i < hallData.length - 1; i++) {
+            if (hallData[i].roomId == data.roomId) {//当前房间存在
+                if (hallData[i][data.seat].id == data.userInfo.id) {//当前房间内 当前位置 确实是当前用户
+
+                    // 当前玩家选择抢地主
+                    hallData[i].playerLandlordNum += 1;
+
+                    if (data.isPlayLandlord == 'true') {
+                        hallData[i].is_playLandlord.push(data.seat)
+                    }
+                    //清除轮到当前玩家叫地主状态
+                    hallData[i][data.seat].playLandlord = 'false';
+
+                    // 如果没有人抢地主  重新发牌
+                    function Licensing() {
+                        hallData[i].status = 'Licensing';//进入发牌阶段
+                        // 给玩家随机分牌赋值
+                        let roomCardData = actionLicensing();
+                        hallData[i].leftPlayer.cardData = roomCardData.slice(0, 17).sort(cardSort);
+                        hallData[i].rightPlayer.cardData = roomCardData.slice(17, 34).sort(cardSort);
+                        hallData[i].bottomPlayer.cardData = roomCardData.slice(34, 51).sort(cardSort);
+                        hallData[i].landlordCard = roomCardData.slice(51).sort(cardSort)// 地主牌
+
+                        //当前房间 抢地主 子状态 设置
+                        hallData[i].subStatus = 'playLandlord';
+
+                        //随机一个玩家叫地主
+                        let randomis_playLandlord = ['leftPlayer', 'rightPlayer', 'bottomPlayer'];
+                        let randomIndex = Math.floor(Math.random() * 3);
+                        hallData[i][randomis_playLandlord[randomIndex]].playLandlord = 'true';
+
+                        // 所有玩家都没有抢地主 重新发牌
+                        sendData.code = 200;
+                        sendData.msg = '所有玩家都没有抢地主 重新发牌';
+                        sendData.data = hallData[i];
+                        io.sockets.in(data.roomId).emit('isPlayLandlord', sendData);
+                    }
+
+                    // 叫地主抢地主 三轮已过
+                    if (hallData[i].playerLandlordNum == 3) {
+                        // 没有人抢地主
+                        if (hallData[i].is_playLandlord.length == 0) {
+                            hallData[i].playerLandlordNum = 0;
+                            hallData[i].subStatus = '';
+
+                            // 重新回到发牌
+                            Licensing()
+                            return;
+                        }
+
+                        // 只有一个人叫地主 没有其他人抢
+                        if (hallData[i].is_playLandlord.length == 1) {
+                            hallData[i].playerLandlordNum = 0;
+                            hallData[i].subStatus = 'playCard';//子状态  进入打牌阶段
+
+                            // 抢地主结束 进入打牌阶段
+                            sendData.code = 200;
+                            sendData.msg = '抢地主结束 进入打牌阶段';
+                            sendData.data = hallData[i];
+                            io.sockets.in(data.roomId).emit('isPlayLandlord', sendData);
+                            return;
+                        }
+                    }
+
+                    // 叫地主抢地主 第四轮  终结 
+                    if (hallData[i].playerLandlordNum == 4) {
+                        hallData[i].playerLandlordNum = 0;
+                        hallData[i].subStatus = 'playCard';//子状态  进入打牌阶段
+
+                        // 抢地主结束 进入打牌阶段
+                        sendData.code = 200;
+                        sendData.msg = '抢地主结束 进入打牌阶段';
+                        sendData.data = hallData[i];
+                        io.sockets.in(data.roomId).emit('isPlayLandlord', sendData);
+                        return;
+                    }
+
+
+                    // 抢地主给下一家
+                    if (data.seat == 'leftPlayer') {
+                        hallData[i].rightPlayer.playLandlord = 'true';
+                    }
+                    if (data.seat == 'rightPlayer') {
+                        hallData[i].bottomPlayer.playLandlord = 'true';
+                    }
+                    if (data.seat == 'bottomPlayer') {
+                        hallData[i].leftPlayer.playLandlord = 'true';
+                    }
+
+                    sendData.code = 200;
+                    sendData.msg = '叫地主抢地主  发送前端状态更新';
+                    sendData.data = hallData[i];
+                    io.sockets.in(data.roomId).emit('isPlayLandlord', sendData);
+
+                    isPlayLandlord = false;
+                    break;
+                }
+            }
+        }
+
+        if (isPlayLandlord) {
             sendData.code = 201;
             sendData.msg = '异常错误';
             sendData.data = {};

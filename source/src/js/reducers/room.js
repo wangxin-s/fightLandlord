@@ -17,8 +17,9 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
         roomId: '',
         landlordCard: [],//地主牌数据源
         status: 'ready',//房间内当前进行到哪一步 状态
-        status_is_playLandlord:'false',//子状态=> 抢地主
+        subStatus:'',//子状态=> 抢地主
         is_playLandlord:[],//谁是地主
+        playerLandlordNum:0,//叫地主 抢地主次数
         leftPlayer: {
             id: '',
             account: '',

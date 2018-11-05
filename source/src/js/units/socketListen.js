@@ -62,6 +62,14 @@ socket.on('Licensing',(data) => {
 })
 
 
+// 玩家是否抢地主  后端返回监听
+
+let isPlayLandlordObject = {
+    callBack:function() {}
+}
+socket.on('isPlayLandlord',(data) => {
+    isPlayLandlordObject.callBack(data)
+})
 
 
 
@@ -83,4 +91,5 @@ export {
     getRoomPlayerInfoObject,
     readyObject,
     LicensingObject,
+    isPlayLandlordObject,
 }
