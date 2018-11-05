@@ -686,8 +686,11 @@ class RoomMain extends React.Component {
                 {/*顶部展示区域 start*/}
                 <Top
                     list={this.state.list}
+                    roomPlayerInfo={room.roomPlayerInfo}
+
+
+                    
                     newTime={this.state.newTime}
-                    isRevers={this.state.isRevers}
                     revers={this.revers.bind(this)}
                     exit={this.exit.bind(this)}
                 />
@@ -766,7 +769,10 @@ class RoomMain extends React.Component {
                         </div>
 
                         {/* 地主农民身份 */}
-                        <div className="my-identity hidden"></div>
+                        <div className="my-identity" style={{display:room.roomPlayerInfo.subStatus=='playCard'?'block':'none'}}>
+                            <img src={room.roomPlayerInfo.is_playLandlord[room.roomPlayerInfo.is_playLandlord.length-1]==mySeat?
+                                require('../../images/Landlord.png'):require('../../images/farmer.png')} alt=""/>
+                        </div>
                     </div>
 
                     {/*底部静态文件 start*/}

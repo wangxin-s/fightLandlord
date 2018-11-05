@@ -89,7 +89,11 @@ class MyBeenOutCard extends React.Component {
 
                         </div>
                         <div className="player-identity">
-                            <img className="farmer hidden" src={require('../../../images/farmer.png')} alt="" />
+                            <img className="farmer" 
+                            style={{display:this.props.roomPlayerInfo.subStatus=='playCard'?'block':'none'}}
+                            src={this.props.roomPlayerInfo.is_playLandlord[this.props.roomPlayerInfo.is_playLandlord.length-1]==leftSeat?
+                            require('../../../images/Landlord.png'):require('../../../images/farmer.png')} alt="" />
+
                             {status == 'Licensing' ?
                                 <div className="card-back">
                                     {this.props.roomPlayerInfo[leftSeat].cardData.length}
@@ -137,7 +141,11 @@ class MyBeenOutCard extends React.Component {
                     <div className="player">
                         {/* 右边玩家 */}
                         <div className="player-identity">
-                            <img className="farmer hidden" src={require('../../../images/farmer.png')} alt="" />
+                            <img className="farmer" 
+                            style={{display:this.props.roomPlayerInfo.subStatus=='playCard'?'block':'none'}}
+                            src={this.props.roomPlayerInfo.is_playLandlord[this.props.roomPlayerInfo.is_playLandlord.length-1]==rightSeat?
+                            require('../../../images/Landlord.png'):require('../../../images/farmer.png')} alt="" />
+
                             {status == 'Licensing' ?
                                 <div className="card-back">
                                     {this.props.roomPlayerInfo[rightSeat].cardData.length}
