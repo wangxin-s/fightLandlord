@@ -25,6 +25,7 @@ import card_back from '../../images/card_back.png';
 
 import Top from '../components/room/top';
 import Ready from '../components/room/ready';
+import IsPlayLandlordTitle from '../components/room/isPlayLandlordTitle';
 import MyCard from '../components/room/myCard';
 import MyPlayButton from '../components/room/myPlayButton';
 import PlayLandlordButton from '../components/room/playLandlordButton';
@@ -81,7 +82,7 @@ class RoomMain extends React.Component {
             playerTwoData: [],
             // 玩家操作倒计时  控制隐藏显示
             isTimer: 1,
-            
+
             // 当前时间
             newTime: '',
             // 地主牌  翻转控制
@@ -142,29 +143,20 @@ class RoomMain extends React.Component {
         }
 
         // 玩家是否抢地主 后端返回监听
-        isPlayLandlordObject.callBack = (data)=> {
+        isPlayLandlordObject.callBack = (data) => {
             console.log(data)
             clearInterval(timer)
             this.setState({
                 count: 50,
             })
-            
 
             if (data.code == 200) {
                 this.props._roomHandle({
                     roomPlayerInfo: data.data
                 })
-                if(data.data.subStatus!='playCard') {
-                    timer = setInterval(() => {
-                        console.log('timer1')
-                        if (this.state.count <= 0) {
-                            clearInterval(timer);
-                        } else {
-                            this.setState({
-                                count: this.state.count - 1,
-                            })
-                        }
-                    }, 1000)
+                if (data.data.subStatus != 'playCard') {
+                    // 启动抢地主定时
+                    this.playLandlordTimer()
                 }
             } else {
                 alert(data.msg)
@@ -251,10 +243,7 @@ class RoomMain extends React.Component {
         timer = setInterval(() => {
             console.log("timer")
             if (this.state.count <= 0) {
-                this.setState({
-                    count: 50
-                })
-                clearInterval(timer);
+                this.default_playerNoLandlord()
             } else {
                 this.setState({
                     count: this.state.count - 1,
@@ -263,7 +252,22 @@ class RoomMain extends React.Component {
         }, 1000)
     }
 
-    
+    // 倒计时结束 默认不抢地主
+    default_playerNoLandlord() {
+        let roomPlayerInfo = this.props.room.roomPlayerInfo;
+        // 当前是谁叫地主 默认不抢
+        let defaultSeat = roomPlayerInfo.leftPlayer.playLandlord=='true'&&'leftPlayer' 
+                || roomPlayerInfo.rightPlayer.playLandlord=='true'&&'rightPlayer'
+                || roomPlayerInfo.bottomPlayer.playLandlord=='true'&&'bottomPlayer';
+        socket.emit('isPlayLandlord', {
+            userInfo: this.props.login.userInfo,
+            roomId: roomPlayerInfo.roomId,
+            seat: defaultSeat,
+            isPlayLandlord: 'false',
+            isPlayLandlordTitle:roomPlayerInfo.is_playLandlord.length>0?'不抢':'不叫',
+        })
+    }
+
 
 
 
@@ -553,7 +557,7 @@ class RoomMain extends React.Component {
         })
     }
 
-    
+
 
     //出牌定时器
     playCardTimer() {
@@ -623,7 +627,7 @@ class RoomMain extends React.Component {
                         subStatus: '',//子状态=> 抢地主
                         status: 'ready',
                         is_playLandlord: [],//谁是地主
-                        playerLandlordNum:0,//叫地主 抢地主次数
+                        playerLandlordNum: 0,//叫地主 抢地主次数
                         leftPlayer: {
                             id: '',
                             account: '',
@@ -633,7 +637,8 @@ class RoomMain extends React.Component {
                             seat: '',
                             is_ready: '',
                             cardData: [],//当前玩家  卡牌数据源
-                            playLandlord:'false',//谁在抢地主
+                            playLandlord: 'false',//谁在抢地主
+                            isPlayLandlordTitle: '',//存储当前玩家是否叫地主 仅给前端做页面展示
                         },
                         rightPlayer: {
                             id: '',
@@ -644,7 +649,8 @@ class RoomMain extends React.Component {
                             seat: '',
                             is_ready: '',
                             cardData: [],//当前玩家  卡牌数据源
-                            playLandlord:'false',
+                            playLandlord: 'false',
+                            isPlayLandlordTitle: '',
                         },
                         bottomPlayer: {
                             id: '',
@@ -655,7 +661,8 @@ class RoomMain extends React.Component {
                             seat: '',
                             is_ready: '',
                             cardData: [],//当前玩家  卡牌数据源
-                            playLandlord:'false',
+                            playLandlord: 'false',
+                            isPlayLandlordTitle: '',
                         }
                     }
                 })
@@ -688,8 +695,6 @@ class RoomMain extends React.Component {
                     list={this.state.list}
                     roomPlayerInfo={room.roomPlayerInfo}
 
-
-                    
                     newTime={this.state.newTime}
                     revers={this.revers.bind(this)}
                     exit={this.exit.bind(this)}
@@ -701,10 +706,12 @@ class RoomMain extends React.Component {
                     <LeftPlay
                         userInfo={this.props.login.userInfo}
                         roomPlayerInfo={room.roomPlayerInfo}
+                        count={this.state.count}
+
                         leftList={room.left}
                         rightList={room.right}
                         isTimer={this.state.isTimer}
-                        count={this.state.count}
+
                     />
 
                     <div className="my-show-brand">
@@ -718,7 +725,11 @@ class RoomMain extends React.Component {
                             /> : ''
                         }
 
-
+                        {/* 叫地主 && 不叫展示 */}
+                        <IsPlayLandlordTitle 
+                            roomPlayerInfo={room.roomPlayerInfo}
+                            mySeat={mySeat}
+                        />
 
                         {/* 不出&出牌 按钮 start */}
                         <MyPlayButton
@@ -743,7 +754,7 @@ class RoomMain extends React.Component {
                             noLandlord={this.noLandlord.bind(this)}
                             is_playLandlord={this.is_playLandlord.bind(this)}
                             isTimer={this.state.isTimer}
-                            
+
                         />
 
                         {/* 已出的牌  start*/}
@@ -769,9 +780,9 @@ class RoomMain extends React.Component {
                         </div>
 
                         {/* 地主农民身份 */}
-                        <div className="my-identity" style={{display:room.roomPlayerInfo.subStatus=='playCard'?'block':'none'}}>
-                            <img src={room.roomPlayerInfo.is_playLandlord[room.roomPlayerInfo.is_playLandlord.length-1]==mySeat?
-                                require('../../images/Landlord.png'):require('../../images/farmer.png')} alt=""/>
+                        <div className="my-identity" style={{ display: room.roomPlayerInfo.subStatus == 'playCard' ? 'block' : 'none' }}>
+                            <img src={room.roomPlayerInfo.is_playLandlord[room.roomPlayerInfo.is_playLandlord.length - 1] == mySeat ?
+                                require('../../images/Landlord.png') : require('../../images/farmer.png')} alt="" />
                         </div>
                     </div>
 

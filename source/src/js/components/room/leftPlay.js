@@ -70,6 +70,7 @@ class MyBeenOutCard extends React.Component {
         let leftSeat = this.state.leftSeat;
         let rightSeat = this.state.rightSeat;
         let status = this.props.roomPlayerInfo.status;//当前房间  进行到哪一步状态
+        let roomPlayerInfo = this.props.roomPlayerInfo;
         return (
             <div className="room-container-player">
                 <div className="room-container-player-left">
@@ -89,10 +90,10 @@ class MyBeenOutCard extends React.Component {
 
                         </div>
                         <div className="player-identity">
-                            <img className="farmer" 
-                            style={{display:this.props.roomPlayerInfo.subStatus=='playCard'?'block':'none'}}
-                            src={this.props.roomPlayerInfo.is_playLandlord[this.props.roomPlayerInfo.is_playLandlord.length-1]==leftSeat?
-                            require('../../../images/Landlord.png'):require('../../../images/farmer.png')} alt="" />
+                            <img className="farmer"
+                                style={{ display: this.props.roomPlayerInfo.subStatus == 'playCard' ? 'block' : 'none' }}
+                                src={this.props.roomPlayerInfo.is_playLandlord[this.props.roomPlayerInfo.is_playLandlord.length - 1] == leftSeat ?
+                                    require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
 
                             {status == 'Licensing' ?
                                 <div className="card-back">
@@ -109,12 +110,17 @@ class MyBeenOutCard extends React.Component {
                         {/* <div className="is-landlord" style={{ display: this.props.isTimer == 3 ? 'none' : 'block' }}></div> */}
 
                         {/* 准备 */}
-                        <div className="isReady" style={{ display: this.props.roomPlayerInfo.status == 'ready' && this.props.roomPlayerInfo[leftSeat].is_ready == 'true' ? 'block' : 'none' }}>
+                        <div className="isplayLandlordTitle" style={{ display: this.props.roomPlayerInfo.status == 'ready' && this.props.roomPlayerInfo[leftSeat].is_ready == 'true' ? 'block' : 'none' }}>
                             已准备
                         </div>
 
+                        {/* 是否抢地主展示title */}
+                        <div className="isplayLandlordTitle" style={{ display: roomPlayerInfo.subStatus == 'playLandlord' && roomPlayerInfo[leftSeat].isPlayLandlordTitle != '' ? 'block' : 'none' }}>
+                            {roomPlayerInfo[leftSeat].isPlayLandlordTitle}
+                        </div>
+
                         {/* 倒计时 */}
-                        <div className="timer" style={{ display: this.props.isTimer == 3 ? 'block' : 'none' }}>
+                        <div className="timer" style={{ display: this.props.roomPlayerInfo[leftSeat].playLandlord == 'true' ? 'block' : 'none' }}>
                             {this.props.count}
                         </div>
                     </div>
@@ -128,28 +134,33 @@ class MyBeenOutCard extends React.Component {
                         {/* <div className="is-landlord" style={{ display: this.props.isTimer == 2 ? 'none' : 'block' }}></div> */}
 
                         {/* 准备 */}
-
-                        <div className="isReady" style={{ display: this.props.roomPlayerInfo.status == 'ready' && this.props.roomPlayerInfo[rightSeat].is_ready == 'true' ? 'block' : 'none' }}>
+                        <div className="isplayLandlordTitle" style={{ display: this.props.roomPlayerInfo.status == 'ready' && this.props.roomPlayerInfo[rightSeat].is_ready == 'true' ? 'block' : 'none' }}>
                             已准备
                         </div>
 
+                        {/* 是否抢地主展示title */}
+                        <div className="isplayLandlordTitle" style={{ display: roomPlayerInfo.subStatus == 'playLandlord' && roomPlayerInfo[rightSeat].isPlayLandlordTitle != '' ? 'block' : 'none' }}>
+                            {roomPlayerInfo[rightSeat].isPlayLandlordTitle}
+                        </div>
+
+
                         {/* 倒计时 */}
-                        <div className="timer" style={{ display: this.props.isTimer == 2 ? 'block' : 'none' }}>
+                        <div className="timer" style={{ display: this.props.roomPlayerInfo[rightSeat].playLandlord == 'true' ? 'block' : 'none' }}>
                             {this.props.count}
                         </div>
                     </div>
                     <div className="player">
                         {/* 右边玩家 */}
                         <div className="player-identity">
-                            <img className="farmer" 
-                            style={{display:this.props.roomPlayerInfo.subStatus=='playCard'?'block':'none'}}
-                            src={this.props.roomPlayerInfo.is_playLandlord[this.props.roomPlayerInfo.is_playLandlord.length-1]==rightSeat?
-                            require('../../../images/Landlord.png'):require('../../../images/farmer.png')} alt="" />
+                            <img className="farmer"
+                                style={{ display: this.props.roomPlayerInfo.subStatus == 'playCard' ? 'block' : 'none' }}
+                                src={this.props.roomPlayerInfo.is_playLandlord[this.props.roomPlayerInfo.is_playLandlord.length - 1] == rightSeat ?
+                                    require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
 
                             {status == 'Licensing' ?
                                 <div className="card-back">
                                     {this.props.roomPlayerInfo[rightSeat].cardData.length}
-                                </div>:''
+                                </div> : ''
                             }
 
                         </div>

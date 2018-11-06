@@ -30,6 +30,7 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
             is_ready:'',
             cardData: [],//当前玩家  卡牌数据源
             is_is_playLandlord1:'false',//谁在抢地主
+            isPlayLandlordTitle: '',
         },
         rightPlayer: {
             id: '',
@@ -41,6 +42,7 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
             is_ready:'',
             cardData: [],//当前玩家  卡牌数据源
             is_is_playLandlord1:'false',//谁在抢地主
+            isPlayLandlordTitle: '',
         },
         bottomPlayer: {
             id: '',
@@ -52,6 +54,7 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
             is_ready:'',
             cardData: [],//当前玩家  卡牌数据源
             is_is_playLandlord1:'false',//谁在抢地主
+            isPlayLandlordTitle: '',
         }
     },//当前房间玩家信息
 };
