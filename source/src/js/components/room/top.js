@@ -23,12 +23,18 @@ class BottomCard extends React.Component {
         )
     }
 
+    //离开房间
+    leaveRoom(){
+        this.props.leaveRoom();
+    }
+
     render() {
         return (
             <div className="room-header">
                 <div className="room-header-left">
-                    <img src={require('../../../images/exit.png')} alt=""/>
+                    <img onClick={this.leaveRoom.bind(this)} src={require('../../../images/exit.png')} alt=""/>
                     <span className="time">{this.props.newTime}</span>
+                    <span className="time">房间：{this.props.roomId}</span>
                 </div>
                 {/*三张底牌 start*/}
                 <div className='room-header-center' onClick={this.props.revers}>

@@ -5,6 +5,9 @@
 //判断当前牌的类型
 export function cardType(list) {
     newSort(list);
+    if(list.length<=0){
+        return false;
+    }
     let newData=countScore(list);
     let score = newData.score;//牌分值数组
     let arr = newData.arr;//牌相同张数数组  list--[1,1,2,2,3,3]   arr--[2,2,2]
@@ -159,6 +162,9 @@ export function compareCard(myList,upList){
     /*
     myList  我当前要出的牌  和 上家已经出的牌
     * */
+    if(upList.length<=0){
+        return true;
+    }
     let myNewData=countScore(myList);//我当前要出的牌
     let myType=cardType(myList);//我的牌的牌型
     let myLen=myList.length;//我的牌的牌型

@@ -3,31 +3,18 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-
 import {hallHandle} from '../actions/hall';
+//import {socket_emit} from '../units/socket';
+var socket = require('socket.io-client')('http://localhost:3001');
 
-const socket = require('socket.io-client')('http://localhost:3001');
 class HallMain extends React.Component {
-    // componentDidMount() {
-    //     let options = {
-    //         partyId : 'YH005'
-    //     }
-    //     socket.emit('loginer',options);
-    //     socket.on('loginer',(data)=>{
-    //         console.log(data);
-    //     }) 
-    // }      
-    // constructor(props) {
-    //     super(props);
-        
-    //     this.state={
-    //         hallInfo:[],//房间信息
-    //     }
-    // }
 
     componentDidMount() {
+        console.log('1234567');
+        socket.emit('getHallInfo','socket方法测试');
         socket.emit('getHallInfo', {});
         socket.on('getHallInfo',(data)=>{
+            console.log('--------进入大厅-------',data);
             this.props._hallHandle({
                 hallInfo:data,
             });
@@ -39,7 +26,21 @@ class HallMain extends React.Component {
         });
     }
 
+    //生命周期销毁方法
+    componentWillUnmount() {
+        //告诉后台离开了，销毁当前 socket
+        socket.removeAllListeners('getHallInfo');
+        socket.removeAllListeners('exitHall');
+    }
+
     action() {
+        let login=this.props.login;
+        socket.emit('fastMatching', {
+            message:'快速匹配',
+            id:login.id,
+            account: login.account,
+            password: login.password,
+        });
         this.props.history.push("/room");
     }
 
@@ -49,7 +50,13 @@ class HallMain extends React.Component {
         if(param!==""){
             alert('此位置已有人');
         }else{
-            socket.emit('sit',{id:data.roomId,roomNum:1,location:sit,userId:this.props.match.params.id});
+            socket.emit('sit',{roomId:data.roomId,roomNum:1,location:sit,userId:this.props.match.params.id});
+            this.props._hallHandle({
+                roomId:data.roomId,
+                location:sit,
+                userId:this.props.match.params.id
+            });
+            this.props.history.push("/room");
         }
     }
     showHall(data){
@@ -71,15 +78,6 @@ class HallMain extends React.Component {
                     bottomPic=val.bottomSit.headImg;
                 }else{
                     bottomPic='';
-                }
-
-                if(leftPic!=="" && rightPic!=="" && bottomPic!==''){
-                    
-                    let id=Number(this.props.match.params.id);
-                    if(id===val.leftSit.id||id===val.rightSit.id||id===val.bottomSit.id){
-                        this.props.history.push("/room");
-                    }
-                    
                 }
 
                 let roomNumImg=require('../../images/room'+(i+1)+'.png');

@@ -16,17 +16,19 @@ class MyPlayButton extends React.PureComponent {
     }
 
     render() {
+        let isReady=this.props.show;
         return (
-            <div className="my-operating" style={{display:this.props.show==1?'block':'none'}}>
-                <div className="not-out" onClick={this.props.notOut}>
+            <div className="my-operating" style={{display:(isReady=='discardOrNo'||isReady=='noDiscard')?'block':'none'}}>
+                <div className="not-out" style={{display:(isReady=='discardOrNo')?'block':'none'}} onClick={this.props.playCard.bind(this,2000)}>
                     不出
                 </div>
-                <div className="timer" style={{display:this.props.show==1?'block':'none'}}>
+                <div className="timer"  style={{display:(isReady=='discardOrNo')?'block':'none'}}>
                     {this.props.count}
                 </div>
-                <div className="play-card" onClick={this.props.playCard}>
+                <div className="play-card"  style={{display:(isReady=='discardOrNo')?'block':'none'}} onClick={this.props.playCard.bind(this,1000)}>
                     出牌
                 </div>
+                <div  style={{display:(isReady=='noDiscard')?'inline-block':'none'}}>不出</div>
             </div>
         );
     }

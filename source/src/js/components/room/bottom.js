@@ -16,11 +16,12 @@ class Bottom extends React.Component {
     }
 
     render() {
+        let bottomData=this.props.bottomData;
         return (
             <div className="room-container-footer">
                 <div className="footer-left">
-                    <p>平安是福</p>
-                    <p className="color-y"><img className="beans" src={require('../../../images/beans2.png')}></img>9999</p>
+                    <p>{bottomData.account}</p>
+                    <p className="color-y"><img className="beans" src={require('../../../images/beans2.png')}></img>{bottomData.beanNum}</p>
                 </div>
                 <div className="footer-right">
                     <img src={require('../../../images/expression.png')} alt=""/>

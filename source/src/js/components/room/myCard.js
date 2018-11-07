@@ -48,8 +48,12 @@ class MyCard extends React.Component {
     }
 
     render() {
+        let isReady=this.props.show;
         return (
-            <div className="show-card" style={{ overflow: "hidden", display: "inline-block", verticalAlign: "bottom" }}>
+            <div className="show-card"
+                 style={{ overflow: "hidden",
+                display: (isReady!='readyEd'&&isReady!='ready')?"inline-block":"none",
+                verticalAlign: "bottom" }}>
                 {this.brandData(this.props.list,this.props.imgArr)}
             </div>
         );

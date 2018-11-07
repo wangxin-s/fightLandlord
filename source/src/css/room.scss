@@ -159,6 +159,14 @@
                         top: 40%;
                         left: 0;
                     }
+                    .center{
+                        width: 1.2rem;
+                        height: .5rem;
+                        background-size: 100% 100%;
+                        position: absolute;
+                        top: 40%;
+                        left: 0;
+                    }
                 }
             }
             .room-container-player-right {
@@ -240,6 +248,13 @@
                         top: 40%;
                         right: 0;
                     }
+                    .center{
+                        width: 1.2rem;
+                        height: .5rem;
+                        position: absolute;
+                        top: 40%;
+                        right: 0;
+                    }
                 }
                 
             }
@@ -285,7 +300,15 @@
                     float: right;
                     background: url('../images/border.png') no-repeat;
                     background-size: 100% 100%;
-                } 
+                }
+                .ready-icon{
+                    background: url('../images/action-btn.png') no-repeat;
+                    background-size: 100% 100%;
+                    display: none;
+                }
+                .prepared-icon{
+                    display: inline-block;
+                }
                 .timer {
                     width: 1rem;
                     height: 1rem;
@@ -349,6 +372,15 @@
                 width: .5rem;
                 height: 1.2rem;
                 background: url('../images/Landlord.png') no-repeat;
+                background-size: 100% 100%;
+                position: absolute;
+                left: 2.1rem;
+                bottom: 0;
+            }
+            .farmer{
+                width: .5rem;
+                height: 1.2rem;
+                background: url('../images/farmer.png') no-repeat;
                 background-size: 100% 100%;
                 position: absolute;
                 left: 2.1rem;

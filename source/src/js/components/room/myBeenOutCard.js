@@ -33,8 +33,9 @@ class MyBeenOutCard extends React.Component {
         })
     }
     render() {
+        let isReady=this.props.show;
         return (
-            <div className="been-out" style={{display:this.props.show?'block':'none'}}>
+            <div className="been-out" style={{display:isReady=='hasDisCard'?'block':'none'}}>
                 {this.beenOut(this.props.list)}
             </div>
         );
