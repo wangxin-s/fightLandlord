@@ -36,7 +36,12 @@ import {
     roomHandle, getCard
 } from '../actions/room';
 
-import { socket, outRoomObject, getRoomPlayerInfoObject, readyObject, LicensingObject, isPlayLandlordObject } from '../units/socketListen';
+import {
+    socket, outRoomObject, getRoomPlayerInfoObject, readyObject,
+    LicensingObject, isPlayLandlordObject, isPlayCardObject,
+    clearCardStatusArrObject,
+
+} from '../units/socketListen';
 
 import { cardType, compareCard, cloneFun } from '../units/room';
 
@@ -63,9 +68,14 @@ class RoomMain extends React.Component {
         this.state = {
             // 玩家操作倒计时 (抢地主)
             count: 50,
-
+            // "我"  =>玩家位置
+            mySeat: this.props.login.userInfo.seat,
             // 卡牌是否选择 及出牌控制  true：选中  'out'：出牌
-            imgArr: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+            cardStatusArr: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+
+
+
+
             // 出牌&不出  控制隐藏显示
             isShow_playCard: true,
             // 抢地主&不抢  控制隐藏显示
@@ -89,8 +99,7 @@ class RoomMain extends React.Component {
             isRevers: false,
             //地主牌数据源
             list: [card_back, card_back, card_back],
-            // "我"  =>玩家位置
-            mySeat: this.props.login.userInfo.seat,
+
         }
     }
 
@@ -154,7 +163,10 @@ class RoomMain extends React.Component {
                 this.props._roomHandle({
                     roomPlayerInfo: data.data
                 })
-                if (data.data.subStatus != 'playCard') {
+                if (data.data.subStatus == 'playCard') {
+                    // 启动出牌 不出牌定时器
+                    this.playCardTimer()
+                } else {
                     // 启动抢地主定时
                     this.playLandlordTimer()
                 }
@@ -163,6 +175,47 @@ class RoomMain extends React.Component {
                 return;
             }
         }
+
+        // 玩家是否出牌 后端返回监听
+        isPlayCardObject.callBack = (data) => {
+            console.log(data)
+            if (data.code == 200) {
+                this.props._roomHandle({
+                    roomPlayerInfo: data.data,
+                })
+            } else {
+                alert(data.msg)
+                return;
+            }
+        }
+
+        // 用户出牌服务端返回事件 清除当前玩家卡牌是否选择 及出牌控制  true：选中  out：出牌
+        clearCardStatusArrObject.callBack = (data) => {
+            console.log(data)
+            if (data.code == 200) {
+                let cardStatusArr = [];
+                this.state.cardStatusArr.map((item) => {
+                    if (item) {
+                        item = false;
+                    }
+                    cardStatusArr.push(item)
+                })
+                this.setState({
+                    cardStatusArr: cardStatusArr
+                })
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -197,40 +250,19 @@ class RoomMain extends React.Component {
                 rightList: data.rightList,//右侧玩家出的牌
             })
         });
-        /*// 获取当前时间  倒计时
-         timeTimer = setInterval(() => {
-         let date = new Date();
-         let hours = date.getHours();
-         let minutes = date.getMinutes();
-         let seconds = date.getSeconds();
-         let newTime = hours + ':' + minutes + ':' + seconds;
-         this.setState({
-         newTime: newTime
-         })
-         }, 1000)
+        // 获取当前时间  倒计时
+        // timeTimer = setInterval(() => {
+        //     let date = new Date();
+        //     let hours = date.getHours();
+        //     let minutes = date.getMinutes();
+        //     let seconds = date.getSeconds();
+        //     let newTime = hours + ':' + minutes + ':' + seconds;
+        //     this.setState({
+        //         newTime: newTime
+        //     })
+        // }, 1000)
 
-         // 玩家操作  倒计时
-         timer = setInterval(() => {
-         if (this.state.count == 1) {
-         let isTimer = 1;
-         if (this.state.isTimer == 1) {
-         isTimer = 2;
-         }
-         if (this.state.isTimer == 2) {
-         isTimer = 3;
-         }
-         this.setState({
-         isShow_is_playLandlord: false,
-         isTimer: isTimer,
-         count: 10,
-         })
-         } else {
-         console.log('timer')
-         this.setState({
-         count: this.state.count -= 1
-         })
-         }
-         }, 1000)*/
+        this.scoreComparisonTest()
     }
 
     componentWillUnmount() {
@@ -252,21 +284,37 @@ class RoomMain extends React.Component {
         }, 1000)
     }
 
-    // 倒计时结束 默认不抢地主
+    // 抢地主倒计时结束 默认不抢地主
     default_playerNoLandlord() {
         let roomPlayerInfo = this.props.room.roomPlayerInfo;
         // 当前是谁叫地主 默认不抢
-        let defaultSeat = roomPlayerInfo.leftPlayer.playLandlord=='true'&&'leftPlayer' 
-                || roomPlayerInfo.rightPlayer.playLandlord=='true'&&'rightPlayer'
-                || roomPlayerInfo.bottomPlayer.playLandlord=='true'&&'bottomPlayer';
+        let defaultSeat = roomPlayerInfo.leftPlayer.playLandlord == 'true' && 'leftPlayer'
+            || roomPlayerInfo.rightPlayer.playLandlord == 'true' && 'rightPlayer'
+            || roomPlayerInfo.bottomPlayer.playLandlord == 'true' && 'bottomPlayer';
         socket.emit('isPlayLandlord', {
             userInfo: this.props.login.userInfo,
             roomId: roomPlayerInfo.roomId,
             seat: defaultSeat,
             isPlayLandlord: 'false',
-            isPlayLandlordTitle:roomPlayerInfo.is_playLandlord.length>0?'不抢':'不叫',
+            isPlayLandlordTitle: roomPlayerInfo.is_playLandlord.length > 0 ? '不抢' : '不叫',
         })
     }
+
+    // 启动出牌 不出牌定时器
+    playCardTimer() {
+
+    }
+
+    // 当牌被点击时
+    cardClick(index) {
+        let cardStatusArr = this.state.cardStatusArr;
+        cardStatusArr[index] = !cardStatusArr[index]
+        this.setState({
+            cardStatusArr: cardStatusArr
+        })
+    }
+
+
 
 
 
@@ -484,12 +532,12 @@ class RoomMain extends React.Component {
     notOut() {
         //告诉后台--不出牌
         socket.emit('notPlayCard', '发送消息--不出牌');
-        let state = this.state.imgArr;
+        let state = this.state.cardStatusArr;
         state.forEach((item, index) => {
             state[index] = false;
         });
         this.setState({
-            imgArr: state,
+            cardStatusArr: state,
         })
     }
 
@@ -560,39 +608,39 @@ class RoomMain extends React.Component {
 
 
     //出牌定时器
-    playCardTimer() {
-        let count = 5;
-        clearInterval(timer);
-        timer = setInterval(() => {
-            let obj = this.state;
-            if (this.state.count <= 1) {
-                if (obj.isTimer == 1) {
-                    this.setState({
-                        isShow_playCard: false,
-                        isTimer: obj.isTimer + 1,
-                        count: count,
-                        isShow_beenOut: true,
-                    })
-                } else if (obj.isTimer >= 3) {
-                    this.setState({
-                        isShow_playCard: true,
-                        isTimer: 1,
-                        count: count,
-                        isShow_beenOut: false,
-                    })
-                } else {
-                    this.setState({
-                        count: count,
-                        isTimer: obj.isTimer + 1,
-                    })
-                }
-            } else {
-                this.setState({
-                    count: this.state.count - 1,
-                })
-            }
-        }, 1000)
-    }
+    // playCardTimer() {
+    //     let count = 5;
+    //     clearInterval(timer);
+    //     timer = setInterval(() => {
+    //         let obj = this.state;
+    //         if (this.state.count <= 1) {
+    //             if (obj.isTimer == 1) {
+    //                 this.setState({
+    //                     isShow_playCard: false,
+    //                     isTimer: obj.isTimer + 1,
+    //                     count: count,
+    //                     isShow_beenOut: true,
+    //                 })
+    //             } else if (obj.isTimer >= 3) {
+    //                 this.setState({
+    //                     isShow_playCard: true,
+    //                     isTimer: 1,
+    //                     count: count,
+    //                     isShow_beenOut: false,
+    //                 })
+    //             } else {
+    //                 this.setState({
+    //                     count: count,
+    //                     isTimer: obj.isTimer + 1,
+    //                 })
+    //             }
+    //         } else {
+    //             this.setState({
+    //                 count: this.state.count - 1,
+    //             })
+    //         }
+    //     }, 1000)
+    // }
 
     //地主牌翻转 
     revers() {
@@ -624,7 +672,7 @@ class RoomMain extends React.Component {
                     roomPlayerInfo: {
                         roomId: '',
                         landlordCard: [],//地主牌数据源
-                        subStatus: '',//子状态=> 抢地主
+                        subStatus: '',//子状态=> 抢地主||打牌阶段
                         status: 'ready',
                         is_playLandlord: [],//谁是地主
                         playerLandlordNum: 0,//叫地主 抢地主次数
@@ -639,6 +687,8 @@ class RoomMain extends React.Component {
                             cardData: [],//当前玩家  卡牌数据源
                             playLandlord: 'false',//谁在抢地主
                             isPlayLandlordTitle: '',//存储当前玩家是否叫地主 仅给前端做页面展示
+                            playCard: 'false',//当前是谁在出牌
+                            showOutCard: [],//当前玩家  上一轮出牌操作 (已出的牌||不出)
                         },
                         rightPlayer: {
                             id: '',
@@ -651,6 +701,8 @@ class RoomMain extends React.Component {
                             cardData: [],//当前玩家  卡牌数据源
                             playLandlord: 'false',
                             isPlayLandlordTitle: '',
+                            playCard: 'false',
+                            showOutCard: [],
                         },
                         bottomPlayer: {
                             id: '',
@@ -663,6 +715,8 @@ class RoomMain extends React.Component {
                             cardData: [],//当前玩家  卡牌数据源
                             playLandlord: 'false',
                             isPlayLandlordTitle: '',
+                            playCard: 'false',
+                            showOutCard: [],
                         }
                     }
                 })
@@ -694,10 +748,8 @@ class RoomMain extends React.Component {
                 <Top
                     list={this.state.list}
                     roomPlayerInfo={room.roomPlayerInfo}
-
-                    newTime={this.state.newTime}
-                    revers={this.revers.bind(this)}
                     exit={this.exit.bind(this)}
+                    newTime={this.state.newTime}
                 />
 
 
@@ -707,11 +759,6 @@ class RoomMain extends React.Component {
                         userInfo={this.props.login.userInfo}
                         roomPlayerInfo={room.roomPlayerInfo}
                         count={this.state.count}
-
-                        leftList={room.left}
-                        rightList={room.right}
-                        isTimer={this.state.isTimer}
-
                     />
 
                     <div className="my-show-brand">
@@ -726,16 +773,22 @@ class RoomMain extends React.Component {
                         }
 
                         {/* 叫地主 && 不叫展示 */}
-                        <IsPlayLandlordTitle 
+                        <IsPlayLandlordTitle
                             roomPlayerInfo={room.roomPlayerInfo}
                             mySeat={mySeat}
                         />
 
-                        {/* 不出&出牌 按钮 start */}
+                        {/* 不出 && 出牌 按钮 start */}
                         <MyPlayButton
+                            roomPlayerInfo={room.roomPlayerInfo}
+                            userInfo={this.props.login.userInfo}
+                            mySeat={mySeat}
+                            count={this.state.count}
+                            cardList={room.roomPlayerInfo[mySeat].cardData}
+                            cardStatusArr={this.state.cardStatusArr}
+
                             show={this.state.isShow_playCard}
                             isTimer={this.state.isTimer}
-                            count={this.state.count}
                             notOut={this.notOut.bind(this)}
                             playCard={this.playCard.bind(this)}
                         />
@@ -747,14 +800,6 @@ class RoomMain extends React.Component {
                             count={this.state.count}
                             roomId={this.props.match.params.id}
                             mySeat={mySeat}
-
-
-
-                            show={this.state.isShow_is_playLandlord}
-                            noLandlord={this.noLandlord.bind(this)}
-                            is_playLandlord={this.is_playLandlord.bind(this)}
-                            isTimer={this.state.isTimer}
-
                         />
 
                         {/* 已出的牌  start*/}
@@ -768,14 +813,13 @@ class RoomMain extends React.Component {
                             <MyCard
                                 status={room.roomPlayerInfo.status}
                                 list={room.roomPlayerInfo[mySeat].cardData}
-                                imgArr={room.mySelectCard}
-                                imgClick={this.imgClick}
+                                cardStatusArr={this.state.cardStatusArr}
+                                cardClick={this.cardClick.bind(this)}
                             /> : ''
                         }
 
                         {/* 我的头像 */}
                         <div className="my-head" title="点击头像发牌" onClick={this.startCard}>
-                            {/* <img src={room.roomPlayerInfo&&room.roomPlayerInfo[mySeat]&&room.roomPlayerInfo[mySeat].headImg ? require('../../images/' + room.roomPlayerInfo[mySeat].headImg + '.png') : require('../../images/head-border.png')} alt="" /> */}
                             <img src={room.roomPlayerInfo[mySeat].headImg ? require('../../images/' + room.roomPlayerInfo[mySeat].headImg + '.png') : require('../../images/head-border.png')} alt="" />
                         </div>
 

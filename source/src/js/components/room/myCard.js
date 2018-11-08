@@ -16,7 +16,7 @@ class MyCard extends React.Component {
     }
 
     // 渲染所有牌
-    brandData(list,imgArr) {
+    brandData(list,statusArr) {
         let is_ml0 = true;
         let imgData = [];
         if(list.length>0) {
@@ -32,14 +32,14 @@ class MyCard extends React.Component {
                 //     i=(1065+item*1);
                 // }
                 let src=require('../../../images/card/card_'+item.icon+'.png');
-                if(is_ml0 && imgArr[index]!='out') {//当前第一张图片  margin-left 0
+                if(is_ml0 && statusArr[index]!='out') {//当前第一张图片  margin-left 0
                     imgData.push(
-                        <img key={index} src={src} className={['ml0',imgArr[item] ? 'transition-selection' : '', imgArr[item] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.props.imgClick.bind(this,index)} alt="" />
+                        <img key={index} src={src} className={['ml0',statusArr[index] ? 'transition-selection' : '', statusArr[index] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.props.cardClick.bind(this,index)} alt="" />
                     )
                     is_ml0 = false;
                 }else {
                     imgData.push(
-                        <img key={index} src={src} className={[imgArr[item] ? 'transition-selection' : '',imgArr[item] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.props.imgClick.bind(this,index)} alt="" />
+                        <img key={index} src={src} className={[statusArr[index] ? 'transition-selection' : '',statusArr[index] == 'out' ? 'transition-out' : ''].join(' ')} onClick={this.props.cardClick.bind(this,index)} alt="" />
                     )
                 }
     
@@ -53,7 +53,7 @@ class MyCard extends React.Component {
     render() {
         return (
             <div className="show-card" style={{ display: "inline-block", verticalAlign: "bottom" }}>
-                {this.brandData(this.props.list,this.props.imgArr)}
+                {this.brandData(this.props.list,this.props.cardStatusArr)}
             </div>
         );
     }

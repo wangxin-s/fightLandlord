@@ -63,12 +63,30 @@ socket.on('Licensing',(data) => {
 
 
 // 玩家是否抢地主  后端返回监听
-
 let isPlayLandlordObject = {
     callBack:function() {}
 }
 socket.on('isPlayLandlord',(data) => {
     isPlayLandlordObject.callBack(data)
+})
+
+
+// 当前玩家是否出牌
+
+let isPlayCardObject = {
+    callBack:function() {}
+}
+socket.on('isPlayCard',(data) => {
+    isPlayCardObject.callBack(data)
+})
+
+// 用户出牌后 清除当前玩家卡牌是否选择 及出牌控制  true：选中  out：出牌
+
+let clearCardStatusArrObject = {
+    callBack:function() {}
+}
+socket.on('clearCardStatusArr',(data) => {
+    clearCardStatusArrObject.callBack(data)
 })
 
 
@@ -92,4 +110,6 @@ export {
     readyObject,
     LicensingObject,
     isPlayLandlordObject,
+    isPlayCardObject,
+    clearCardStatusArrObject,
 }
