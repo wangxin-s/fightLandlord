@@ -67,7 +67,7 @@ class MyPlayButton extends React.PureComponent {
         let mySeat = this.props.mySeat;
         return (
             <div className="my-operating" style={{ "display": roomPlayerInfo.subStatus == 'playCard' && roomPlayerInfo[mySeat].playCard == 'true' ? 'block' : 'none' }}>
-                <div className="not-out" onClick={this.playCard.bind(this, 'false')} style={{ display: (roomPlayerInfo[leftSeat].showOutCard.length == 0 || roomPlayerInfo[leftSeat].showOutCard[0] == 'notOut') && (roomPlayerInfo[rightSeat].showOutCard.length == 0 || roomPlayerInfo[rightSeat].showOutCard[0] == 'notOut') ? 'none' : 'block' }}>
+                <div className="not-out" onClick={this.playCard.bind(this, 'false')} style={{ display: (roomPlayerInfo[leftSeat].showOutCardIcon.length == 0 || roomPlayerInfo[leftSeat].showOutCardIcon[0] == 'notOut') && (roomPlayerInfo[rightSeat].showOutCardIcon.length == 0 || roomPlayerInfo[rightSeat].showOutCardIcon[0] == 'notOut') ? 'none' : 'block' }}>
                     不出
                 </div>
                 <div className="timer">

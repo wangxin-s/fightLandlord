@@ -32,7 +32,8 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
             is_is_playLandlord1:'false',//谁在抢地主
             isPlayLandlordTitle: '',//存储当前玩家是否叫地主 仅给前端做页面展示
             playCard:'false',//当前是谁在出牌
-            showOutCard:[],//当前玩家  上一轮出牌操作 (已出的牌||不出)
+            showOutCardIcon: [],//当前玩家  上一轮出牌操作 (已出的牌||不出) Icon 用作前端展示
+            showOutCardVal: [],//当前玩家  上一轮出牌操作 (已出的牌||不出) Val  用作比牌
         },
         rightPlayer: {
             id: '',
@@ -46,8 +47,8 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
             is_is_playLandlord1:'false',//谁在抢地主
             isPlayLandlordTitle: '',
             playCard:'false',
-            showOutCard:[],
-            // 卡牌是否选择 及出牌控制  true：选中  'out'：出牌
+            showOutCardIcon: [],
+            showOutCardVal: [],
         },
         bottomPlayer: {
             id: '',
@@ -61,7 +62,8 @@ const roomState =sessionStorage.getItem('roomState')? JSON.parse(sessionStorage.
             is_is_playLandlord1:'false',//谁在抢地主
             isPlayLandlordTitle: '',
             playCard:'false',
-            showOutCard:[],
+            showOutCardIcon: [],
+            showOutCardVal: [],
         }
     },//当前房间玩家信息
 };

@@ -40,30 +40,32 @@ class MyBeenOutCard extends React.Component {
 
     // 左边玩家出牌展示
     leftCardData(list) {
-        return list.map((item, index) => {
-            return <img key={index} src={this.getSrc(item)} alt="" />
-        })
+        if (list[0] == 'notOut') {
+            return <div className="my-operating">
+                <div className='isplayLandlordTitle'>
+                    不出
+                </div>
+            </div>
+        } else {
+            return list.map((item, index) => {
+                return <img key={index} src={require('../../../images/card/card_' + item + '.png')} alt="" />
+            })
+        }
     }
 
     // 右边玩家出牌展示
     rightCardData(list) {
-        return list.map((item, index) => {
-            return <img key={index} src={this.getSrc(item)} alt="" />
-        })
-    }
-
-    getSrc(item) {
-        let i = 1061;
-        if (item * 1 == 51 || item * 1 == 50 || item * 1 == 49 || item * 1 == 48) {
-            i = 1061 + item * 1 - 48
-        } else if (item * 1 == 52) {
-            i = 1114;
-        } else if (item * 1 == 53) {
-            i = 1113;
+        if (list[0] == 'notOut') {
+            return  <div className="my-operating">
+                        <div className='isplayLandlordTitle'>
+                            不出
+                        </div>
+                    </div>
         } else {
-            i = (1065 + item * 1);
+            return list.map((item, index) => {
+                return <img key={index} src={require('../../../images/card/card_' + item + '.png')} alt="" />
+            })
         }
-        return require('../../../images/card/card_' + i + '@2x.png');
     }
 
     render() {
@@ -95,16 +97,24 @@ class MyBeenOutCard extends React.Component {
                                 src={this.props.roomPlayerInfo.is_playLandlord[this.props.roomPlayerInfo.is_playLandlord.length - 1] == leftSeat ?
                                     require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
 
-                            {status == 'Licensing' ?
+                            {/* {status == 'Licensing' ?
                                 <div className="card-back">
                                     {this.props.roomPlayerInfo[leftSeat].cardData.length}
                                 </div> : ''
-                            }
+                            } */}
+
+                            <div className="card-back" style={{visibility:status == 'Licensing'?'':'hidden'}}>
+                                {this.props.roomPlayerInfo[leftSeat].cardData.length}
+                            </div>
                         </div>
                     </div>
                     <div className="out-brand">
                         {/* 左边玩家出牌区 */}
-                        {/* {this.leftCardData(this.props.leftList)} */}
+                        {
+                            roomPlayerInfo[leftSeat].showOutCardIcon.length != 0 ?
+                                this.leftCardData(roomPlayerInfo[leftSeat].showOutCardIcon)
+                                : ''
+                        }
 
                         {/* 叫地主 */}
                         {/* <div className="is-landlord" style={{ display: this.props.isTimer == 3 ? 'none' : 'block' }}></div> */}
@@ -120,7 +130,7 @@ class MyBeenOutCard extends React.Component {
                         </div>
 
                         {/* 倒计时 */}
-                        <div className="timer" style={{ display: this.props.roomPlayerInfo[leftSeat].playLandlord == 'true' ? 'block' : 'none' }}>
+                        <div className="timer" style={{ display: this.props.roomPlayerInfo[leftSeat].playLandlord == 'true' || this.props.roomPlayerInfo[leftSeat].playCard == 'true'? 'block' : 'none' }}>
                             {this.props.count}
                         </div>
                     </div>
@@ -128,7 +138,11 @@ class MyBeenOutCard extends React.Component {
                 <div className="room-container-player-right">
                     <div className="out-brand">
                         {/* 右边玩家出牌区 */}
-                        {/* {this.rightCardData(this.props.rightList)} */}
+                        {
+                            roomPlayerInfo[rightSeat].showOutCardIcon.length != 0 ?
+                                this.leftCardData(roomPlayerInfo[rightSeat].showOutCardIcon)
+                                : ''
+                        }
 
                         {/* 叫地主 */}
                         {/* <div className="is-landlord" style={{ display: this.props.isTimer == 2 ? 'none' : 'block' }}></div> */}
@@ -145,7 +159,7 @@ class MyBeenOutCard extends React.Component {
 
 
                         {/* 倒计时 */}
-                        <div className="timer" style={{ display: this.props.roomPlayerInfo[rightSeat].playLandlord == 'true' ? 'block' : 'none' }}>
+                        <div className="timer" style={{ display: this.props.roomPlayerInfo[rightSeat].playLandlord == 'true' || this.props.roomPlayerInfo[rightSeat].playCard == 'true' ? 'block' : 'none' }}>
                             {this.props.count}
                         </div>
                     </div>
@@ -156,12 +170,18 @@ class MyBeenOutCard extends React.Component {
                                 style={{ display: this.props.roomPlayerInfo.subStatus == 'playCard' ? 'block' : 'none' }}
                                 src={this.props.roomPlayerInfo.is_playLandlord[this.props.roomPlayerInfo.is_playLandlord.length - 1] == rightSeat ?
                                     require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
+                            <div style={{clear:'both'}}></div>
 
-                            {status == 'Licensing' ?
+                            {/* {status == 'Licensing' ?
                                 <div className="card-back">
                                     {this.props.roomPlayerInfo[rightSeat].cardData.length}
                                 </div> : ''
-                            }
+                            } */}
+
+                            <div className="card-back" style={{visibility:status == 'Licensing'?'':'hidden'}}>
+                                {this.props.roomPlayerInfo[rightSeat].cardData.length}
+                            </div> 
+                            <div style={{clear:'both'}}></div>
 
                         </div>
                         <div className="player-head text-l">

@@ -17,25 +17,24 @@ class MyBeenOutCard extends React.Component {
 
     // 已出的牌展示
     beenOut(list) {
-        return list.map((item, index) => {
-            let i=1061;
-            if(item*1==51||item*1==50||item*1==49||item*1==48){
-                i=1061+item*1-48
-            }else if(item*1==52){
-                i=1114;
-            }else if(item*1==53){
-                i=1113;
-            }else{
-                i=(1065+item*1);
-            }
-            let src=require('../../../images/card/card_'+i+'@2x.png');
-            return <img key={index} src={src} alt="" />
+        let imgData = [];
+        list.forEach((item, index) => {
+            let src=require('../../../images/card/card_'+item+'.png');
+            imgData.push(
+                <img key={index} src={src} className={index==0 ?'ml0':''} alt="" />
+            )
+
         })
+        return imgData;
     }
     render() {
+        let roomPlayerInfo = this.props.roomPlayerInfo;
+        let mySeat = this.props.mySeat;
         return (
-            <div className="been-out" style={{display:this.props.show?'block':'none'}}>
-                {this.beenOut(this.props.list)}
+            <div className="been-out" style={{display:roomPlayerInfo[mySeat].showOutCardIcon.length!=0?'block':'none'}}>
+                {roomPlayerInfo[mySeat].showOutCardIcon[0]!='notOut'?
+                    this.beenOut(roomPlayerInfo[mySeat].showOutCardIcon):'不出'
+                }
             </div>
         );
     }

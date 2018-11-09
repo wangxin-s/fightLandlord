@@ -21,16 +21,6 @@ class MyCard extends React.Component {
         let imgData = [];
         if(list.length>0) {
             list.forEach((item, index) => {
-                // let i=1061;
-                // if(item*1==51||item*1==50||item*1==49||item*1==48){
-                //     i=1061+item*1-48
-                // }else if(item*1==52){
-                //     i=1114;
-                // }else if(item*1==53){
-                //     i=1113;
-                // }else{
-                //     i=(1065+item*1);
-                // }
                 let src=require('../../../images/card/card_'+item.icon+'.png');
                 if(is_ml0 && statusArr[index]!='out') {//当前第一张图片  margin-left 0
                     imgData.push(
@@ -45,7 +35,6 @@ class MyCard extends React.Component {
     
             })
         }
-        
         return imgData;
 
     }

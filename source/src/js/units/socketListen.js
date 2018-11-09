@@ -89,6 +89,15 @@ socket.on('clearCardStatusArr',(data) => {
     clearCardStatusArrObject.callBack(data)
 })
 
+// gameOver  游戏结束
+
+let gameOverObject = {
+    callBack:function() {}
+}
+socket.on('gameOver',(data) => {
+    gameOverObject.callBack(data)
+})
+
 
 
 
@@ -112,4 +121,5 @@ export {
     isPlayLandlordObject,
     isPlayCardObject,
     clearCardStatusArrObject,
+    gameOverObject,
 }
