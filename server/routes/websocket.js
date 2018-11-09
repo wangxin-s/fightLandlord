@@ -153,6 +153,7 @@ exports.websocket = function websocket(socket,io) {
     });
     //退出房间
     socket.on('outRoom',(data)=>{
+        landlordNum = 0;
        desk.deskList.map((item , index)=>{
             if(data.room == item.room){
                 item.playerList.map((val,i)=>{
@@ -182,7 +183,7 @@ exports.websocket = function websocket(socket,io) {
                 }  
                  if(item.playerList.every(function(val){ return val.isFull})){
                     firstLandlord = getOneCard(landlord);
-                    console.log(firstLandlord);
+
                     //当前房间的底牌                   
                     item.headCard = obj.headCard;
                     item.playerList.map((val,i)=>{
@@ -255,38 +256,123 @@ exports.websocket = function websocket(socket,io) {
                 })
             }
         }); 
+
+        if(landlordNum == 4){
+           let arr=[];
+           desk.deskList.map((item , index)=>{
+               if(data.room == item.room){
+                   if(item.playerList.every(function(val){ return val.isRob == undefined})){
+                      item.playerList.map((val,i)=>{
+                          if(val.isLandlord == 'Y'){                                
+                                delete item.playerList[i].isLandlord;
+                                if(val.site == 'left'){
+                                    item.playerList[2].showCard = 'Y'; 
+
+                                    for(let k in hiddenCards){
+                                        item.playerList[2].cardsList.push(hiddenCards[k]);
+                                        item.playerList[2].cardsList = item.playerList[2].cardsList.sort(cardSort)
+                                    }                                   
+
+                                }
+                                if(val.site == 'bottom'){
+                                    item.playerList[0].showCard = 'Y';
+                                    for(let k in hiddenCards){
+                                        item.playerList[0].cardsList.push(hiddenCards[k]);
+                                        item.playerList[0].cardsList = item.playerList[0].cardsList.sort(cardSort)
+                                    } 
+
+                                }
+                                if(val.site == 'right'){
+                                    item.playerList[1].showCard = 'Y';
+                                    for(let k in hiddenCards){
+                                        item.playerList[1].cardsList.push(hiddenCards[k]);
+                                        item.playerList[1].cardsList = item.playerList[1].cardsList.sort(cardSort)
+                                    } 
+
+                                }
+                            }
+                      }) 
+                   }else{
+                        item.playerList.map((val,i)=>{
+                            if(val.isLandlord == 'Y'){                           
+                                console.log(val.site,val.isRob);
+                                delete item.playerList[i].isLandlord;
+                                if(val.site == 'left'){
+                                    item.playerList[2].showCard = 'Y';
+                                    for(let k in hiddenCards){
+                                        item.playerList[2].cardsList.push(hiddenCards[k]);
+                                        item.playerList[2].cardsList = item.playerList[2].cardsList.sort(cardSort)
+                                    }
+                                }
+                                if(val.site == 'bottom'){
+                                    item.playerList[1].showCard = 'Y';
+                                    for(let k in hiddenCards){
+                                        item.playerList[1].cardsList.push(hiddenCards[k]);
+                                        item.playerList[1].cardsList = item.playerList[1].cardsList.sort(cardSort)
+                                    }
+                                }
+                                if(val.site == 'right'){
+                                    item.playerList[0].showCard = 'Y';
+                                    for(let k in hiddenCards){
+                                        item.playerList[0].cardsList.push(hiddenCards[k]);
+                                        item.playerList[0].cardsList = item.playerList[0].cardsList.sort(cardSort)
+                                    }
+                                }
+                            }
+                           
+                        })
+                   }
+                
+               }
+           }) 
+        }
         console.log(landlordNum);
         if(landlordNum == 3){
            let arr=[];
            desk.deskList.map((item , index)=>{
-               if(data.room == item.room){
-                   item.playerList.map((val,i)=>{
-                        if(val.isLandlord == 'Y'){
-                            if(val.site == 'left'){
-                                item.playerList[2].showCard = 'Y';
-                            }
-                            if(val.site == 'bottom'){
-                                item.playerList[0].showCard = 'Y';
-                            }
-                            if(val.site == 'right'){
-                                item.playerList[1].showCard = 'Y';
-                            }
-                        }
-                        
-                   })
-               }
-           }) 
-        }
-        if(landlordNum == 2){
-           let arr=[];
-           desk.deskList.map((item , index)=>{
-               if(data.room == item.room){
-                   item.playerList.map((val,i)=>{
-                        if(val.isRob !== 'Y' && val.isRob !== undefined){
-                            item.playerList[i].showCard = 'Y';
-                        }
-                        
-                   })
+                if(data.room == item.room){
+                    if(!item.playerList.every(function(val){ return val.isRob == undefined})){
+                        item.playerList.map((val,i)=>{
+                                if(val.isRob == 'Y'){
+                                    arr.push(item.playerList[i]);
+                                }                                                                
+                                if(arr.length == 2){                                    
+                                     if(val.isRob == undefined){ 
+                                        console.log(val.isRob,val.site);                               
+                                        delete item.playerList[i].isLandlord;
+                                        item.playerList[i].showCard = 'Y';
+                                                                                
+                                        for(let k in hiddenCards){
+                                            item.playerList[i].cardsList.push(hiddenCards[k]);
+                                            item.playerList[i].cardsList = item.playerList[i].cardsList.sort(cardSort)
+                                        }
+                                        if(val.site == 'left'){
+                                            delete item.playerList[2].isLandlord;
+                                        }
+                                        if(val.site == 'bottom'){
+                                            delete item.playerList[0].isLandlord;
+                                        }
+                                        if(val.site == 'right'){
+                                            delete item.playerList[1].isLandlord;
+                                        }                                    
+                                    }else{
+                                        if(val.isRob == 'Y'){ 
+                                            console.log(val.isRob,val.site);
+                                            if(val.site == 'left'){
+                                                item.playerList[i].showCard = 'Y';
+                                            }
+                                            if(val.site == 'bottom'){
+                                                item.playerList[i].showCard = 'Y';
+                                            }
+                                            if(val.site == 'right'){
+                                                item.playerList[i].showCard = 'Y';
+                                            }
+                                        }
+                                    }  
+
+                                 }                                                   
+                        })
+                    }
                }
            }) 
         }
@@ -331,13 +417,36 @@ exports.websocket = function websocket(socket,io) {
                 })
             }
         }); 
-        console.log(landlordNum);
         if(landlordNum == 4){
            desk.deskList.map((item , index)=>{
                if(data.room == item.room){
                    item.playerList.map((val,i)=>{
-                        if(val.isLandlord == 'Y'){
-                            item.playerList[i].showCard = 'Y';
+                        if(val.isLandlord == 'Y'){                            
+                            if(val.site == 'left'){
+                                item.playerList[2].showCard = 'Y';
+                                for(let k in hiddenCards){
+                                        item.playerList[2].cardsList.push(hiddenCards[k]);
+                                        item.playerList[2].cardsList = item.playerList[2].cardsList.sort(cardSort)
+                                    }
+                                delete item.playerList[1].isLandlord;
+                            }
+                            if(val.site == 'bottom'){
+                                item.playerList[1].showCard = 'Y';
+                                for(let k in hiddenCards){
+                                        item.playerList[1].cardsList.push(hiddenCards[k]);
+                                        item.playerList[1].cardsList = item.playerList[1].cardsList.sort(cardSort)
+                                    }
+                                delete item.playerList[2].isLandlord;
+                            }
+                            if(val.site == 'right'){
+                                item.playerList[0].showCard = 'Y';
+                                for(let k in hiddenCards){
+                                        item.playerList[0].cardsList.push(hiddenCards[k]);
+                                        item.playerList[0].cardsList = item.playerList[0].cardsList.sort(cardSort)
+                                    }
+                                delete item.playerList[0].isLandlord;
+                            }
+                            
                         }
                         
                    })
@@ -356,7 +465,13 @@ exports.websocket = function websocket(socket,io) {
                             console.log('重新发牌');
                         }else{
                             if(val.isLandlord == 'Y'){
+                                console.log(val.isLandlord,val.site)
                                 item.playerList[i].showCard = 'Y';
+                                for(let k in hiddenCards){
+                                        item.playerList[i].cardsList.push(hiddenCards[k]);
+                                        item.playerList[i].cardsList = item.playerList[i].cardsList.sort(cardSort)
+                                    }
+                                delete item.playerList[i].isLandlord;
                             } 
                         }
                    })
