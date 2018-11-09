@@ -8,129 +8,105 @@ import {hallHandle} from '../actions/hall';
 
 const socket = require('socket.io-client')('http://localhost:3001');
 class HallMain extends React.Component {
-    // componentDidMount() {
-    //     let options = {
-    //         partyId : 'YH005'
-    //     }
-    //     socket.emit('loginer',options);
-    //     socket.on('loginer',(data)=>{
-    //         console.log(data);
-    //     }) 
-    // }      
-    // constructor(props) {
-    //     super(props);
-        
-    //     this.state={
-    //         hallInfo:[],//房间信息
-    //     }
-    // }
-    componentDidMount() {
-        socket.emit('getHallInfo', {});
-        socket.on('getHallInfo',(data)=>{
+    componentDidMount() {  
+        socket.emit('desk', '');
+        socket.on('desk',(data)=>{
             this.props._hallHandle({
                 hallInfo:data,
             });
         });
-        socket.on('exitHall',(data)=>{
-            if(Number(this.props.match.params.id)===data){
-                this.props.history.push("/login");
-            }
+         socket.on('createDesk',(data)=>{
+           this.props._hallHandle({
+                hallInfo:data,
+            });
+        })
+        socket.on('toRoom',(data)=>{
+           this.props._hallHandle({
+                hallInfo:data,
+            });
         });
+        socket.on('outRoom',(data)=>{
+           this.props._hallHandle({
+                hallInfo:data,
+            });
+        })
     }
 
-    action() {
-        this.props.history.push("/room");
-    }
-
-
-
-    sitFun(param,data,sit){
-        if(param!==""){
-            alert('此位置已有人');
-        }else{
-            socket.emit('sit',{id:data.roomId,roomNum:1,location:sit,userId:this.props.match.params.id});
+    action(sit,name,list) {
+        let imgUrl = this.props.hall.imgUrl;
+        // if(list.playerList.every(function(item){ return item.name}) !== ''){
+        //      alert('此房间已满，请换房间试试！');
+        //      return;
+        // }
+        if(sit == 'left'){
+            if(list.playerList[0].imgUrl !== ''){
+                alert('此位置已占，请换位置试试！');
+                return;
+            }
         }
+        if(sit == 'right'){
+            if(list.playerList[2].imgUrl !== ''){
+                alert('此位置已占，请换位置试试！');
+                return;
+            }
+        }
+        if(sit == 'bottom'){
+            if(list.playerList[1].imgUrl !== ''){
+                alert('此位置已占，请换位置试试！');
+                return;
+            }
+        }
+        socket.emit('toRoom',{
+            sit : sit,
+            name : name,
+            room : list.room,
+            imgUrl : imgUrl
+        })
+        this.props.history.push("/room?room="+list.room+'&name='+name);            
     }
+
+  
     showHall(data){
-        if(data.length>0){
-            return data.map((val,i)=>{
-                console.log(val);
-                let leftPic='',rightPic='',bottomPic="";
-                if(val.leftSit!==''){
-                    leftPic=JSON.parse(val.leftSit).headImg;
-                }else{
-                    leftPic='';
-                }
-                if(val.rightSit!==''){
-                    rightPic=JSON.parse(val.rightSit).headImg;
-                }else{
-                    rightPic='';
-                }
-                if(val.bottomSit!==''){
-                    bottomPic=JSON.parse(val.bottomSit).headImg;
-                }else{
-                    bottomPic='';
-                }
-
-                if(leftPic!=="" && rightPic!=="" && bottomPic!==''){
-                    
-                    let id=Number(this.props.match.params.id);
-                    if(id===JSON.parse(val.leftSit).id||id===JSON.parse(val.rightSit).id||id===JSON.parse(val.bottomSit).id){
-                        this.props.history.push("/room");
-                    }
-                    
-                }
-
-                let roomNumImg=require('../../images/room'+(i+1)+'.png');
-                
-                return(
-
-                    <li key={i}>
-                        <img src={leftPic===""?require('../../images/Vacancy.png'):leftPic} className="player" alt="" 
-                            onClick={this.sitFun.bind(this,leftPic,val,'p1')}/>
-                        <span className="table">
-                            <img src={roomNumImg} alt=""/>
-                        </span>
-                        <img src={rightPic===""?require('../../images/Vacancy.png'):rightPic} className="player" alt="" 
-                            onClick={this.sitFun.bind(this,rightPic,val,'p3')}/>
-
-                        <img src={bottomPic===""?require('../../images/Vacancy.png'):bottomPic} className="player player-bottom" alt="" 
-                            onClick={this.sitFun.bind(this,bottomPic,val,'p2')}/>
-                    </li>
-                );
+        let name = this.props.match.params.id;
+        if(data.length>0){            
+            return data.map((val,i)=>{            
+                    return(
+                        <li key={i}>
+                            <img src={val.playerList[0].imgUrl !== '' ? val.playerList[0].imgUrl : require('../../images/head-border.png')} className="player" alt="" 
+                                onClick={this.action.bind(this,'left',name,val)}/>
+                            <span className="table">
+                                <img src={require("../../images/diamond.png")} alt=""/>
+                            </span>
+                            <img src={val.playerList[2].imgUrl !== '' ? val.playerList[2].imgUrl : require('../../images/head-border.png')} className="player" alt="" 
+                                onClick={this.action.bind(this,'right',name,val)}/>
+                            <span >
+                                <img src={val.playerList[1].imgUrl !== '' ? val.playerList[1].imgUrl : require('../../images/head-border.png')} className="player-bottom" alt="" 
+                                onClick={this.action.bind(this,'bottom',name,val)}/>
+                            </span>
+                        </li>
+                    );                       
             });
         }
     }
 
-
-    exitHall(){
-        socket.emit('exitHall',{userId:this.props.match.params.id});
-
-    }
-
-    intoRoom(){
-        let roomData = {
-            partyId : 'YH7403',
-            playerSeat : 'left',
-            roomId : 4
-        }
-        socket.emit('room',roomData)
-        socket.on('room',(data)=>{
-            console.log(data);
-        })
+    
+    intoRoom (){        
+        socket.emit('createDesk','')       
     }
 
     render() {
+        let name = this.props.match.params.id;
+        let imgUrl = this.props.hall.imgUrl;
         return (
             <div id="landlord-hall">
                 <div className="header">
                     <div className="header-left">
                         <div className="head">
-                            <img src={require('../../images/head.png')} alt="" />
+                            <img src={imgUrl !== '' ? imgUrl : require('../../images/head.png')} alt="" />
                         </div>
 
                         <div className="userName">
-                            fuyf
+                            {name}
                         </div>
                         <div className="beans">
                             <img src={require('../../images/beans2.png')} alt="" />
@@ -142,7 +118,7 @@ class HallMain extends React.Component {
                         <img src={require('../../images/store.png')} alt="" />
                         <img src={require('../../images/info.png')} alt="" />
                         <img src={require('../../images/setting.png')} alt="" />
-                        <img src={require('../../images/exit.png')} alt="" onClick={this.exitHall.bind(this)}/>
+                        <img src={require('../../images/exit.png')} alt="" />
                     </div>
                     <div className="clear"></div>
                 </div>
@@ -152,49 +128,51 @@ class HallMain extends React.Component {
                     </div>
                     <div className="table-right">
                         <ul className="table-list clearfix">
-
-                           {this.showHall(this.props.hall.hallInfo)}
-
+                            {this.showHall(this.props.hall.hallInfo)}                           
                             {/*<li onClick={this.intoRoom.bind(this)}>
-                                <img src={require('../../images/player1.png')} className="player" alt="" />
+                                <img src={require('../../images/head-border.png')} className="player" alt="" />
                                 <span className="table">
-                                    <img src={require("../../images/one.png")} alt=""/>
+                                    <img src={require("../../images/diamond.png")} alt=""/>
                                 </span>
-                                <img src={require('../../images/player2.png')} className="player" alt="" />
-                                <span className="player-bottom">
+                                <img src={require('../../images/head-border.png')} className="player" alt="" />
+                                <span >
+                                    <img src={require('../../images/head-border.png')} className="player-bottom" alt="" />
                                 </span>
                             </li>
                             <li>
-                                <img src={require('../../images/player1.png')} className="player" alt="" />
+                                <img src={require('../../images/head-border.png')} className="player" alt="" />
                                 <span className="table">
-                                    <img src={require("../../images/two.png")} alt=""/>
+                                    <img src={require("../../images/diamond.png")} alt=""/>
                                 </span>
-                                <img src={require('../../images/player2.png')} className="player" alt="" />
-                                <span className="player-bottom">
+                                <img src={require('../../images/head-border.png')} className="player" alt="" />
+                                <span >
+                                    <img src={require('../../images/head-border.png')} className="player-bottom" alt="" />
                                 </span>
                             </li>
                             <li>
-                                <img src={require('../../images/player1.png')} className="player" alt="" />
+                                <img src={require('../../images/head-border.png')} className="player" alt="" />
                                 <span className="table">
-                                    <img src={require("../../images/three.png")} alt=""/>
+                                    <img src={require("../../images/diamond.png")} alt=""/>
                                 </span>
-                                <img src={require('../../images/player2.png')} className="player" alt="" />
-                                <span className="player-bottom">
+                                <img src={require('../../images/head-border.png')} className="player" alt="" />
+                                <span >
+                                    <img src={require('../../images/head-border.png')} className="player-bottom" alt="" />
                                 </span>
                             </li>
                             <li>
-                                 <img src={require('../../images/player1.png')} className="player" alt="" />
+                                 <img src={require('../../images/head-border.png')} className="player" alt="" />
                                 <span className="table">
-                                    <img src={require("../../images/four.png")} alt=""/>
+                                    <img src={require("../../images/diamond.png")} alt=""/>
                                 </span>
-                                <img src={require('../../images/player2.png')} className="player" alt="" />
-                                <span className="player-bottom">
+                                <img src={require('../../images/head-border.png')} className="player" alt="" />
+                                <span >
+                                    <img src={require('../../images/head-border.png')} className="player-bottom" alt="" />
                                 </span>
                             </li>*/}
 
                         </ul>
-                        <div className="fast-action" onClick={this.action.bind(this)}>
-                            快速开始
+                        <div className="fast-action" onClick={this.intoRoom.bind(this)}>
+                            创建房间
                         </div>
                     </div>
                 </div>

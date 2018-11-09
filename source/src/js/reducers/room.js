@@ -11,6 +11,8 @@ const roomState =sessionStorage.getItem('roomIndex')? JSON.parse(sessionStorage.
 
     leftList:[],//左侧玩家出的牌
     rightList:[],//右侧玩家出的牌
+    roomId : '',//当前房间
+    roomData : [],//房间详情
 };
 const room=(state=roomState,action)=>{
     switch (action.type){

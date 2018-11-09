@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import {loginAllHandle} from '../actions/login'
 import {withRouter} from "react-router-dom";
-
+import {hallHandle} from '../actions/hall';
 const socket = require('socket.io-client')('http://localhost:3001');
 class LoginMain extends React.Component {
 
@@ -14,7 +14,10 @@ class LoginMain extends React.Component {
             console.log(data)
             if(data.code==200) {
                 alert('登陆成功')
-                this.props.history.push("/hall/"+data.data.id);
+                this.props.history.push("/hall/"+data.data.party_id);
+                this.props._hallHandle({
+                    imgUrl: data.data.player_img,
+                })
                 //this.props.history.push("/hall/"+12);
                 return;
             }else {
@@ -49,7 +52,7 @@ class LoginMain extends React.Component {
         let obj = [];
         if (type == '1') {//1 直接取 event 0 取event.target.value
             obj[name] = event;
-        } else {
+        } else {         
             obj[name] = event.target.value;
         }
         this.props._loginAllHandle(obj);
@@ -97,6 +100,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         _loginAllHandle: (options) => {
             dispatch(loginAllHandle(options))
+        },
+        _hallHandle : (options)=>{
+            dispatch(hallHandle(options))
         }
     }
 };

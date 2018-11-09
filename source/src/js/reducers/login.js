@@ -6,6 +6,7 @@ const loginState = {
    account:'',
    password:'',
    isShow_dialog:false,//登陆弹窗dialog 是否显示
+   imgUrl:'',
 };
 const login=(state=loginState,action)=>{
     switch (action.type){

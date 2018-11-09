@@ -3,6 +3,7 @@
  */
 const hallState = {
     hallInfo:[],//大厅数据
+    imgUrl : '',
 };
 const hall=(state=hallState,action)=>{
     switch (action.type){

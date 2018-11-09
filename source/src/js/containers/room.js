@@ -81,145 +81,148 @@ class RoomMain extends React.Component {
             // 地主牌  翻转控制
             isRevers: false,
             //地主牌数据源
-            list: [card_back, card_back, card_back]
+            list: [card_back, card_back, card_back],
+            //抢地主玩家所在位置
+            landlordSit : '',
+            
         }
     }
 
     //判断牌型 牌分值大小比较测试
-    scoreComparisonTest() {
-        console.log('单牌', cardType([53]));
-        console.log('火箭', cardType([52, 53]));
-        console.log('单顺', cardType([1, 5, 9, 13, 17, 21, 25]));
-        console.log('单顺', cardType([30, 34, 38, 42, 46, 50]));
-        console.log('双顺', cardType([0, 1, 5, 6, 9, 10, 13, 15, 16, 19]));
-        console.log('三顺', cardType([0, 1, 2, 5, 6, 7, 9, 10, 11, 12, 14, 15]));
-        console.log('三顺', cardType([47, 46, 45, 43, 42, 41, 39, 38, 37, 33, 35, 34]));
-        console.log('对牌', cardType([0, 2]));
-        console.log('三牌', cardType([0, 3, 2]));
-        console.log('炸弹', cardType([8, 10, 11, 9]));
-        console.log('三带一', cardType([0, 1, 2, 12]));
-        console.log('三带二', cardType([16, 17, 19, 20, 21]));
-        console.log('四带二', cardType([24, 25, 26, 27, 28, 31]));
-        console.log('四带二', cardType([24, 25, 26, 27, 28, 29, 30, 31]));
-        console.log('飞机带翅膀 true', cardType([0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23, 45]));
-        console.log('飞机带翅膀 false', cardType([0, 1, 2, 5, 6, 7, 16, 17, 18, 20, 23, 45]));
-        console.log('飞机带翅膀 false', cardType([0, 1, 2, 5, 6, 7, 12, 14, 15, 20, 23, 22]));
-        console.log('飞机带翅膀  333 444 555 999 true', cardType([0, 1, 2, 5, 6, 7, 8, 10, 9, 20, 23, 22]));
-        console.log('飞机带翅膀 true', cardType([0, 1, 2, 5, 6, 7, 8, 10, 9, 20, 23, 28]));
+    // scoreComparisonTest() {
+    //     console.log('单牌', cardType([53]));
+    //     console.log('火箭', cardType([52, 53]));
+    //     console.log('单顺', cardType([1, 5, 9, 13, 17, 21, 25]));
+    //     console.log('单顺', cardType([30, 34, 38, 42, 46, 50]));
+    //     console.log('双顺', cardType([0, 1, 5, 6, 9, 10, 13, 15, 16, 19]));
+    //     console.log('三顺', cardType([0, 1, 2, 5, 6, 7, 9, 10, 11, 12, 14, 15]));
+    //     console.log('三顺', cardType([47, 46, 45, 43, 42, 41, 39, 38, 37, 33, 35, 34]));
+    //     console.log('对牌', cardType([0, 2]));
+    //     console.log('三牌', cardType([0, 3, 2]));
+    //     console.log('炸弹', cardType([8, 10, 11, 9]));
+    //     console.log('三带一', cardType([0, 1, 2, 12]));
+    //     console.log('三带二', cardType([16, 17, 19, 20, 21]));
+    //     console.log('四带二', cardType([24, 25, 26, 27, 28, 31]));
+    //     console.log('四带二', cardType([24, 25, 26, 27, 28, 29, 30, 31]));
+    //     console.log('飞机带翅膀 true', cardType([0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23, 45]));
+    //     console.log('飞机带翅膀 false', cardType([0, 1, 2, 5, 6, 7, 16, 17, 18, 20, 23, 45]));
+    //     console.log('飞机带翅膀 false', cardType([0, 1, 2, 5, 6, 7, 12, 14, 15, 20, 23, 22]));
+    //     console.log('飞机带翅膀  333 444 555 999 true', cardType([0, 1, 2, 5, 6, 7, 8, 10, 9, 20, 23, 22]));
+    //     console.log('飞机带翅膀 true', cardType([0, 1, 2, 5, 6, 7, 8, 10, 9, 20, 23, 28]));
 
 
-        //牌大小比较测试
+    //     //牌大小比较测试
 
-        //单牌比较
-        console.log('单牌', compareCard([53],
-            [12]));
-        console.log('单牌', compareCard([12],
-            [13]));
+    //     //单牌比较
+    //     console.log('单牌', compareCard([53],
+    //         [12]));
+    //     console.log('单牌', compareCard([12],
+    //         [13]));
 
-        //火箭与其他牌比较
-        console.log('火箭--单牌', compareCard([52, 53],
-            [12]));
-        console.log('火箭--对牌', compareCard([52, 53],
-            [12, 13]));
-        console.log('火箭--三牌', compareCard([52, 53],
-            [12, 13, 14]));
-        console.log('火箭--炸弹', compareCard([52, 53],
-            [12, 13, 14, 15]));
-        console.log('火箭--单顺', compareCard([52, 53],
-            [12, 16, 20, 24, 28]));
-        console.log('火箭--双顺', compareCard([52, 53],
-            [16, 17, 20, 21, 24, 25, 28, 29]));
-        console.log('火箭--三顺', compareCard([52, 53],
-            [16, 17, 18, 20, 21, 22, 24, 25, 26]));
-        console.log('火箭--三带一', compareCard([52, 53],
-            [12, 13, 14, 30]));
-        console.log('火箭--三带二', compareCard([52, 53],
-            [12, 13, 14, 20, 21]));
-        console.log('火箭--四带二', compareCard([52, 53],
-            [12, 13, 14, 15, 0, 48]));
-        console.log('火箭--四带二', compareCard([52, 53],
-            [12, 13, 14, 15, 16, 17]));
-        console.log('火箭--飞机带翅膀', compareCard([52, 53],
-            [12, 13, 14, 16, 17, 18, 20, 21, 20, 4, 8, 39]));
+    //     //火箭与其他牌比较
+    //     console.log('火箭--单牌', compareCard([52, 53],
+    //         [12]));
+    //     console.log('火箭--对牌', compareCard([52, 53],
+    //         [12, 13]));
+    //     console.log('火箭--三牌', compareCard([52, 53],
+    //         [12, 13, 14]));
+    //     console.log('火箭--炸弹', compareCard([52, 53],
+    //         [12, 13, 14, 15]));
+    //     console.log('火箭--单顺', compareCard([52, 53],
+    //         [12, 16, 20, 24, 28]));
+    //     console.log('火箭--双顺', compareCard([52, 53],
+    //         [16, 17, 20, 21, 24, 25, 28, 29]));
+    //     console.log('火箭--三顺', compareCard([52, 53],
+    //         [16, 17, 18, 20, 21, 22, 24, 25, 26]));
+    //     console.log('火箭--三带一', compareCard([52, 53],
+    //         [12, 13, 14, 30]));
+    //     console.log('火箭--三带二', compareCard([52, 53],
+    //         [12, 13, 14, 20, 21]));
+    //     console.log('火箭--四带二', compareCard([52, 53],
+    //         [12, 13, 14, 15, 0, 48]));
+    //     console.log('火箭--四带二', compareCard([52, 53],
+    //         [12, 13, 14, 15, 16, 17]));
+    //     console.log('火箭--飞机带翅膀', compareCard([52, 53],
+    //         [12, 13, 14, 16, 17, 18, 20, 21, 20, 4, 8, 39]));
 
 
-        //单顺比较
-        console.log('单顺--单顺', compareCard([6, 10, 14, 18, 22, 26, 28],
-            [1, 5, 9, 13, 17, 21, 25]));
+    //     //单顺比较
+    //     console.log('单顺--单顺', compareCard([6, 10, 14, 18, 22, 26, 28],
+    //         [1, 5, 9, 13, 17, 21, 25]));
 
-        //双顺比较
-        console.log('双顺', compareCard([4, 7, 8, 11, 12, 14, 17, 18, 20, 21],
-            [0, 1, 5, 6, 9, 10, 13, 15, 16, 19]));
+    //     //双顺比较
+    //     console.log('双顺', compareCard([4, 7, 8, 11, 12, 14, 17, 18, 20, 21],
+    //         [0, 1, 5, 6, 9, 10, 13, 15, 16, 19]));
 
-        //三顺比较
-        console.log('三顺', compareCard([16, 17, 18, 20, 21, 22, 24, 25, 26, 28, 29, 30],
-            [0, 1, 2, 5, 6, 7, 9, 10, 11, 12, 14, 15]));
+    //     //三顺比较
+    //     console.log('三顺', compareCard([16, 17, 18, 20, 21, 22, 24, 25, 26, 28, 29, 30],
+    //         [0, 1, 2, 5, 6, 7, 9, 10, 11, 12, 14, 15]));
 
-        //对牌比较
-        console.log('对牌', compareCard([13, 14],
-            [0, 2]));
+    //     //对牌比较
+    //     console.log('对牌', compareCard([13, 14],
+    //         [0, 2]));
 
-        //三牌比较
-        console.log('三牌--三牌', compareCard([12, 13, 14],
-            [0, 3, 2]));
+    //     //三牌比较
+    //     console.log('三牌--三牌', compareCard([12, 13, 14],
+    //         [0, 3, 2]));
 
-        //炸弹比较
-        console.log('炸弹--火箭', compareCard([0, 1, 2, 3],
-            [52, 53]));
-        console.log('炸弹--炸弹', compareCard([12, 13, 14, 15],
-            [0, 1, 2, 3]));
-        console.log('炸弹--单牌', compareCard([0, 1, 2, 3],
-            [12]));
-        console.log('炸弹--对牌', compareCard([0, 1, 2, 3],
-            [12, 13]));
-        console.log('炸弹--三牌', compareCard([0, 1, 2, 3],
-            [12, 13, 14]));
-        console.log('炸弹--单顺', compareCard([0, 1, 2, 3],
-            [12, 16, 20, 24, 28]));
-        console.log('炸弹--双顺', compareCard([0, 1, 2, 3],
-            [16, 17, 20, 21, 24, 25, 28, 29]));
-        console.log('炸弹--三顺', compareCard([0, 1, 2, 3],
-            [16, 17, 18, 20, 21, 22, 24, 25, 26]));
-        console.log('炸弹--三带一', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 30]));
-        console.log('炸弹--三带二', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 20, 21]));
-        console.log('炸弹--四带二', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 15, 0, 48]));
-        console.log('炸弹--四带二', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 15, 16, 17]));
-        console.log('炸弹--飞机带翅膀', compareCard([0, 1, 2, 3],
-            [12, 13, 14, 16, 17, 18, 20, 21, 20, 4, 8, 39]));
+    //     //炸弹比较
+    //     console.log('炸弹--火箭', compareCard([0, 1, 2, 3],
+    //         [52, 53]));
+    //     console.log('炸弹--炸弹', compareCard([12, 13, 14, 15],
+    //         [0, 1, 2, 3]));
+    //     console.log('炸弹--单牌', compareCard([0, 1, 2, 3],
+    //         [12]));
+    //     console.log('炸弹--对牌', compareCard([0, 1, 2, 3],
+    //         [12, 13]));
+    //     console.log('炸弹--三牌', compareCard([0, 1, 2, 3],
+    //         [12, 13, 14]));
+    //     console.log('炸弹--单顺', compareCard([0, 1, 2, 3],
+    //         [12, 16, 20, 24, 28]));
+    //     console.log('炸弹--双顺', compareCard([0, 1, 2, 3],
+    //         [16, 17, 20, 21, 24, 25, 28, 29]));
+    //     console.log('炸弹--三顺', compareCard([0, 1, 2, 3],
+    //         [16, 17, 18, 20, 21, 22, 24, 25, 26]));
+    //     console.log('炸弹--三带一', compareCard([0, 1, 2, 3],
+    //         [12, 13, 14, 30]));
+    //     console.log('炸弹--三带二', compareCard([0, 1, 2, 3],
+    //         [12, 13, 14, 20, 21]));
+    //     console.log('炸弹--四带二', compareCard([0, 1, 2, 3],
+    //         [12, 13, 14, 15, 0, 48]));
+    //     console.log('炸弹--四带二', compareCard([0, 1, 2, 3],
+    //         [12, 13, 14, 15, 16, 17]));
+    //     console.log('炸弹--飞机带翅膀', compareCard([0, 1, 2, 3],
+    //         [12, 13, 14, 16, 17, 18, 20, 21, 20, 4, 8, 39]));
 
-        //三带一比较
-        console.log('三带一', compareCard([12, 13, 14, 45],
-            [0, 1, 2, 12]));
-        /*console.log('三带一--三带二', compareCard([12,13,14,45],
-         [0, 1, 2, 12,13]));*/
+    //     //三带一比较
+    //     console.log('三带一', compareCard([12, 13, 14, 45],
+    //         [0, 1, 2, 12]));
+    //     /*console.log('三带一--三带二', compareCard([12,13,14,45],
+    //      [0, 1, 2, 12,13]));*/
 
-        //三带二比较
-        console.log('三带二--三带二', compareCard([16, 17, 19, 20, 21],
-            [0, 1, 2, 23, 22]));
+    //     //三带二比较
+    //     console.log('三带二--三带二', compareCard([16, 17, 19, 20, 21],
+    //         [0, 1, 2, 23, 22]));
 
-        //四带二比较
-        console.log('四带二--四带二', compareCard([24, 25, 26, 27, 28, 31],
-            [4, 5, 6, 7, 45, 34]));
+    //     //四带二比较
+    //     console.log('四带二--四带二', compareCard([24, 25, 26, 27, 28, 31],
+    //         [4, 5, 6, 7, 45, 34]));
 
-        //飞机带翅膀比较--
-        console.log('飞机带翅膀 -- 三飞带翅膀', compareCard([12, 13, 14, 16, 17, 19, 20, 21, 22, 34, 35, 36],
-            [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23, 45]));
-        /*console.log('飞机带翅膀 -- (三飞带单--三飞带双)', compareCard([12,13,14,16,17,19,20,21,22,34,35,36],
-         [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23,24,45,46]));
-         console.log('飞机带翅膀 -- (三飞带单--双飞带单)', compareCard([12,13,14,16,17,19,20,21,22,34,35,36],
-         [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23,24,45,46]));*/
-    }
+    //     //飞机带翅膀比较--
+    //     console.log('飞机带翅膀 -- 三飞带翅膀', compareCard([12, 13, 14, 16, 17, 19, 20, 21, 22, 34, 35, 36],
+    //         [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23, 45]));
+    //     /*console.log('飞机带翅膀 -- (三飞带单--三飞带双)', compareCard([12,13,14,16,17,19,20,21,22,34,35,36],
+    //      [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23,24,45,46]));
+    //      console.log('飞机带翅膀 -- (三飞带单--双飞带单)', compareCard([12,13,14,16,17,19,20,21,22,34,35,36],
+    //      [0, 1, 2, 5, 6, 7, 8, 9, 11, 18, 23,24,45,46]));*/
+    // }
 
     // redux 参数重置
     resetRedux() {
         this.props._roomHandle({
             myCard: [],//我的牌
             mySelectCard: {},//当前玩家选中的牌
-            left: [0, 1, 2],//左侧玩家的牌
+            left: [],//左侧玩家的牌
             right: [],//右侧玩家的牌
         })
 
@@ -233,6 +236,38 @@ class RoomMain extends React.Component {
 
     //初始化生命周期函数
     componentDidMount() {
+        this.resetRedux();
+        let room = window.location.href.split('&')[0].split('=')[1];
+        let name = window.location.href.split('&')[1].split('=')[1];  
+        let roomId = {
+            room,
+            name
+        }
+        this.props._roomHandle({
+            roomId 
+        });    
+        socket.emit('getCards',roomId);    
+        //进入房间
+        // socket.on('toRoom',(data)=>{
+        //     data.map((item,i)=>{
+        //         if(room == item.room){                
+        //             if(item.playerList.every(function(val){ return val.isFull})){
+        //                 firstLandlord = landlord.splice(Math.ceil(Math.random()*landlord.length - 1) ,1)[0];                                                
+        //                 // socket.emit('getCards',roomId);
+        //             }                    
+        //         }
+        //     })
+        //     this.props._roomHandle({
+        //         roomData : data
+        //     })
+        // })
+        //退出房间
+        socket.on('outRoom',(data)=>{                      
+           this.props._roomHandle({
+                roomData : data
+            })
+        })
+        
         //排序算法时间测试
         let list = [23, 21, 23, 4, 35, 9, 54, 40, 39, 2, 49, 30, 59, 34, 28];
         countTime(sortBubble, '冒泡排序', [23, 21, 23, 4, 35, 9, 54, 40, 39, 2, 49, 30, 59, 34, 28]);
@@ -242,16 +277,137 @@ class RoomMain extends React.Component {
         countTime(sortHalfInsert, '二分插入排序', [23, 21, 23, 4, 35, 9, 54, 40, 39, 2, 49, 30, 59, 34, 28]);
         countTime(sortShell, '希尔排序', [23, 21, 23, 4, 35, 9, 54, 40, 39, 2, 49, 30, 59, 34, 28]);
         countTime(sortMerge, '归并排序', [23, 21, 23, 4, 35, 9, 54, 40, 39, 2, 49, 30, 59, 34, 28]);
-
-
-        this.resetRedux();
+        
         //调用接口获取发牌内容
         socket.on('getCards', (data) => {
+            console.log(data);
+            let bottomCard,myCard=[],left=[],right=[],isShow_playLandlord='',landlordSit='';
+            data.map((item,i)=>{
+                if(room == item.room){ 
+                     bottomCard = item.headCard              
+                     for(let j in item.playerList){
+                        if(name == item.playerList[j].name){
+                            myCard = item.playerList[j].cardsList;                                                   
+                            if(item.playerList[j].isLandlord == 'Y'){                                
+                                isShow_playLandlord = 'Y'; 
+                                landlordSit = item.playerList[j].site
+                            }                       
+                        }                         
+                     }                 
+                }
+            })                   
+            if(isShow_playLandlord == 'Y'){
+                this.setState({
+                    isShow_playLandlord,
+                    isTimer: 1,
+                    count: 20,
+                    landlordSit,                    
+                })            
+            }
             this.props._roomHandle({
-                bottomCard: data.bottomCard,//顶部中间的底牌
-                myCard: data.myCard,//我的牌
+                bottomCard,//顶部中间的底牌
+                myCard,//我的牌
+                roomData : data,
+                left,
+                right
             })
-        });
+         });
+
+         //抢地主
+         socket.on('robHost',(data)=>{
+            console.log(data);
+            let isShow_playLandlord='',landlordSit='',isShow_playCard='';
+            data.map((item,i)=>{
+                if(room == item.room){                          
+                     for(let j in item.playerList){
+                        if(name == item.playerList[j].name){                                                                             
+                            if(item.playerList[j].isLandlord == 'Y'){                                
+                                isShow_playLandlord = 'Y'; 
+                                landlordSit = item.playerList[j].site
+                            } 
+                            if(item.playerList[j].showCard == 'Y'){
+                                isShow_playCard = true
+                            }                      
+                        }                         
+                     }                 
+                }
+            }) 
+            if(isShow_playCard){
+                this.setState({
+                    isShow_playCard,
+                    isTimer: 1,
+                    count: 20,                                
+                })  
+                return true;          
+            }else{
+                this.setState({
+                    isShow_playCard: false,                   
+                    count: 20,                                 
+                })
+            }                  
+            if(isShow_playLandlord == 'Y'){
+                this.setState({
+                    isShow_playLandlord,
+                    isTimer: 1,
+                    count: 20,
+                    landlordSit,                    
+                })            
+            }else{
+                this.setState({
+                    isShow_playLandlord: false,                   
+                    count: 20,                                 
+                })
+            }
+            
+         })
+
+         //不抢
+         socket.on('notRobbing',(data)=>{
+            console.log(data);
+            let isShow_playLandlord='',landlordSit='',isShow_playCard='';
+            data.map((item,i)=>{
+                if(room == item.room){                          
+                     for(let j in item.playerList){
+                        if(name == item.playerList[j].name){                                                                             
+                            if(item.playerList[j].isLandlord == 'Y'){                                
+                                isShow_playLandlord = 'Y'; 
+                                landlordSit = item.playerList[j].site
+                            } 
+                            if(item.playerList[j].showCard == 'Y'){
+                                isShow_playCard = true
+                            }                      
+                        }                         
+                     }                 
+                }
+            })  
+            if(isShow_playCard == 'Y'){
+                this.setState({
+                    isShow_playCard,
+                    isTimer: 1,
+                    count: 20,                                
+                })            
+            }else{
+                this.setState({
+                    isShow_playCard: false,                   
+                    count: 20,                                 
+                })
+            }                 
+            if(isShow_playLandlord == 'Y'){
+                this.setState({
+                    isShow_playLandlord,
+                    isTimer: 1,
+                    count: 20,
+                    landlordSit,                    
+                })            
+            }else{
+                this.setState({
+                    isShow_playLandlord: false,                   
+                    count: 20,                                 
+                })
+            }
+            
+         })
+         
         //左侧玩家出牌接口
         socket.on('leftPushCards', (data) => {
             this.props._roomHandle({
@@ -305,12 +461,18 @@ class RoomMain extends React.Component {
         clearInterval(timer);
     }
 
+    //退出房间
+    outRoom(data){
+        socket.emit('outRoom',data)
+        this.props.history.push("/hall/"+data.name); 
+    }   
+
     //当牌被点击时
     imgClick = (index) => {
         let myCard = this.props.room.myCard;
         let mySelectCard = this.props.room.mySelectCard;
         let check = false;
-        mySelectCard[myCard[index]] = mySelectCard[myCard[index]] ? false : true;
+        mySelectCard[myCard[index].icon] = mySelectCard[myCard[index].icon] ? false : true;
         this.props._roomHandle({
             mySelectCard
         })
@@ -338,7 +500,7 @@ class RoomMain extends React.Component {
         for (let key in mySelectCard) {
             if (mySelectCard[key]) {
                 list.push(key);
-                myCard.splice(myCard.findIndex(item =>item == key), 1)
+                myCard.splice(myCard.findIndex(item =>item.icon == key), 1)
             }
         }
         if (list.length <= 0) {
@@ -375,15 +537,26 @@ class RoomMain extends React.Component {
 
     // 不抢
     noLandlord() {
-        //右侧玩家出牌接口
-        socket.emit('notRobbing', '不抢');
+        clearInterval(timer);
+        let roomId = this.props.room.roomId;        
+        roomId.landlordSit = this.state.landlordSit;
+        socket.emit('notRobbing', roomId);
+        this.setState({
+            isShow_playLandlord: false,
+            isTimer: 2,
+            count: 20,
+        }, () => {
+            this.robTimer();
+        })
     }
 
     //抢地主
     playLandlord() {
         clearInterval(timer);
         //告诉后台抢地主
-        socket.emit('robHost', '抢地主');
+        let roomId = this.props.room.roomId;        
+        roomId.landlordSit = this.state.landlordSit;
+        socket.emit('robHost', roomId);
         this.setState({
             isShow_playLandlord: false,
             isTimer: 2,
@@ -463,12 +636,13 @@ class RoomMain extends React.Component {
 
     //地主牌翻转 
     revers() {
+        let bottomCard = this.props.room.bottomCard;
         this.setState({
             isRevers: true,
         }, ()=> {
             this.setState({
-                list: [card4, card5, card6],
-                brandArr: this.state.brandArr.concat([card4, card5, card6]),
+                list: bottomCard,
+                brandArr: this.state.brandArr.concat(bottomCard),
             })
         })
     }
@@ -483,6 +657,10 @@ class RoomMain extends React.Component {
         })
     }
 
+    getCardFun(){
+        let roomId = this.props.room.roomId;
+        socket.emit('getCards',roomId);
+    }
 
     render() {
         let room = this.props.room;
@@ -494,6 +672,8 @@ class RoomMain extends React.Component {
                     newTime={this.state.newTime}
                     isRevers={this.state.isRevers}
                     revers={this.revers.bind(this)}
+                    outRoom={this.outRoom.bind(this)}
+                    roomId={room.roomId}
                 />
                 {/*顶部展示区域 end*/}
 
@@ -502,8 +682,11 @@ class RoomMain extends React.Component {
                     <LeftPlay
                         leftList={room.left}
                         rightList={room.right}
+                        bottomList={room.myCard}
                         isTimer={this.state.isTimer}
                         count={this.state.count}
+                        roomId = {room.roomId}
+                        roomData = {room.roomData}
                     />
                     {/*其他玩家区域 end*/}
 
@@ -551,8 +734,12 @@ class RoomMain extends React.Component {
                     </div>
 
                     {/*底部静态文件 start*/}
-                    <Bottom />
+                    <Bottom 
+                        roomId = {room.roomId}
+                        roomData = {room.roomData}
+                    />
                     {/*底部静态文件 end*/}
+                    {/*<div onClick={this.getCardFun.bind(this)}>开始发牌</div>*/}
                 </div>
             </div>
         )

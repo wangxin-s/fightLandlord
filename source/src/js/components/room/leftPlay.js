@@ -10,23 +10,104 @@ class MyBeenOutCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            count: 30
+            count: 30,
+            playerLeft : '',//左边的人
+            playerRight : '',//右边的人
+            leftList : [],//左边的牌
+            rightList : [],//右边的牌
+            bottomList : [],//底下人的牌
         };
 
     }
+    componentDidMount() {
+        this.setState({
+            count: 30,
+            playerLeft : '',//左边的人
+            playerRight : '',//右边的人
+            leftList : [],//左边的牌
+            rightList : [],//右边的牌
+            bottomList : [],//底下人的牌
+        })
+        let roomData = this.props.roomData;
+        let name = this.props.roomId.name;
+        let room = this.props.roomId.room;         
+        this.dataFun(roomData,name,room)              
+    }
 
+    componentWillUnmount() {
+        this.setState({
+            count: 30,
+            playerLeft : '',//左边的人
+            playerRight : '',//右边的人
+            leftList : [],//左边的牌
+            rightList : [],//右边的牌
+            bottomList : [],//底下人的牌
+        })
+    }
+    componentWillReceiveProps(nextProps) { 	
+        let roomData = nextProps.roomData;
+        let name = nextProps.roomId.name; 
+        let room = nextProps.roomId.room;           
+        this.dataFun(roomData,name,room)
+    }
+
+    dataFun(roomData,name,room,left,right,bottom){
+        let playerLeft,playerRight,leftList=[],rightList=[],sit,dataList;       
+        roomData.map((item,i)=>{
+            if(room == item.room){
+                dataList = item.playerList;
+                for(let j in item.playerList){
+                    if(item.playerList[j].name == name){                       
+                        sit = item.playerList[j].site;
+                    }
+                }                
+            }
+        });
+        if(sit == 'left'){
+            playerLeft = dataList[2].name;
+            playerRight = dataList[1].name;
+            leftList = dataList[2].cardsList;
+            rightList = dataList[1].cardsList;
+        }
+        if(sit == 'right'){
+            playerLeft = dataList[1].name;
+            playerRight = dataList[0].name;
+            leftList = dataList[1].cardsList;
+            rightList = dataList[0].cardsList;
+        }
+        if(sit == 'bottom'){
+            playerLeft = dataList[0].name;
+            playerRight = dataList[2].name;
+            leftList = dataList[0].cardsList;
+            rightList = dataList[2].cardsList;
+        }
+        this.setState({
+            playerLeft,
+            playerRight,
+            leftList,
+            rightList
+        })
+    }
     // 左边玩家出牌展示
     leftCardData(list) {
-        return list.map((item, index) => {
-            return <img key={index} src={this.getSrc(item)} alt="" />
-        })
+        if(list == undefined)return;
+        if(list.length >0){
+            return list.map((item, index) => {
+                return <img key={index} src={this.getSrc(item.icon)} alt="" />
+            })
+        }
     }
 
     // 右边玩家出牌展示
     rightCardData(list) {
-        return list.map((item, index) => {
-            return <img key={index} src={this.getSrc(item)} alt="" />
-        })
+        if(list == undefined)return;
+        if(list.length >0){
+            return list.map((item, index) => {
+                return <img key={index} src={this.getSrc(item.icon)} alt="" />
+            })
+        }else{
+            return
+        }
     }
 
     getSrc(item){
@@ -46,11 +127,12 @@ class MyBeenOutCard extends React.Component {
     render() {
         return (
             <div className="room-container-player">
-                <div className="room-container-player-left">
+                <div className="room-container-player-left" style={{display : this.state.playerLeft !==''?'inline-block':'none'}}>
                     <div className="player">
                         <div className="player-head text-r">
                             <img src={require('../../../images/player8.png')} alt="" />
-                            <p>平安是福</p>
+                            <p>{this.state.playerLeft}</p>
+                            <p>已准备</p>
                             <p className="color-y"><img className="beans"
                                 src={require('../../../images/beans2.png')}></img>9999</p>
                         </div>
@@ -63,7 +145,7 @@ class MyBeenOutCard extends React.Component {
                     </div>
                     <div className="out-brand">
                         {/* 左边玩家出牌区 */}
-                        {this.leftCardData(this.props.leftList)}
+                        {this.leftCardData(this.state.leftList)}
                         {/* 提示 title */}
                         <div className="is-landlord" style={{ display: this.props.isTimer == 3 ? 'none' : 'block' }}></div>
                         {/* 倒计时 */}
@@ -72,10 +154,10 @@ class MyBeenOutCard extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div className="room-container-player-right">
+                <div className="room-container-player-right" style={{display : this.state.playerRight !==''?'inline-block':'none'}}>
                     <div className="out-brand">
                         {/* 右边玩家出牌区 */}
-                        {this.rightCardData(this.props.rightList)}
+                        {this.rightCardData(this.state.rightList)}
                         {/* 提示 title */}
                         <div className="is-landlord" style={{ display: this.props.isTimer == 2 ? 'none' : 'block' }}></div>
                         {/* 倒计时 */}
@@ -92,7 +174,8 @@ class MyBeenOutCard extends React.Component {
                         </div>
                         <div className="player-head text-l">
                             <img src={require('../../../images/player8.png')} alt="" />
-                            <p>平安是福</p>
+                            <p>{this.state.playerRight}</p>
+                            <p>已准备</p>
                             <p className="color-y"><img className="beans"
                                 src={require('../../../images/beans2.png')}></img>9999</p>
                         </div>

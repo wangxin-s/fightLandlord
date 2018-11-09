@@ -17,11 +17,11 @@ class MyPlayButton extends React.PureComponent {
 
     render() {
         return (
-            <div className="my-operating" style={{display:this.props.show==1?'block':'none'}}>
+            <div className="my-operating" style={{display:this.props.show=='Y'?'block':'none'}}>
                 <div className="not-out" onClick={this.props.noLandlord}>
                     不抢
                 </div>
-                <div className="timer" style={{display:this.props.show==1?'block':'none'}}>
+                <div className="timer" style={{display:this.props.show=='Y'?'block':'none'}}>
                     {this.props.count}
                 </div>
                 <div className="play-card" onClick={this.props.playLandlord}>
