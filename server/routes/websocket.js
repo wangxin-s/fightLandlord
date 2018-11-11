@@ -326,8 +326,8 @@ function getHallData() {
         if (newHallData.length >= 4) {
             break;
         }
-        if (hallData[i].leftPlayer.id && hallData[i].rightPlayer.id && hallData[i].bottomPlayer.id) {
-            // 当前房间人数已满
+        if (hallData[i].status == 'Licensing' || hallData[i].leftPlayer.id && hallData[i].rightPlayer.id && hallData[i].bottomPlayer.id) {
+            // 当前房间中三名玩家都已准备 已进入到发牌阶段 || 当前房间人数已满    这个房间就不显示在大厅中
         } else {
             newHallData.push(hallData[i])
         }
@@ -477,6 +477,26 @@ function actionLicensing() {
 // 卡牌  排序
 function cardSort(a, b) {
     return b.val - a.val;
+}
+
+// 游戏结束 当前房间数据重置 但保留玩家信息
+function gameOverClear(i) {
+    hallData[i].landlordCard = [];
+    hallData[i].status = 'ready';
+    hallData[i].subStatus = '';
+    hallData[i].is_playLandlord = [];
+    hallData[i].playerLandlordNum = 0;
+
+    let playerArr = ['leftPlayer', 'bottomPlayer', 'rightPlayer'];
+    for (let j = 0; j < playerArr.length; j++) {
+        hallData[i][playerArr[j]].is_ready = '';
+        hallData[i][playerArr[j]].cardData = [];
+        hallData[i][playerArr[j]].playLandlord = 'false';
+        hallData[i][playerArr[j]].isPlayLandlordTitle = '';
+        hallData[i][playerArr[j]].playCard = 'false';
+        hallData[i][playerArr[j]].showOutCardIcon = [];
+        hallData[i][playerArr[j]].showOutCardVal = [];
+    }
 }
 
 exports.websocket = function websocket(socket) {
@@ -934,6 +954,7 @@ exports.websocket = function websocket(socket) {
                                 hallData[i].leftPlayer.playCard = 'false';//清除轮到当前玩家出牌状态
 
                                 if (hallData[i].leftPlayer.cardData.length == 0) {//游戏结束 当前玩家牌已打完
+                                    gameOverClear(i)//当前房间数据重置 但保留玩家信息
                                     sendData.code = 200;
                                     sendData.data = hallData[i];
                                     sendData.msg = '游戏结束=> leftPlayer玩家胜利';
@@ -982,6 +1003,7 @@ exports.websocket = function websocket(socket) {
                                 hallData[i].bottomPlayer.playCard = 'false';//清除轮到当前玩家出牌状态
 
                                 if (hallData[i].bottomPlayer.cardData.length == 0) {//游戏结束 当前玩家牌已打完
+                                    gameOverClear(i)//当前房间数据重置 但保留玩家信息
                                     sendData.code = 200;
                                     sendData.data = hallData[i];
                                     sendData.msg = '游戏结束=> bottomPlayer玩家胜利';
@@ -1032,6 +1054,7 @@ exports.websocket = function websocket(socket) {
                                 hallData[i].rightPlayer.playCard = 'false';//清除轮到当前玩家出牌状态
 
                                 if (hallData[i].rightPlayer.cardData.length == 0) {//游戏结束 当前玩家牌已打完
+                                    gameOverClear(i)//当前房间数据重置 但保留玩家信息
                                     sendData.code = 200;
                                     sendData.data = hallData[i];
                                     sendData.msg = '游戏结束=> rightPlayer玩家胜利';
@@ -1440,7 +1463,7 @@ function IsFlayTwo(card) {
                 t = b.length;
 
             // return s < t ? -1 : 1;
-            return s- t;
+            return s - t;
         });
 
         var everyIsTrue = newArr.every(function (item) {//处理后的数据  是否正常 (飞机三张不包括222)
@@ -1688,7 +1711,7 @@ function GetCardType(card) {
         type = "FlayTwo";
     } else if (IsBoom(card)) {
         type = "Boom";
-    } else if(IsBoomOne(card)) {
+    } else if (IsBoomOne(card)) {
         type = "BoomOne";
     } else if (IsBoomTwo(card)) {
         type = "BoomTwo";
