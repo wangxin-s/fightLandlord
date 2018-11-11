@@ -223,6 +223,7 @@ class RoomMain extends React.Component {
         //     let hours = date.getHours();
         //     let minutes = date.getMinutes();
         //     let seconds = date.getSeconds();
+        //     seconds = seconds>=0 && seconds<10 ?'0'+seconds : seconds;
         //     let newTime = hours + ':' + minutes + ':' + seconds;
         //     this.setState({
         //         newTime: newTime

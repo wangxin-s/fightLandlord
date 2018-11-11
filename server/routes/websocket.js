@@ -1344,12 +1344,12 @@ function IsFlayOne(card) {
             }
         }
         newArr.push(markArr)
-
-        newArr = newArr.sort(function (a, b) {
+        newArr.sort(function (a, b) {
             var s = a.length,
                 t = b.length;
 
-            return s < t ? -1 : 1;
+            // return s < t ? -1 : 1;
+            return s - t;
         });
 
         var everyIsTrue = newArr.every(function (item) {//处理后的数据  是否正常 (飞机三张不包括222)
@@ -1399,7 +1399,6 @@ function IsFlayOne(card) {
                 // 		&& newArr[5].length == 1 && newArr[6].length==1 && newArr[7].length == 1 && newArr[8].length == 1 && newArr[9].length == 1 ? true : false;
                 // }
             }
-
             return false;
         } else {
             return false;
@@ -1440,7 +1439,8 @@ function IsFlayTwo(card) {
             var s = a.length,
                 t = b.length;
 
-            return s < t ? -1 : 1;
+            // return s < t ? -1 : 1;
+            return s- t;
         });
 
         var everyIsTrue = newArr.every(function (item) {//处理后的数据  是否正常 (飞机三张不包括222)
@@ -1520,6 +1520,70 @@ function IsBoom(card) {
     }
 }
 
+// 是否是炸弹带两个单
+function IsBoomOne(card) {
+    var someisTrue = [4, 6].some(function (item) {//所有可能出现的情况 length
+        return card.length == item;
+    })
+    if (card.length == 4) {//火箭
+        if (card[2] == 16 && card[3] == 17) {
+            return card[0] == card[1] ? false : true
+        } else {
+            return false;
+        }
+    }
+
+    if (card[4] == 16 && card[5] == 17) {//length为6 时  不允许同时存在大小王
+        return false;
+    }
+
+    if (someisTrue) {
+        var markId = card[0]
+        var newArr = [];
+        var markArr = [];
+        for (var i = 0; i < card.length; i++) {
+            if (card[i] === markId) {
+                markArr.push(card[i]);
+            } else {
+                newArr.push(markArr)
+                markId = card[i];
+                markArr = [card[i]];
+
+            }
+        }
+        newArr.push(markArr)
+
+        newArr = newArr.sort(function (a, b) {
+            var s = a.length,
+                t = b.length;
+
+            return s - t;
+        });
+
+        var everyIsTrue = newArr.every(function (item) {
+            return item.length == 1 || item.length == 4
+        })
+
+        if (everyIsTrue) {
+            if (newArr.length == 3) {
+                if (newArr[0].length == 1 && newArr[1].length == 1) {
+                    return newArr[0][0] != newArr[1][0] && newArr[2][0] == newArr[2][1] && newArr[2][0] == newArr[2][2] && newArr[2][0] == newArr[2][3] ? true : false;
+                }
+                // if (newArr[0].length == 4 && newArr[1].length == 2) {
+                // 	return newArr[0][0]==newArr[0][1]==newArr[0][2]==newArr[0][3] && newArr[1][0]==newArr[1][1]? true : false;
+                // }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+    } else {
+        return false;
+    }
+}
+
 // 是否是炸弹带对子
 function IsBoomTwo(card) {
     var someisTrue = [4, 6].some(function (item) {//所有可能出现的情况 length
@@ -1557,7 +1621,7 @@ function IsBoomTwo(card) {
             var s = a.length,
                 t = b.length;
 
-            return s < t ? -1 : 1;
+            return s - t;
         });
 
         var everyIsTrue = newArr.every(function (item) {
@@ -1624,6 +1688,8 @@ function GetCardType(card) {
         type = "FlayTwo";
     } else if (IsBoom(card)) {
         type = "Boom";
+    } else if(IsBoomOne(card)) {
+        type = "BoomOne";
     } else if (IsBoomTwo(card)) {
         type = "BoomTwo";
     } else {
