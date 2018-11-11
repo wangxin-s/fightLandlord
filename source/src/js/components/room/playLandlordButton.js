@@ -19,13 +19,13 @@ class MyPlayButton extends React.PureComponent {
         return (
             <div className="my-operating" style={{display:this.props.show=='Y'?'block':'none'}}>
                 <div className="not-out" onClick={this.props.noLandlord}>
-                    不抢
+                    {this.props.landlordStatus ? '不抢' : '不叫'}
                 </div>
                 <div className="timer" style={{display:this.props.show=='Y'?'block':'none'}}>
                     {this.props.count}
                 </div>
                 <div className="play-card" onClick={this.props.playLandlord}>
-                    抢地主
+                    {this.props.landlordStatus ? '抢地主' : '叫地主'}
                 </div>
             </div>
         );

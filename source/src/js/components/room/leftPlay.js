@@ -58,7 +58,7 @@ class MyBeenOutCard extends React.Component {
                 dataList = item.playerList;
                 for(let j in item.playerList){
                     if(item.playerList[j].name == name){                       
-                        sit = item.playerList[j].site;
+                        sit = item.playerList[j].site;                       
                     }
                 }                
             }
@@ -159,7 +159,7 @@ class MyBeenOutCard extends React.Component {
                         {/* 右边玩家出牌区 */}
                         {this.rightCardData(this.state.rightList)}
                         {/* 提示 title */}
-                        <div className="is-landlord" style={{ display: this.props.isTimer == 2 ? 'none' : 'block' }}></div>
+                        <div className="is-landlord" style={{ display: this.props.isTimer == 3 ? 'none' : 'block' }}></div>
                         {/* 倒计时 */}
                         <div className="timer" style={{ display: this.props.isTimer == 2 ? 'block' : 'none' }}>
                             {this.props.count}
