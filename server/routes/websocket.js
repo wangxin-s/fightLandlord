@@ -1748,7 +1748,7 @@ function cardHandle(card) {
         let s = a.length,
             t = b.length;
 
-        return s < t ? -1 : 1;
+        return s - t;
     });
     return newArr;
 }
@@ -1782,8 +1782,8 @@ function cardContrast(oldData, newData) {
             let type = GetCardType(oldData);
 
             // 排序处理
-            let sortHandleOld = sortHandle(oldData);
-            let sortHandleNew = sortHandle(newData);
+            let sortHandleOld = oldData.sort(sortHandle);
+            let sortHandleNew = newData.sort(sortHandle);
 
             // 特殊牌型处理  
             let cardHandleOld = cardHandle(oldData);
