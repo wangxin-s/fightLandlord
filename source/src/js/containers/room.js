@@ -89,8 +89,9 @@ class RoomMain extends React.Component {
             //抢地主图标显示
             grabImg : false,
             //当前牌面上最大的牌
-            maxCard : []
-
+            maxCard : [],
+            //不出的显示隐藏
+            noOutStatus : false
         }
     }
 
@@ -361,7 +362,8 @@ class RoomMain extends React.Component {
                     isShow_playLandlord :'',
                     isTimer: 1,
                     count: 20, 
-                    landlordSit                               
+                    landlordSit,
+                    noOutStatus: true                              
                 }) 
                 this.props._roomHandle({
                     bottomCard,//顶部中间的底牌
@@ -429,7 +431,8 @@ class RoomMain extends React.Component {
                     isShow_playLandlord : '',
                     isTimer: 1,
                     count: 20, 
-                    landlordSit                               
+                    landlordSit,
+                    noOutStatus: true                               
                 })  
                 this.props._roomHandle({
                     bottomCard,//顶部中间的底牌
@@ -462,7 +465,32 @@ class RoomMain extends React.Component {
             console.log(data);  
             let bottomCard,myCard=[],isShow_playCard,landlordSit;
             data.map((item,i)=>{
-                if(room == item.room){ 
+                if(room == item.room){
+                     if(item.gameOver == 'Y'){
+                        alert('gameOver');                        
+                        return false;
+                     }
+                     if(item.maxCard !== undefined){
+                         if(item.maxCard.length > 0){
+                            this.props._roomHandle({
+                                myCardOut : item.maxCard
+                            });
+                            this.setState({
+                                isShow_beenOut : true,
+                                maxCard : item.maxCard
+                            })
+                            console.log(item.maxCard);
+                         }else{
+                            this.props._roomHandle({
+                                myCardOut : item.maxCard
+                            });
+                            this.setState({
+                                isShow_beenOut : false,
+                                maxCard : item.maxCard
+                            })
+                            // alert('不符合出牌规则');
+                         }                        
+                     } 
                      bottomCard = item.headCard              
                      for(let j in item.playerList){
                         if(name == item.playerList[j].name){
@@ -498,6 +526,16 @@ class RoomMain extends React.Component {
                             if(item.playerList[j].showCard == 'Y'){
                                 isShow_playCard = true;
                                 landlordSit = item.playerList[j].site;                                                                
+                            }
+                            if(item.playerList[j].firstCard == 'Y'){
+                               this.setState({
+                                   noOutStatus : true,
+                                   maxCard : []
+                               })                                                                                              
+                            }else{
+                               this.setState({
+                                   noOutStatus : false
+                               }) 
                             }                        
                         } 
                      }                 
@@ -596,6 +634,7 @@ class RoomMain extends React.Component {
         });
         this.setState({
             imgArr: state,
+            noOutStatus : false
         })
     }
 
@@ -606,6 +645,7 @@ class RoomMain extends React.Component {
         let mySelectCard = room.mySelectCard;
         let myCard = cloneFun(room.myCard);//去掉玩家已出的牌后玩家现有的牌
         let maxCard = this.state.maxCard;
+        console.log(maxCard+'---------');
         let list = [];//当前玩家出的牌
         for (let key in mySelectCard) {
             if (mySelectCard[key]) {
@@ -635,6 +675,7 @@ class RoomMain extends React.Component {
             isShow_playCard: false,
             isTimer: 2,
             isShow_beenOut: true,
+            noOutStatus : false
         }, ()=> {
             // this.playCardTimer();
         });
@@ -810,6 +851,7 @@ class RoomMain extends React.Component {
                         <MyPlayButton
                             show={this.state.isShow_playCard}
                             isTimer={this.state.isTimer}
+                            noOutStatus={this.state.noOutStatus}
                             count={this.state.count}
                             notOut={this.notOut.bind(this)}
                             playCard={this.playCard.bind(this)}

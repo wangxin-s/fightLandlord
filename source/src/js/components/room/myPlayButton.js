@@ -18,7 +18,7 @@ class MyPlayButton extends React.PureComponent {
     render() {
         return (
             <div className="my-operating" style={{display:this.props.show==1?'block':'none'}}>
-                <div className="not-out" onClick={this.props.notOut}>
+                <div className="not-out" onClick={this.props.notOut} style={{display:this.props.noOutStatus == false?'block':'none'}}>
                     不出
                 </div>
                 <div className="timer" style={{display:this.props.show==1?'block':'none'}}>

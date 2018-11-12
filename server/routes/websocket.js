@@ -80,8 +80,24 @@ var Cards = [
         {icon: 43, type: '4', val: 13}
     ];
 var cards = Cards.slice(0);
+var self = {
+    ONE : 1,
+    PAIRS : 2,
+    THREE : 3,
+    THREE_WITH_ONE : 4,
+    THREE_WITH_PAIRS : 5,
+    PROGRESSION : 6,
+    PROGRESSION_PAIRS : 7,
+    PLANE : 8,
+    PLANE_WITH_ONE : 9,    
+    PLANE_WITH_PAIRS : 10,
+    FOUR_WITH_TWO : 11,
+    FOUR_WITH_TWO_PAIRS : 12,
+    BOMB : 13,
+    KING_BOMB : 14,
+}
 var landlord = ['left','right','bottom'].slice(0);
-var one = [] , two = [] , three = [] , hiddenCards = [],firstLandlord,landlordNum=0,noRobArr=[];
+var one = [] , two = [] , three = [] , hiddenCards = [],firstLandlord,landlordNum=0,noRobArr=[],noOut=[],ringNum=0,firstOut;
 exports.websocket = function websocket(socket,io) {
     // 登录
     socket.on('login',(data)=> {
@@ -172,7 +188,7 @@ exports.websocket = function websocket(socket,io) {
     socket.on('getCards',(data)=>{
         let obj = dealCards();              
         desk.deskList.map((item , index)=>{
-            if(data.room == item.room){
+            if(data.room == item.room){                
                 if(data.sit == 'left'){
                     item.playerList[0] = {name : data.name,imgUrl : data.imgUrl,site : data.sit,isFull:true};
                 }
@@ -214,7 +230,10 @@ exports.websocket = function websocket(socket,io) {
        }
        landlordNum++;
        desk.deskList.map((item , index)=>{
-            if(data.room == item.room){                                               
+            if(data.room == item.room){ 
+                // if(item.gameOver == 'Y'){
+                //     delete item.gameOver;
+                // }                                              
                 item.playerList.map((val,i)=>{
                     if(data.landlordSit == 'left'){                        
                         if(val.site == 'left'){
@@ -335,7 +354,10 @@ exports.websocket = function websocket(socket,io) {
        landlordNum++; 
        noRobArr.push(data.landlordSit);   
        desk.deskList.map((item , index)=>{
-            if(data.room == item.room){                                               
+            if(data.room == item.room){
+                // if(item.gameOver == 'Y'){
+                //     delete item.gameOver;
+                // }                                               
                 item.playerList.map((val,i)=>{
                     if(data.landlordSit == 'left'){                        
                         if(val.site == 'left'){                        
@@ -434,61 +456,71 @@ exports.websocket = function websocket(socket,io) {
     })
     //出牌
     socket.on('emitCard',(data)=>{
+        firstOut = data.landlordSit;
+        if(firstOut == data.landlordSit){
+            noOut = [];
+        }        
         let maxCard = data.maxCard;//当前牌面上最大的牌
         let outCard = data.outCard;//当前玩家出的牌
-        if(maxCard.length == 0){//删除当前玩家的牌
+        if(maxCard.length == 0){//删除当前玩家的牌            
             desk.deskList.map((item , index)=>{
                 if(data.room == item.room){
-                    item.playerList.map((val,i)=>{
+                    if(item.gameOver == 'Y'){
+                        delete item.gameOver;
+                    }                     
+                    item.maxCard = outCard;
+                    item.playerList.map((val,i)=>{                        
                         if(data.landlordSit == 'left'){ 
-                                console.log(data.landlordSit);                       
+                                item.playerList[1].showCard = 'Y';                                                       
                                 if(val.site == 'left'){
-                                    delete item.playerList[i].showCard                                                   
+                                    delete item.playerList[i].showCard;
+                                    delete item.playerList[i].noOut;
+                                    delete item.playerList[i].firstCard;
                                 }
-                                if(val.site == 'bottom'){
-                                    if(val.noOut !== 'Y'){
-                                    item.playerList[i].showCard = 'Y'; 
-                                    }else{
-                                    item.playerList[2].showCard = 'Y'; 
-                                    }
-                                }                        
+                                //if(val.site == 'bottom'){
+                                    
+                                    // if(val.noOut !== 'Y'){
+                                    // item.playerList[i].showCard = 'Y'; 
+                                    // }else{
+                                    // item.playerList[2].showCard = 'Y'; 
+                                    // }
+                                //}                        
                                 
                             }
                             if(data.landlordSit == 'right'){  
-                                console.log(data.landlordSit);                      
+                                item.playerList[0].showCard = 'Y';                     
                                 if(val.site == 'right'){                        
-                                    delete item.playerList[i].showCard
+                                    delete item.playerList[i].showCard;
+                                    delete item.playerList[i].noOut;
+                                    delete item.playerList[i].firstCard;
                                 }
-                                if(val.site == 'left'){
-                                    if(val.noOut !== 'Y'){
-                                    item.playerList[i].showCard = 'Y'; 
-                                    }else{
-                                    item.playerList[1].showCard = 'Y'; 
-                                    }
-                                }   
+                                //if(val.site == 'left'){
+                                    
+                                    // if(val.noOut !== 'Y'){
+                                    // item.playerList[i].showCard = 'Y'; 
+                                    // }else{
+                                    // item.playerList[1].showCard = 'Y'; 
+                                    // }
+                                //}   
                                 
                             }
                             if(data.landlordSit == 'bottom'){ 
-                                console.log(data.landlordSit);                       
+                                item.playerList[2].showCard = 'Y';                      
                                 if(val.site == 'bottom'){                        
-                                    delete item.playerList[i].showCard
+                                    delete item.playerList[i].showCard;
+                                    delete item.playerList[i].noOut;
+                                    delete item.playerList[i].firstCard;
                                 }
-                                if(val.site == 'right'){
-                                    if(val.noOut !== 'Y'){
-                                    item.playerList[i].showCard = 'Y'; 
-                                    }else{
-                                    item.playerList[0].showCard = 'Y'; 
-                                    }
-                                }
+                                //if(val.site == 'right'){
+                                    
+                                    // if(val.noOut !== 'Y'){
+                                    // item.playerList[i].showCard = 'Y'; 
+                                    // }else{
+                                    // item.playerList[0].showCard = 'Y'; 
+                                    // }
+                                //}
                                 
-                            }                            
-                            for(let k in outCard){                                    
-                                val.cardsList.map((list,j)=>{
-                                        if(outCard[k]*1 == list.icon*1){
-                                            item.playerList[i].cardsList.splice(j,1);
-                                        }
-                                })
-                            }         
+                            }                                                                
                         if(val.site == data.landlordSit){                                                 
                             for(let k in outCard){                                    
                                 val.cardsList.map((list,j)=>{
@@ -499,70 +531,105 @@ exports.websocket = function websocket(socket,io) {
                             }                                
                         }
                     })
+                    if(!item.playerList.every(function(val){ return val.cardsList.length>0})){
+                        item.gameOver = 'Y';
+                    }
                 }
             });
         }else{
-            desk.deskList.map((item , index)=>{
-                if(data.room == item.room){
-                    item.playerList.map((val,i)=>{                       
-                            if(data.landlordSit == 'left'){ 
-                                console.log(data.landlordSit);                       
-                                if(val.site == 'left'){
-                                    delete item.playerList[i].showCard                                                   
-                                }
-                                if(val.site == 'bottom'){
-                                    if(val.noOut !== 'Y'){
-                                    item.playerList[i].showCard = 'Y'; 
-                                    }else{
-                                    item.playerList[2].showCard = 'Y'; 
+            let maxData=[],outData=[];                      
+            for(let z in maxCard){                                    
+                cards.map((lists,h)=>{
+                    if(maxCard[z]*1 == lists.icon*1){
+                        maxData.push(lists);
+                    }
+                })
+            }
+            for(let k in outCard){                                    
+                cards.map((list,j)=>{
+                    if(outCard[k]*1 == list.icon*1){
+                        outData.push(list);
+                    }
+                })
+            }  
+            console.log(maxData,outData);
+            console.log(thanCard(maxData,outData));
+            if(thanCard(maxData,outData)){ 
+             desk.deskList.map((item , index)=>{
+                if(data.room == item.room){                                       
+                    item.playerList.map((val,i)=>{ 
+                                item.maxCard = outCard;                               
+                                if(data.landlordSit == 'left'){ 
+                                    item.playerList[1].showCard = 'Y';                    
+                                    if(val.site == 'left'){
+                                        delete item.playerList[i].showCard;
+                                        delete item.playerList[i].noOut;
+                                        delete item.playerList[i].firstCard;                                                   
                                     }
-                                }                        
-                                
-                            }
-                            if(data.landlordSit == 'right'){  
-                                console.log(data.landlordSit);                      
-                                if(val.site == 'right'){                        
-                                    delete item.playerList[i].showCard
+                                    //if(val.site == 'bottom'){
+                                        
+                                        // if(val.noOut !== 'Y'){
+                                        // item.playerList[i].showCard = 'Y'; 
+                                        // }else{
+                                        // item.playerList[2].showCard = 'Y'; 
+                                        // }
+                                    //}                        
+                                    
                                 }
-                                if(val.site == 'left'){
-                                    if(val.noOut !== 'Y'){
-                                    item.playerList[i].showCard = 'Y'; 
-                                    }else{
-                                    item.playerList[1].showCard = 'Y'; 
+                                if(data.landlordSit == 'right'){  
+                                    item.playerList[0].showCard = 'Y';                    
+                                    if(val.site == 'right'){                        
+                                        delete item.playerList[i].showCard;
+                                        delete item.playerList[i].noOut;
+                                        delete item.playerList[i].firstCard;
                                     }
-                                }   
-                                
-                            }
-                            if(data.landlordSit == 'bottom'){ 
-                                console.log(data.landlordSit);                       
-                                if(val.site == 'bottom'){                        
-                                    delete item.playerList[i].showCard
+                                    //if(val.site == 'left'){
+                                        
+                                        // if(val.noOut !== 'Y'){
+                                        // item.playerList[i].showCard = 'Y'; 
+                                        // }else{
+                                        // item.playerList[1].showCard = 'Y'; 
+                                        // }
+                                    //}   
+                                    
                                 }
-                                if(val.site == 'right'){
-                                    if(val.noOut !== 'Y'){
-                                    item.playerList[i].showCard = 'Y'; 
-                                    }else{
-                                    item.playerList[0].showCard = 'Y'; 
+                                if(data.landlordSit == 'bottom'){ 
+                                    item.playerList[2].showCard = 'Y';                     
+                                    if(val.site == 'bottom'){                        
+                                        delete item.playerList[i].showCard;
+                                        delete item.playerList[i].noOut;
+                                        delete item.playerList[i].firstCard;
                                     }
-                                }
-                                
-                            }                            
-                            for(let k in outCard){                                    
-                                val.cardsList.map((list,j)=>{
-                                        if(outCard[k]*1 == list.icon*1){
-                                            item.playerList[i].cardsList.splice(j,1);
-                                        }
-                                })
-                            }                                                        
+                                    //if(val.site == 'right'){
+                                        
+                                        // if(val.noOut !== 'Y'){
+                                        // item.playerList[i].showCard = 'Y'; 
+                                        // }else{
+                                        // item.playerList[0].showCard = 'Y'; 
+                                        // }
+                                    //}
+                                    
+                                }                            
+                                if(val.site == data.landlordSit){                                                 
+                                    for(let k in outCard){                                    
+                                        val.cardsList.map((list,j)=>{
+                                                if(outCard[k]*1 == list.icon*1){
+                                                    item.playerList[i].cardsList.splice(j,1);
+                                                }
+                                        })
+                                    }                                
+                                }                                                       
                     })
                 }
-            });            
-        }        
-        console.log(data);
+            });
+            }                    
+                  
+        }               
         io.sockets.emit('emitCard',desk.deskList);
     });
     //不出
-    socket.on('notPlayCard',(data)=>{
+    socket.on('notPlayCard',(data)=>{        
+        noOut.push(data.landlordSit);
         desk.deskList.map((item , index)=>{
             if(data.room == item.room){                                               
                 item.playerList.map((val,i)=>{
@@ -595,7 +662,22 @@ exports.websocket = function websocket(socket,io) {
                     }                    
                 })
             }
-        }); 
+        });
+        if(noOut.length == 2){
+           desk.deskList.map((item , index)=>{
+               if(data.room == item.room){
+                   item.playerList.map((val,i)=>{                            
+                            if(val.noOut !== 'Y'){    
+                                item.playerList[i].showCard = 'Y';
+                                item.playerList[i].firstCard = 'Y';
+                                noOut = [];
+                                item.maxCard = [];
+                                firstOut='';
+                            }                
+                   })
+               }
+           }) 
+        } 
         io.sockets.emit('notPlayCard',desk.deskList);
     })
 
