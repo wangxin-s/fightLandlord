@@ -230,10 +230,7 @@ exports.websocket = function websocket(socket,io) {
        }
        landlordNum++;
        desk.deskList.map((item , index)=>{
-            if(data.room == item.room){ 
-                // if(item.gameOver == 'Y'){
-                //     delete item.gameOver;
-                // }                                              
+            if(data.room == item.room){                                            
                 item.playerList.map((val,i)=>{
                     if(data.landlordSit == 'left'){                        
                         if(val.site == 'left'){
@@ -354,10 +351,7 @@ exports.websocket = function websocket(socket,io) {
        landlordNum++; 
        noRobArr.push(data.landlordSit);   
        desk.deskList.map((item , index)=>{
-            if(data.room == item.room){
-                // if(item.gameOver == 'Y'){
-                //     delete item.gameOver;
-                // }                                               
+            if(data.room == item.room){                                       
                 item.playerList.map((val,i)=>{
                     if(data.landlordSit == 'left'){                        
                         if(val.site == 'left'){                        

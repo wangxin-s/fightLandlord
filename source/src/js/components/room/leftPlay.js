@@ -16,6 +16,7 @@ class MyBeenOutCard extends React.Component {
             leftList : [],//左边的牌
             rightList : [],//右边的牌
             bottomList : [],//底下人的牌
+            grabImg : false,           
         };
 
     }
@@ -27,6 +28,7 @@ class MyBeenOutCard extends React.Component {
             leftList : [],//左边的牌
             rightList : [],//右边的牌
             bottomList : [],//底下人的牌
+            grabImg : false,
         })
         let roomData = this.props.roomData;
         let name = this.props.roomId.name;
@@ -42,6 +44,7 @@ class MyBeenOutCard extends React.Component {
             leftList : [],//左边的牌
             rightList : [],//右边的牌
             bottomList : [],//底下人的牌
+            grabImg : false,
         })
     }
     componentWillReceiveProps(nextProps) { 	
@@ -52,13 +55,14 @@ class MyBeenOutCard extends React.Component {
     }
 
     dataFun(roomData,name,room,left,right,bottom){
-        let playerLeft,playerRight,leftList=[],rightList=[],sit,dataList;       
+        let playerLeft,playerRight,leftList=[],rightList=[],sit,dataList,isRob,showCard,grabImg;       
         roomData.map((item,i)=>{
             if(room == item.room){
                 dataList = item.playerList;
-                for(let j in item.playerList){
+                for(let j in item.playerList){                    
                     if(item.playerList[j].name == name){                       
-                        sit = item.playerList[j].site;                       
+                        sit = item.playerList[j].site;
+                        isRob = item.playerList[j].isRob;                                               
                     }
                 }                
             }
@@ -123,7 +127,6 @@ class MyBeenOutCard extends React.Component {
         }
         return require('../../../images/card/card_'+i+'@2x.png');
     }
-
     render() {
         return (
             <div className="room-container-player">
@@ -137,7 +140,7 @@ class MyBeenOutCard extends React.Component {
                                 src={require('../../../images/beans2.png')}></img>9999</p>
                         </div>
                         <div className="player-identity">
-                            <img className="farmer" src={require('../../../images/farmer.png')} alt="" />
+                            <img className="farmer" src={this.props.landlordShow == this.state.playerLeft ? require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
                             <div className="card-back">
                                 17
                             </div>
@@ -147,7 +150,7 @@ class MyBeenOutCard extends React.Component {
                         {/* 左边玩家出牌区 */}
                         {this.leftCardData(this.state.leftList)}
                         {/* 提示 title */}
-                        <div className="is-landlord" style={{ display: this.props.isTimer == 3 ? 'none' : 'block' }}></div>
+                        <div className="is-landlord" style={{ display: this.state.isTimer == 3 ? 'none' : 'block' }}></div>
                         {/* 倒计时 */}
                         <div className="timer" style={{ display: this.props.isTimer == 3 ? 'block' : 'none' }}>
                             {this.props.count}
@@ -159,7 +162,7 @@ class MyBeenOutCard extends React.Component {
                         {/* 右边玩家出牌区 */}
                         {this.rightCardData(this.state.rightList)}
                         {/* 提示 title */}
-                        <div className="is-landlord" style={{ display: this.props.isTimer == 3 ? 'none' : 'block' }}></div>
+                        <div className="is-landlord" style={{ display: this.state.isTimer == 2 ? 'none' : 'block' }}></div>
                         {/* 倒计时 */}
                         <div className="timer" style={{ display: this.props.isTimer == 2 ? 'block' : 'none' }}>
                             {this.props.count}
@@ -167,7 +170,7 @@ class MyBeenOutCard extends React.Component {
                     </div>
                     <div className="player">
                         <div className="player-identity">
-                            <img className="farmer" src={require('../../../images/farmer.png')} alt="" />
+                            <img className="farmer" src={this.props.landlordShow == this.state.playerRight ? require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
                             <div className="card-back">
                                 17
                             </div>
