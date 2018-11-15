@@ -128,6 +128,7 @@ class MyBeenOutCard extends React.Component {
         return require('../../../images/card/card_'+i+'@2x.png');
     }
     render() {
+        // console.log(this.props.count);
         return (
             <div className="room-container-player">
                 <div className="room-container-player-left" style={{display : this.state.playerLeft !==''?'inline-block':'none'}}>
@@ -152,7 +153,7 @@ class MyBeenOutCard extends React.Component {
                         {/* 提示 title */}
                         <div className="is-landlord" style={{ display: this.state.isTimer == 3 ? 'none' : 'block' }}></div>
                         {/* 倒计时 */}
-                        <div className="timer" style={{ display: this.props.isTimer == 3 ? 'block' : 'none' }}>
+                        <div className="timer" style={{ display: this.props.timerImg == this.state.playerLeft ? 'block' : 'none' }}>
                             {this.props.count}
                         </div>
                     </div>
@@ -164,7 +165,7 @@ class MyBeenOutCard extends React.Component {
                         {/* 提示 title */}
                         <div className="is-landlord" style={{ display: this.state.isTimer == 2 ? 'none' : 'block' }}></div>
                         {/* 倒计时 */}
-                        <div className="timer" style={{ display: this.props.isTimer == 2 ? 'block' : 'none' }}>
+                        <div className="timer" style={{ display: this.props.timerImg == this.state.playerRight ? 'block' : 'none' }}>
                             {this.props.count}
                         </div>
                     </div>
