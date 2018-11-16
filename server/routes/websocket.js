@@ -97,7 +97,8 @@ var self = {
     KING_BOMB : 14,
 }
 var landlord = ['left','right','bottom'].slice(0);
-var one = [] , two = [] , three = [] , hiddenCards = [],firstLandlord,landlordNum=0,noRobArr=[],noOut=[],ringNum=0,firstOut;
+var one = [] , two = [] , three = [] , hiddenCards = [],firstLandlord,landlordNum=0,noRobArr=[],noOut=[],ringNum=0,firstOut,
+grabList = [],noGrabList = [];
 exports.websocket = function websocket(socket,io) {
     // 登录
     socket.on('login',(data)=> {
@@ -239,10 +240,22 @@ exports.websocket = function websocket(socket,io) {
        }
        landlordNum++;
        desk.deskList.map((item , index)=>{
-            if(data.room == item.room){                                            
+            if(data.room == item.room){                                                           
                 item.playerList.map((val,i)=>{
-                    if(data.landlordSit == 'left'){                        
+                    if(data.landlordSit == 'left'){
+                        // if(grabList.length == 0){
+                        //     grabList.push(val.name);                                 
+                        // }else{
+                        //     for(let v in grabList){
+                        //         if(val.name !== grabList[v]){
+                        //             grabList.push(val.name);    
+                        //         }
+                        //     }
+                        // } 
+                        // item.grabList = grabList;
                         if(val.site == 'left'){
+                            item.playerList[i].isGrad = 'Y';
+                            item.playerList[i].text = data.text; 
                             delete item.playerList[i].isLandlord                                                   
                         }
                         if(val.site == 'bottom'){
@@ -254,8 +267,10 @@ exports.websocket = function websocket(socket,io) {
                         }                        
                         
                     }
-                    if(data.landlordSit == 'right'){                        
-                        if(val.site == 'right'){                        
+                    if(data.landlordSit == 'right'){                                         
+                        if(val.site == 'right'){
+                            item.playerList[i].isGrad = 'Y';
+                            item.playerList[i].text = data.text;                         
                             delete item.playerList[i].isLandlord
                         }
                         if(val.site == 'left'){
@@ -267,8 +282,10 @@ exports.websocket = function websocket(socket,io) {
                         }   
                         
                     }
-                    if(data.landlordSit == 'bottom'){                        
-                        if(val.site == 'bottom'){                        
+                    if(data.landlordSit == 'bottom'){                                             
+                        if(val.site == 'bottom'){ 
+                            item.playerList[i].isGrad = 'Y';
+                            item.playerList[i].text = data.text;                        
                             delete item.playerList[i].isLandlord
                         }
                         if(val.site == 'right'){
@@ -292,10 +309,13 @@ exports.websocket = function websocket(socket,io) {
                       item.playerList.map((val,i)=>{
                           if(val.isLandlord == 'Y'){                                
                                 delete item.playerList[i].isLandlord;                                
-                            }
+                          }
+                          if(val.text !== ''){                                
+                                delete item.playerList[i].text;                                
+                          }                          
                           if(arr.length == 0){
                                 if(data.landlordSit == val.site){
-                                    item.playerList[i].showCard = 'Y';
+                                    item.playerList[i].showCard = 'Y';                                    
                                     item.landlordIn = 'Y';
                                     for(let k in hiddenCards){
                                             item.playerList[i].cardsList.push(hiddenCards[k]);
@@ -309,9 +329,12 @@ exports.websocket = function websocket(socket,io) {
                             if(val.isLandlord == 'Y'){ 
                                 delete item.playerList[i].isLandlord;                                             
                             }
+                            if(val.text !== ''){                                
+                                delete item.playerList[i].text;                                
+                            }
                             if(arr.length == 1){
                                 if(data.landlordSit == val.site){
-                                    item.playerList[i].showCard = 'Y';
+                                    item.playerList[i].showCard = 'Y';                                    
                                     item.landlordIn = 'Y';
                                     for(let k in hiddenCards){
                                         item.playerList[i].cardsList.push(hiddenCards[k]);
@@ -330,7 +353,7 @@ exports.websocket = function websocket(socket,io) {
            desk.deskList.map((item , index)=>{
                 if(data.room == item.room){
                     if(!item.playerList.every(function(val){ return val.isRob == undefined})){
-                        item.playerList.map((val,i)=>{                                                                                               
+                        item.playerList.map((val,i)=>{ 
                                 if(arr.length == 2){                                    
                                     if(val.isRob !== 'Y'){    
                                         item.playerList[i].showCard = 'Y';
@@ -342,6 +365,9 @@ exports.websocket = function websocket(socket,io) {
                                     }
                                     if(val.isLandlord == 'Y'){
                                         delete item.playerList[i].isLandlord;
+                                    }
+                                    if(val.text !== ''){                                
+                                            delete item.playerList[i].text;                                
                                     }
                                  }                                                   
                         })
@@ -357,24 +383,26 @@ exports.websocket = function websocket(socket,io) {
             landlordNum = 0;
             noRobArr = []
        }
-       landlordNum++; 
+       landlordNum++;       
        noRobArr.push(data.landlordSit);   
        desk.deskList.map((item , index)=>{
-            if(data.room == item.room){                                       
+            if(data.room == item.room){                                                  
                 item.playerList.map((val,i)=>{
-                    if(data.landlordSit == 'left'){                        
+                    if(data.landlordSit == 'left'){                                               
                         if(val.site == 'left'){                        
                             delete item.playerList[i].isLandlord;
                             item.playerList[i].isRob = 'Y';
+                            item.playerList[i].text = data.text;
                         }
                         if(val.site == 'bottom'){
                             item.playerList[i].isLandlord = 'Y';
                         }
                     }
-                    if(data.landlordSit == 'right'){                        
+                    if(data.landlordSit == 'right'){                                                     
                         if(val.site == 'right'){                        
                             delete item.playerList[i].isLandlord;
                             item.playerList[i].isRob = 'Y';
+                            item.playerList[i].text = data.text;
                         }
                         if(val.site == 'left'){
                             item.playerList[i].isLandlord = 'Y';
@@ -384,6 +412,7 @@ exports.websocket = function websocket(socket,io) {
                         if(val.site == 'bottom'){                        
                             delete item.playerList[i].isLandlord;
                             item.playerList[i].isRob = 'Y';
+                            item.playerList[i].text = data.text;
                         }
                         if(val.site == 'right'){
                             item.playerList[i].isLandlord = 'Y';
@@ -398,6 +427,9 @@ exports.websocket = function websocket(socket,io) {
                    item.playerList.map((val,i)=>{
                         if(val.isLandlord == 'Y'){
                             delete item.playerList[i].isLandlord;
+                        }
+                        if(val.text !== ''){                                
+                                delete item.playerList[i].text;                                
                         }
                         if(data.landlordSit == 'left'){
                             item.playerList[2].showCard = 'Y';
@@ -423,36 +455,7 @@ exports.websocket = function websocket(socket,io) {
                                     item.playerList[1].cardsList = item.playerList[1].cardsList.sort(cardSort)
                                 }  
                         }                       
-                        // if(val.isLandlord == 'Y'){   
-                        //     delete item.playerList[i].isLandlord;
-                        //     if(val.site == 'left'){
-                        //         item.playerList[2].showCard = 'Y';
-                        //         item.landlordIn = 'Y';
-                        //         for(let k in hiddenCards){
-                        //                 item.playerList[2].cardsList.push(hiddenCards[k]);
-                        //                 item.playerList[2].cardsList = item.playerList[2].cardsList.sort(cardSort)
-                        //             }                               
-                        //     }
-                        //     if(val.site == 'bottom'){
-                        //         item.playerList[1].showCard = 'Y';
-                        //         item.landlordIn = 'Y';
-                        //         for(let k in hiddenCards){
-                        //                 item.playerList[1].cardsList.push(hiddenCards[k]);
-                        //                 item.playerList[1].cardsList = item.playerList[1].cardsList.sort(cardSort)
-                        //             }
-                                
-                        //     }
-                        //     if(val.site == 'right'){
-                        //         item.playerList[0].showCard = 'Y';
-                        //         item.landlordIn = 'Y';
-                        //         for(let k in hiddenCards){
-                        //                 item.playerList[0].cardsList.push(hiddenCards[k]);
-                        //                 item.playerList[0].cardsList = item.playerList[0].cardsList.sort(cardSort)
-                        //             }                               
-                        //     }
-                            
-                        // }
-                        
+                                                
                    })
                }
            }) 
@@ -476,6 +479,9 @@ exports.websocket = function websocket(socket,io) {
                             }
                             if(val.isLandlord == 'Y'){
                                 delete item.playerList[i].isLandlord;
+                            }
+                            if(val.text !== ''){                                
+                                delete item.playerList[i].text;                                
                             } 
                         }
                    })
@@ -513,7 +519,10 @@ exports.websocket = function websocket(socket,io) {
                             delete item.gameOver;
                         }                     
                         item.maxCard = outCard;
-                        item.playerList.map((val,i)=>{                        
+                        item.playerList.map((val,i)=>{
+                            if(val.noOut == 'Y'){
+                               delete item.playerList[i].noOut; 
+                            }  
                             if(data.landlordSit == 'left'){ 
                                     item.playerList[1].showCard = 'Y';                                                       
                                     if(val.site == 'left'){
@@ -603,6 +612,9 @@ exports.websocket = function websocket(socket,io) {
              desk.deskList.map((item , index)=>{
                 if(data.room == item.room){                                       
                     item.playerList.map((val,i)=>{ 
+                                if(val.noOut == 'Y'){
+                                    delete item.playerList[i].noOut; 
+                                } 
                                 item.maxCard = outCard;                               
                                 if(data.landlordSit == 'left'){ 
                                     item.playerList[1].showCard = 'Y';                    

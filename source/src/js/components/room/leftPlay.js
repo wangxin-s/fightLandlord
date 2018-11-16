@@ -16,6 +16,8 @@ class MyBeenOutCard extends React.Component {
             leftList : [],//左边的牌
             rightList : [],//右边的牌
             bottomList : [],//底下人的牌
+            leftText : '',
+            rightText : '',
             grabImg : false,           
         };
 
@@ -27,13 +29,18 @@ class MyBeenOutCard extends React.Component {
             playerRight : '',//右边的人
             leftList : [],//左边的牌
             rightList : [],//右边的牌
+            leftText : '',
+            rightText : '',
             bottomList : [],//底下人的牌
+            noOut : [],
             grabImg : false,
         })
         let roomData = this.props.roomData;
         let name = this.props.roomId.name;
-        let room = this.props.roomId.room;         
-        this.dataFun(roomData,name,room)              
+        let room = this.props.roomId.room;
+        let noOutText = this.props.noOutText;   
+        let noOut = [];   
+        this.dataFun(roomData,name,room) 
     }
 
     componentWillUnmount() {
@@ -43,6 +50,8 @@ class MyBeenOutCard extends React.Component {
             playerRight : '',//右边的人
             leftList : [],//左边的牌
             rightList : [],//右边的牌
+            leftText : '',
+            rightText : '',
             bottomList : [],//底下人的牌
             grabImg : false,
         })
@@ -55,14 +64,14 @@ class MyBeenOutCard extends React.Component {
     }
 
     dataFun(roomData,name,room,left,right,bottom){
-        let playerLeft,playerRight,leftList=[],rightList=[],sit,dataList,isRob,showCard,grabImg;       
+        let playerLeft,playerRight,leftList=[],rightList=[],sit,dataList,isRob,showCard,grabImg,leftText,
+            rightText;       
         roomData.map((item,i)=>{
             if(room == item.room){
                 dataList = item.playerList;
                 for(let j in item.playerList){                    
                     if(item.playerList[j].name == name){                       
-                        sit = item.playerList[j].site;
-                        isRob = item.playerList[j].isRob;                                               
+                        sit = item.playerList[j].site;                                                                       
                     }
                 }                
             }
@@ -72,24 +81,32 @@ class MyBeenOutCard extends React.Component {
             playerRight = dataList[1].name;
             leftList = dataList[2].cardsList;
             rightList = dataList[1].cardsList;
+            leftText = dataList[2].text;
+            rightText = dataList[1].text;
         }
         if(sit == 'right'){
             playerLeft = dataList[1].name;
             playerRight = dataList[0].name;
             leftList = dataList[1].cardsList;
             rightList = dataList[0].cardsList;
+            leftText = dataList[1].text;
+            rightText = dataList[0].text;
         }
         if(sit == 'bottom'){
             playerLeft = dataList[0].name;
             playerRight = dataList[2].name;
             leftList = dataList[0].cardsList;
             rightList = dataList[2].cardsList;
+            leftText = dataList[0].text;
+            rightText = dataList[2].text;
         }
         this.setState({
             playerLeft,
             playerRight,
             leftList,
-            rightList
+            rightList,
+            leftText,
+            rightText
         })
     }
     // 左边玩家出牌展示
@@ -128,7 +145,6 @@ class MyBeenOutCard extends React.Component {
         return require('../../../images/card/card_'+i+'@2x.png');
     }
     render() {
-        // console.log(this.props.count);
         return (
             <div className="room-container-player">
                 <div className="room-container-player-left" style={{display : this.state.playerLeft !==''?'inline-block':'none'}}>
@@ -149,11 +165,19 @@ class MyBeenOutCard extends React.Component {
                     </div>
                     <div className="out-brand">
                         {/* 左边玩家出牌区 */}
-                        {this.leftCardData(this.state.leftList)}
+                        {/*{this.leftCardData(this.state.leftList)}*/}
                         {/* 提示 title */}
-                        <div className="is-landlord" style={{ display: this.state.isTimer == 3 ? 'none' : 'block' }}></div>
+                        <div style={{fontSize:'40px',color:'black'}}>{this.state.leftText}</div>
+
+                        {this.props.noOutText.length == 1 &&                        
+                            <div className="noOut" style={{display:this.props.noOutText[0] == this.state.playerLeft ? 'inline-block' :'none'}}></div>
+                        }
+                        {this.props.noOutText.length == 2 &&                        
+                            <div className="noOut" style={{display:this.props.noOutText[0] !== this.state.playerLeft && this.props.noOutText[1] !== this.state.playerLeft ? 'none' :'inline-block'}}></div>
+                        }
+                        {/*<div className="noOut" style={{display:this.props.noOutLeftText == this.state.playerLeft ? 'inline-block' :'none'}}></div>*/}
                         {/* 倒计时 */}
-                        <div className="timer" style={{ display: this.props.timerImg == this.state.playerLeft ? 'block' : 'none' }}>
+                        <div className="timer" style={{ display: this.props.timerImg == this.state.playerLeft ? 'inline-block' : 'none' }}>
                             {this.props.count}
                         </div>
                     </div>
@@ -161,9 +185,16 @@ class MyBeenOutCard extends React.Component {
                 <div className="room-container-player-right" style={{display : this.state.playerRight !==''?'inline-block':'none'}}>
                     <div className="out-brand">
                         {/* 右边玩家出牌区 */}
-                        {this.rightCardData(this.state.rightList)}
+                        {/*{this.rightCardData(this.state.rightList)}*/}
                         {/* 提示 title */}
-                        <div className="is-landlord" style={{ display: this.state.isTimer == 2 ? 'none' : 'block' }}></div>
+                        <div style={{fontSize:'40px',color:'black'}}>{this.state.rightText}</div>
+                        {this.props.noOutText.length == 1 &&                        
+                            <div className="noOut" style={{display:this.props.noOutText[0] == this.state.playerRight ? 'inline-block' :'none'}}></div>
+                        }
+                        {this.props.noOutText.length == 2 &&                        
+                            <div className="noOut" style={{display:this.props.noOutText[0] !== this.state.playerRight && this.props.noOutText[1] !== this.state.playerRight ? 'none' :'inline-block'}}></div>
+                        }
+                        {/*<div className="noOut" style={{display:this.props.noOutRightText == this.state.playerRight ? 'block' :'none'}}></div>*/}
                         {/* 倒计时 */}
                         <div className="timer" style={{ display: this.props.timerImg == this.state.playerRight ? 'block' : 'none' }}>
                             {this.props.count}

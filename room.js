@@ -82,11 +82,6 @@ class RoomMain extends React.Component {
             isRevers: false,
             //地主牌数据源
             list: [card_back, card_back, card_back],
-            //抢地主的个数
-            grabList : [],
-            noGradList : [],
-            //抢地主的名字
-            grabName : '',
             //抢地主玩家所在位置
             landlordSit : '',
             //叫地主/抢地主显示(默认叫地主)
@@ -256,8 +251,6 @@ class RoomMain extends React.Component {
             landlordStatus:false,
             landlordImg : false,
             landlordShow : '',
-            grabList : [],
-            noGradList : [],
         })
     }
 
@@ -308,7 +301,7 @@ class RoomMain extends React.Component {
         
         //调用接口获取发牌内容
         socket.on('getCards', (data) => {
-            let bottomCard,myCard=[],left=[],right=[],isShow_playLandlord='',landlordSit='',grabName='';
+            let bottomCard,myCard=[],left=[],right=[],isShow_playLandlord='',landlordSit='';
             data.map((item,i)=>{
                 if(room == item.room){ 
                      clearInterval(timer);
@@ -318,8 +311,7 @@ class RoomMain extends React.Component {
                             this.setState({
                                 timerImg : item.playerList[j].name,
                                 landlordSit : item.playerList[j].site,
-                                count : this.state.count,
-                                grabName : item.playerList[j].name
+                                count : this.state.count
                             });                            
                             this.robTimer();
                          }
@@ -328,7 +320,6 @@ class RoomMain extends React.Component {
                             if(item.playerList[j].isLandlord == 'Y'){                                
                                 isShow_playLandlord = 'Y'; 
                                 landlordSit = item.playerList[j].site;
-                                grabName = item.playerList[j].name;
                             }                       
                         }                         
                      }                 
@@ -339,8 +330,7 @@ class RoomMain extends React.Component {
                     isShow_playLandlord,
                     isTimer: 1,
                     count: 20,
-                    landlordSit,
-                    grabName                    
+                    landlordSit,                    
                 })            
             }
             this.props._roomHandle({
@@ -356,28 +346,21 @@ class RoomMain extends React.Component {
          socket.on('robHost',(data)=>{
             console.log(data);
             let  bottomCard,myCard=[],isShow_playLandlord='',landlordSit='',isShow_playCard=false;
-            let grabList=[];
             data.map((item,i)=>{
                 if(room == item.room){
-                    clearInterval(timer);                    
+                    clearInterval(timer);
                     this.setState({
-                        landlordStatus : true,                        
+                        landlordStatus : true
                     })
                     if(item.landlordIn == 'Y'){
-                        clearInterval(timer);
+                        // clearInterval(timer);
                         this.revers();
                         this.setState({
-                            grabImg : false,                           
+                            grabImg : false,                            
                         })
                     } 
                      bottomCard = item.headCard                           
-                    for(let j in item.playerList){
-                        if(item.playerList[j].isGrad == 'Y'){
-                            grabList.push(item.playerList[j].name);
-                            this.setState({
-                                grabList
-                            })
-                        }
+                     for(let j in item.playerList){
                         if(item.playerList[j].showCard == 'Y'){
                             let length = item.playerList[j].cardsList.length;
                             let key = item.playerList[j].cardsList[length-1].icon;
@@ -390,14 +373,12 @@ class RoomMain extends React.Component {
                                 landlordShow : item.playerList[j].name,
                                 timerImg : item.playerList[j].name,
                                 landlordSit : item.playerList[j].site,
-                                count : this.state.count,
-                                noGradList : [],
-                                grabList : []                                
+                                count : this.state.count                                
                             });
                             clearInterval(timer);
                             this.playCardTimer(2);
                          }
-                         if(item.playerList[j].isLandlord === 'Y'){                            
+                         if(item.playerList[j].isLandlord === 'Y'){
                             this.setState({
                                 timerImg : item.playerList[j].name,
                                 landlordSit : item.playerList[j].site,
@@ -429,9 +410,6 @@ class RoomMain extends React.Component {
                      }                 
                 }
             }) 
-            this.props._roomHandle({
-                roomData : data,                    
-            }) 
             if(isShow_playCard){
                 this.setState({
                     isShow_playCard,
@@ -440,7 +418,7 @@ class RoomMain extends React.Component {
                     count: 20, 
                     landlordSit,
                     noOutStatus: true,  
-                    landlordImg : true,                                     
+                    landlordImg : true                                           
                 }) 
                 this.props._roomHandle({
                     bottomCard,//顶部中间的底牌
@@ -474,36 +452,22 @@ class RoomMain extends React.Component {
          //不抢
          socket.on('notRobbing',(data)=>{
              console.log(data); ;           
-            let bottomCard,myCard=[],isShow_playLandlord='',landlordSit='',isShow_playCard=false; 
-            let grabList = this.state.grabList;   
-            let noGradList = [];               
+            let bottomCard,myCard=[],isShow_playLandlord='',landlordSit='',isShow_playCard=false;            
             data.map((item,i)=>{
                 if(room == item.room){
                     clearInterval(timer);
-                    if(grabList.length > 0){
-                        this.setState({
-                            landlordStatus : true
-                        })
-                    }else{
-                        this.setState({
-                            landlordStatus : false
-                        })
-                    }
+                    this.setState({
+                        landlordStatus : true
+                    })
                     if(item.landlordIn == 'Y'){
-                        clearInterval(timer);
+                        // clearInterval(timer);
                         this.revers();
                         this.setState({
-                            grabImg : false,                          
+                            grabImg : false,                            
                         })
                     }                      
                      bottomCard = item.headCard                         
                      for(let j in item.playerList){
-                         if(item.playerList[j].isRob == 'Y'){
-                            noGradList.push(item.playerList[j].name);
-                            this.setState({
-                                noGradList
-                            })
-                        }
                         if(item.playerList[j].showCard == 'Y'){
                             let length = item.playerList[j].cardsList.length;
                             let key = item.playerList[j].cardsList[length-1].icon;
@@ -516,9 +480,7 @@ class RoomMain extends React.Component {
                                 landlordShow : item.playerList[j].name,
                                 timerImg : item.playerList[j].name,
                                 landlordSit : item.playerList[j].site,
-                                count : this.state.count,
-                                noGradList : [],
-                                grabList : []                                
+                                count : this.state.count                                
                             });
                             clearInterval(timer);
                             this.playCardTimer(2);
@@ -553,10 +515,7 @@ class RoomMain extends React.Component {
                         }                         
                      }                 
                 }
-            });
-            this.props._roomHandle({
-                roomData : data,                    
-            }) 
+            })  
             if(isShow_playCard){
                 this.setState({
                     isShow_playCard,
@@ -565,7 +524,7 @@ class RoomMain extends React.Component {
                     count: 20, 
                     landlordSit,
                     noOutStatus: true,
-                    landlordImg : true,                                                
+                    landlordImg : true                            
                 })  
                 this.props._roomHandle({
                     bottomCard,//顶部中间的底牌
@@ -677,18 +636,7 @@ class RoomMain extends React.Component {
             let bottomCard,myCard=[],isShow_playCard,landlordSit;
             data.map((item,i)=>{
                 if(room == item.room){
-                     bottomCard = item.headCard 
-                     if(item.maxCard !== undefined){
-                         if(item.maxCard.length > 0){
-                            this.props._roomHandle({
-                                myCardOut : item.maxCard
-                            });                            
-                         }else{
-                            this.props._roomHandle({
-                                myCardOut : item.maxCard
-                            });                           
-                         }                        
-                     }             
+                     bottomCard = item.headCard              
                      for(let j in item.playerList){
                         if(item.playerList[j].showCard == 'Y'){
                             this.setState({                                
@@ -893,13 +841,13 @@ class RoomMain extends React.Component {
         this.props._roomHandle({
             myCard, myCardOut: list, mySelectCard: {}
         });
-        // this.setState({
-        //     isShow_playCard: false,
-        //     // isTimer: 1,
-        //     // count:20,
-        //     isShow_beenOut: true,
-        //     noOutStatus : false
-        // });
+        this.setState({
+            isShow_playCard: false,
+            // isTimer: 1,
+            // count:20,
+            isShow_beenOut: true,
+            noOutStatus : false
+        });
         // return false;
         roomId.maxCard = maxCard;
         roomId.outCard = list;
@@ -912,16 +860,8 @@ class RoomMain extends React.Component {
     noLandlord() {
         console.log(2222);
         clearInterval(timer);
-        let roomId = this.props.room.roomId;
-        let landlordStatus = this.state.landlordStatus;
-        let text = '';
-        if(landlordStatus){
-            text = '不抢'
-        }else{
-            text = '不叫'
-        }
+        let roomId = this.props.room.roomId;        
         roomId.landlordSit = this.state.landlordSit;
-        roomId.text = text
         socket.emit('notRobbing', roomId);
         // this.setState({
         //     isShow_playLandlord: false,
@@ -938,16 +878,8 @@ class RoomMain extends React.Component {
     playLandlord() {
         clearInterval(timer);
         //告诉后台抢地主
-        let roomId = this.props.room.roomId;
-        let landlordStatus = this.state.landlordStatus;
-        let text = '';
-        if(landlordStatus){
-            text = '抢地主'
-        }else{
-            text = '叫地主'
-        }        
+        let roomId = this.props.room.roomId;        
         roomId.landlordSit = this.state.landlordSit;
-        roomId.text = text;
         socket.emit('robHost', roomId);
         // this.setState({
         //     isShow_playLandlord: false,
@@ -1091,8 +1023,6 @@ class RoomMain extends React.Component {
                         grabImg={this.state.grabImg}
                         noOutText={this.state.noOutText}
                         landlordShow={this.state.landlordShow}
-                        grabList={this.state.grabList}
-                        noGradList={this.state.noGradList}
                         isTimer={this.state.isTimer}
                         timerImg={this.state.timerImg}
                         count={this.state.count}
@@ -1129,7 +1059,7 @@ class RoomMain extends React.Component {
                             show={this.state.isShow_beenOut}
                             list={room.myCardOut}
                         />
-                        {/* 已出的牌  end*/}                        
+                        {/* 已出的牌  end*/}
                         {this.state.noOutText.length == 1 &&                        
                             <div className="noOut" style={{display:this.state.noOutText[0] == room.roomId.name ? 'inline-block' :'none'}}></div>
                         }
