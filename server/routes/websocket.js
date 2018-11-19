@@ -195,7 +195,8 @@ exports.websocket = function websocket(socket,io) {
 
     //发牌
     socket.on('getCards',(data)=>{
-        let obj = dealCards();              
+        let obj = dealCards();
+        firstLandlord = '';              
         desk.deskList.map((item , index)=>{
             if(data.room == item.room){ 
                  if(item.gameOver == 'Y'){
@@ -212,18 +213,21 @@ exports.websocket = function websocket(socket,io) {
                 }  
                  if(item.playerList.every(function(val){ return val.isFull})){
                     firstLandlord = getOneCard(landlord);
-
+                    console.log(firstLandlord+'---------------');
                     //当前房间的底牌                   
                     item.headCard = obj.headCard;
                     item.playerList.map((val,i)=>{
                         if(val.site == 'left'){                        
                             item.playerList[i].cardsList = obj.left;
+                            console.log(obj.left.length)
                         }
                         if(val.site == 'right'){                        
                             item.playerList[i].cardsList = obj.right;
+                            console.log(obj.right.length)
                         }
                         if(val.site == 'bottom'){                        
                             item.playerList[i].cardsList = obj.bottom;
+                            console.log(obj.bottom.length)
                         }
                         if(firstLandlord == val.site){
                             item.playerList[i].isLandlord = 'Y';
@@ -241,6 +245,7 @@ exports.websocket = function websocket(socket,io) {
             noRobArr = []
        }
        landlordNum++;
+       console.log(landlordNum);
        desk.deskList.map((item , index)=>{
             if(data.room == item.room){
                 if(item.newDeal == 'Y'){
@@ -388,7 +393,8 @@ exports.websocket = function websocket(socket,io) {
             landlordNum = 0;
             noRobArr = []
        }
-       landlordNum++;       
+       landlordNum++; 
+       console.log(landlordNum);      
        noRobArr.push(data.landlordSit);   
        desk.deskList.map((item , index)=>{
             if(data.room == item.room){ 
@@ -474,6 +480,7 @@ exports.websocket = function websocket(socket,io) {
                if(data.room == item.room){
                    item.playerList.map((val,i)=>{                        
                         if(arr.length == 3){
+                            landlordNum = 0;noRobArr=[];hiddenCards = []
                             console.log('重新发牌');
                             item.newDeal = 'Y';
                             delete val.isRob;
@@ -481,6 +488,7 @@ exports.websocket = function websocket(socket,io) {
                             delete val.isGrad;
                             delete val.cardsList;
                             delete val.text;
+                            delete val.isLandlord;
                             delete item.headCard;
                             delete item.landlordIn;
                         }
@@ -602,6 +610,22 @@ exports.websocket = function websocket(socket,io) {
                         })
                         if(!item.playerList.every(function(val){ return val.cardsList.length>0})){
                             item.gameOver = 'Y';
+                            noOut = [];
+                            item.maxCard = [];
+                            firstOut='';
+                            landlordNum = 0;noRobArr=[];hiddenCards = [];
+                            item.playerList.map((val,i)=>{
+                                delete val.isRob;
+                                delete val.showCard;
+                                delete val.isGrad;
+                                delete val.cardsList;
+                                delete val.text;
+                                delete val.firstCard;
+                                delete val.noOut;
+                                delete val.isLandlord;
+                            })
+                            delete item.headCard;
+                            delete item.landlordIn;
                         }
                     }
                 });
@@ -695,6 +719,22 @@ exports.websocket = function websocket(socket,io) {
                     });
                     if(!item.playerList.every(function(val){ return val.cardsList.length>0})){
                         item.gameOver = 'Y';
+                        noOut = [];
+                        item.maxCard = [];
+                        firstOut='';
+                        landlordNum = 0;noRobArr=[];hiddenCards = [];
+                        item.playerList.map((val,i)=>{
+                            delete val.isRob;
+                            delete val.showCard;
+                            delete val.isGrad;
+                            delete val.cardsList;
+                            delete val.text;
+                            delete val.firstCard;
+                            delete val.noOut;
+                            delete val.isLandlord;
+                        })
+                        delete item.headCard;
+                        delete item.landlordIn;
                     }
                 }
             });

@@ -289,7 +289,15 @@
                 top : 0;
                 left: 50%;
             }
-
+            .newDeal{
+                display: inline-block;
+                position: absolute;
+                top: 0;
+                left: 50%;
+                background-color: black;
+                margin-left: -1.8rem;
+                color: white;
+            }
             .my-operating {
                 width: 40%;
                 height: 1rem;

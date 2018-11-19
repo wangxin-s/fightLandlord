@@ -106,6 +106,8 @@ class RoomMain extends React.Component {
             //不出文字显示隐藏
             landlordText : '',
             noOutText : [],
+            //重新发牌
+            newDealStatus : false
         }
     }
 
@@ -319,7 +321,8 @@ class RoomMain extends React.Component {
                                 timerImg : item.playerList[j].name,
                                 landlordSit : item.playerList[j].site,
                                 count : this.state.count,
-                                grabName : item.playerList[j].name
+                                grabName : item.playerList[j].name,
+                                newDealStatus :false
                             });                            
                             this.robTimer();
                          }
@@ -483,6 +486,13 @@ class RoomMain extends React.Component {
                     clearInterval(timer);
                     if(item.newDeal === 'Y'){
                         clearInterval(timer);
+                        this.props._roomHandle({
+                            roomData : data,                    
+                        });
+                        this.setState({
+                            timerImg : '',
+                            newDealStatus : true
+                        }) 
                         //重新发牌
                         // socket.emit('getCards',roomId);
                         return false;
@@ -566,7 +576,7 @@ class RoomMain extends React.Component {
             });
             this.props._roomHandle({
                 roomData : data,                    
-            }) 
+            });
             if(isShow_playCard){
                 this.setState({
                     isShow_playCard,
@@ -612,52 +622,67 @@ class RoomMain extends React.Component {
                      clearInterval(timer);
                      if(item.gameOver == 'Y'){
                         clearInterval(timer);
-                        alert('gameOver');                        
+                        alert('gameOver');
+                        this.setState({
+                            newDealStatus : true,
+                            isShow_beenOut : false,
+                            landlordImg : false,
+                            noOutStatus : false,
+                            timerImg : '',
+                            noOutText : [],
+                            landlordShow : ''
+                        });
+                        this.props._roomHandle({
+                            myCardOut : []
+                        });                        
                         return false;
-                     }                     
-                     if(item.maxCard !== undefined){
-                         if(item.maxCard.length > 0){
-                            this.props._roomHandle({
-                                myCardOut : item.maxCard
-                            });
-                            this.setState({
-                                isShow_beenOut : true,
-                                maxCard : item.maxCard,
-                                noOutText : []
-                            })
-                            console.log(item.maxCard);
-                         }else{
-                            this.props._roomHandle({
-                                myCardOut : item.maxCard
-                            });
-                            this.setState({
-                                isShow_beenOut : false,
-                                maxCard : item.maxCard
-                            })
-                            // alert('不符合出牌规则');
-                         }                        
-                     }
-                     bottomCard = item.headCard              
-                     for(let j in item.playerList){
-                        if(item.playerList[j].showCard == 'Y'){
-                            this.setState({                                
-                                timerImg : item.playerList[j].name,
-                                landlordSit : item.playerList[j].site,
-                                count : this.state.count                                
-                            });
-                            this.props._roomHandle({
-                                mySelectCard : {}
-                            });
-                            this.playCardTimer(1);
-                        } 
-                        if(name == item.playerList[j].name){
-                            myCard = item.playerList[j].cardsList;                                                                                                    
-                            if(item.playerList[j].showCard == 'Y'){
-                                isShow_playCard = true;
-                                landlordSit = item.playerList[j].site;                                                                
+                     }else{
+
+                        if(item.maxCard !== undefined){
+                            if(item.maxCard.length > 0){
+                                this.props._roomHandle({
+                                    myCardOut : item.maxCard
+                                });
+                                this.setState({
+                                    isShow_beenOut : true,
+                                    maxCard : item.maxCard,
+                                    noOutText : []
+                                })
+                                console.log(item.maxCard);
+                            }else{
+                                this.props._roomHandle({
+                                    myCardOut : item.maxCard
+                                });
+                                this.setState({
+                                    isShow_beenOut : false,
+                                    maxCard : item.maxCard
+                                })
+                                // alert('不符合出牌规则');
                             }                        
+                        }
+                        bottomCard = item.headCard              
+                        for(let j in item.playerList){
+                            if(item.playerList[j].showCard == 'Y'){
+                                this.setState({                                
+                                    timerImg : item.playerList[j].name,
+                                    landlordSit : item.playerList[j].site,
+                                    count : this.state.count                                
+                                });
+                                this.props._roomHandle({
+                                    mySelectCard : {}
+                                });
+                                this.playCardTimer(1);
+                            } 
+                            if(name == item.playerList[j].name){
+                                myCard = item.playerList[j].cardsList;                                                                                                    
+                                if(item.playerList[j].showCard == 'Y'){
+                                    isShow_playCard = true;
+                                    landlordSit = item.playerList[j].site;                                                                
+                                }                        
+                            } 
                         } 
-                     }                 
+                     }                     
+
                 }
             });
             if(isShow_playCard){
@@ -975,6 +1000,7 @@ class RoomMain extends React.Component {
         let timerImg = this.state.timerImg; 
         let landlordStatus = this.state.landlordStatus;
         let text = '';
+        console.log(timerImg)        
         if(landlordStatus){
             text = '不抢'
         }else{
@@ -1081,9 +1107,9 @@ class RoomMain extends React.Component {
         })
     }
 
-    getCardFun(){
+    newDealFun(){
         let roomId = this.props.room.roomId;
-        socket.emit('getCards',roomId);
+        socket.emit('getCards',roomId);        
     }
 
     render() {
@@ -1142,7 +1168,9 @@ class RoomMain extends React.Component {
                             count={this.state.count}
                         />
                         {/* 不抢&抢地主 按钮 end */}
-
+                        {this.state.newDealStatus && 
+                            <div className="newDeal" onClick={this.newDealFun.bind(this)}>重新发牌</div>
+                        }
                         {/* 已出的牌  start*/}
                         <MyBeenOutCard
                             show={this.state.isShow_beenOut}
@@ -1168,8 +1196,7 @@ class RoomMain extends React.Component {
 
                         {/* 地主农民身份 */}
                         <div className={this.state.landlordImg ? 'my-identity-Y' : 'my-identity-N'}></div>
-                    </div>
-
+                    </div>                    
                     {/*底部静态文件 start*/}
                     <Bottom 
                         roomId = {room.roomId}
