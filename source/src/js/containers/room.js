@@ -473,13 +473,21 @@ class RoomMain extends React.Component {
 
          //不抢
          socket.on('notRobbing',(data)=>{
-             console.log(data); ;           
+             console.log(data);
+             console.log('--------------');          
             let bottomCard,myCard=[],isShow_playLandlord='',landlordSit='',isShow_playCard=false; 
             let grabList = this.state.grabList;   
             let noGradList = [];               
             data.map((item,i)=>{
                 if(room == item.room){
                     clearInterval(timer);
+                    if(item.newDeal === 'Y'){
+                        clearInterval(timer);
+                        //重新发牌
+                        // socket.emit('getCards',roomId);
+                        return false;
+                    }else{
+
                     if(grabList.length > 0){
                         this.setState({
                             landlordStatus : true
@@ -551,7 +559,9 @@ class RoomMain extends React.Component {
                                 })
                             }                    
                         }                         
-                     }                 
+                     } 
+                    }
+
                 }
             });
             this.props._roomHandle({
@@ -673,7 +683,7 @@ class RoomMain extends React.Component {
         //玩家不出牌
         socket.on('notPlayCard',(data)=>{
             clearInterval(timer);
-            console.log(data);  
+            console.log(data);              
             let bottomCard,myCard=[],isShow_playCard,landlordSit;
             data.map((item,i)=>{
                 if(room == item.room){
@@ -962,8 +972,16 @@ class RoomMain extends React.Component {
     //抢地主定时器
     robTimer() {
         let roomId = this.props.room.roomId;  
-        let timerImg = this.state.timerImg;      
+        let timerImg = this.state.timerImg; 
+        let landlordStatus = this.state.landlordStatus;
+        let text = '';
+        if(landlordStatus){
+            text = '不抢'
+        }else{
+            text = '不叫'
+        }     
         roomId.landlordSit = this.state.landlordSit;
+        roomId.text = text;
         timer = setInterval(() => {
             let obj = this.state;
             if (this.state.count == 1 && timerImg == roomId.name) {              
@@ -992,7 +1010,8 @@ class RoomMain extends React.Component {
             } else {
                 this.setState({
                     count: this.state.count - 1,
-                })
+                });
+                console.log(this.state.count);
             }
         }, 1000)
     }

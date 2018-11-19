@@ -167,7 +167,7 @@ class MyBeenOutCard extends React.Component {
                         {/* 左边玩家出牌区 */}
                         {/*{this.leftCardData(this.state.leftList)}*/}
                         {/* 提示 title */}
-                        <div style={{fontSize:'40px',color:'black'}}>{this.state.leftText}</div>
+                        <div style={{color:'black'}} className="out-text">{this.state.leftText}</div>
 
                         {this.props.noOutText.length == 1 &&                        
                             <div className="noOut" style={{display:this.props.noOutText[0] == this.state.playerLeft ? 'inline-block' :'none'}}></div>
@@ -187,7 +187,7 @@ class MyBeenOutCard extends React.Component {
                         {/* 右边玩家出牌区 */}
                         {/*{this.rightCardData(this.state.rightList)}*/}
                         {/* 提示 title */}
-                        <div style={{fontSize:'40px',color:'black'}}>{this.state.rightText}</div>
+                        <div style={{color:'black'}} className="out-text">{this.state.rightText}</div>
                         {this.props.noOutText.length == 1 &&                        
                             <div className="noOut" style={{display:this.props.noOutText[0] == this.state.playerRight ? 'inline-block' :'none'}}></div>
                         }

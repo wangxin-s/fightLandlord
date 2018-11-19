@@ -113,6 +113,8 @@ exports.websocket = function websocket(socket,io) {
             if(result.length>0) {
                 if(result[0].player_pwd===data.password) {
                     serverData.data = result[0]
+                    serverData.code = 200;
+                    serverData.msg = '登录成功';
                     socket.emit('login', serverData);
                     return;
                 }else {
@@ -240,7 +242,10 @@ exports.websocket = function websocket(socket,io) {
        }
        landlordNum++;
        desk.deskList.map((item , index)=>{
-            if(data.room == item.room){                                                           
+            if(data.room == item.room){
+                if(item.newDeal == 'Y'){
+                    delete item.newDeal;
+                }                                                           
                 item.playerList.map((val,i)=>{
                     if(data.landlordSit == 'left'){
                         // if(grabList.length == 0){
@@ -386,7 +391,10 @@ exports.websocket = function websocket(socket,io) {
        landlordNum++;       
        noRobArr.push(data.landlordSit);   
        desk.deskList.map((item , index)=>{
-            if(data.room == item.room){                                                  
+            if(data.room == item.room){ 
+                if(item.newDeal == 'Y'){
+                    delete item.newDeal;
+                }                                                 
                 item.playerList.map((val,i)=>{
                     if(data.landlordSit == 'left'){                                               
                         if(val.site == 'left'){                        
@@ -467,6 +475,14 @@ exports.websocket = function websocket(socket,io) {
                    item.playerList.map((val,i)=>{                        
                         if(arr.length == 3){
                             console.log('重新发牌');
+                            item.newDeal = 'Y';
+                            delete val.isRob;
+                            delete val.showCard;
+                            delete val.isGrad;
+                            delete val.cardsList;
+                            delete val.text;
+                            delete item.headCard;
+                            delete item.landlordIn;
                         }
                         if(arr.length == 2){
                             if(val.isRob !== 'Y'){    

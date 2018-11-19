@@ -48,7 +48,7 @@ class Bottom extends React.Component {
                     <p>已准备</p>
                     <p className="color-y"><img className="beans" src={require('../../../images/beans2.png')}></img>9999</p>
                 </div>
-                <div>{this.state.text}</div>
+                <div className="footer-text">{this.state.text}</div>
                 <div className="footer-right">
                     <img src={require('../../../images/expression.png')} alt=""/>
                     <img src={require('../../../images/say.png')} alt=""/>
