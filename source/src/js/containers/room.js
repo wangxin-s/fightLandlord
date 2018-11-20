@@ -292,7 +292,33 @@ class RoomMain extends React.Component {
         //     })
         // })
         //退出房间
-        socket.on('outRoom',(data)=>{                      
+        socket.on('outRoom',(data)=>{
+           data.map((item , i)=>{
+                if(room == item.room){
+                    if(item.outRoom !== ''){
+                        clearInterval(timer);
+                        alert(item.outRoom+'已离开');
+                        this.setState({
+                            newDealStatus : false,
+                            isShow_beenOut : false,
+                            landlordImg : false,
+                            noOutStatus : false,
+                            isShow_playLandlord: false,
+                            isShow_playCard: false,
+                            isRevers:false,
+                            isTimer: 1,
+                            count: 20,
+                            timerImg : '',
+                            noOutText : [],
+                            landlordShow : ''
+                        });
+                        this.props._roomHandle({
+                            myCardOut : []
+                        });
+                        return false; 
+                    }
+                }
+           })                      
            this.props._roomHandle({
                 roomData : data
             })

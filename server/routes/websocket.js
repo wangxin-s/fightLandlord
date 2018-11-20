@@ -183,8 +183,24 @@ exports.websocket = function websocket(socket,io) {
        desk.deskList.map((item , index)=>{
             if(data.room == item.room){
                 item.playerList.map((val,i)=>{
-                    if(data.name == val.name){                        
+                    if(data.name == val.name){  
+                        item.outRoom = val.name;                     
                         item.playerList[i] = {imgUrl:'',name:'',isFull:false}
+                    }else{
+                        noOut = [];
+                        item.maxCard = [];
+                        firstOut='';
+                        landlordNum = 0;noRobArr=[];hiddenCards = [];                        
+                        delete val.isRob;
+                        delete val.showCard;
+                        delete val.isGrad;
+                        delete val.cardsList;
+                        delete val.text;
+                        delete val.firstCard;
+                        delete val.noOut;
+                        delete val.isLandlord;                        
+                        delete item.headCard;
+                        delete item.landlordIn;
                     }
                 })
             }
@@ -218,16 +234,13 @@ exports.websocket = function websocket(socket,io) {
                     item.headCard = obj.headCard;
                     item.playerList.map((val,i)=>{
                         if(val.site == 'left'){                        
-                            item.playerList[i].cardsList = obj.left;
-                            console.log(obj.left.length)
+                            item.playerList[i].cardsList = obj.left;                           
                         }
                         if(val.site == 'right'){                        
-                            item.playerList[i].cardsList = obj.right;
-                            console.log(obj.right.length)
+                            item.playerList[i].cardsList = obj.right;                           
                         }
                         if(val.site == 'bottom'){                        
-                            item.playerList[i].cardsList = obj.bottom;
-                            console.log(obj.bottom.length)
+                            item.playerList[i].cardsList = obj.bottom;                            
                         }
                         if(firstLandlord == val.site){
                             item.playerList[i].isLandlord = 'Y';
