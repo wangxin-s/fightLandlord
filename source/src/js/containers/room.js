@@ -491,6 +491,7 @@ class RoomMain extends React.Component {
                         });
                         this.setState({
                             timerImg : '',
+                            isRevers:false,
                             newDealStatus : true
                         }) 
                         //重新发牌
@@ -628,6 +629,7 @@ class RoomMain extends React.Component {
                             isShow_beenOut : false,
                             landlordImg : false,
                             noOutStatus : false,
+                            isRevers:false,
                             timerImg : '',
                             noOutText : [],
                             landlordShow : ''
