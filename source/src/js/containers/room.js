@@ -107,7 +107,7 @@ class RoomMain extends React.Component {
             landlordText : '',
             noOutText : [],
             //重新发牌
-            newDealStatus : false
+            newDealStatus : false,
         }
     }
 
@@ -297,7 +297,7 @@ class RoomMain extends React.Component {
                 if(room == item.room){
                     if(item.outRoom !== ''){
                         clearInterval(timer);
-                        alert(item.outRoom+'已离开');
+                        console.log(item.outRoom+'已离开');
                         this.setState({
                             newDealStatus : false,
                             isShow_beenOut : false,
@@ -348,7 +348,7 @@ class RoomMain extends React.Component {
                                 landlordSit : item.playerList[j].site,
                                 count : this.state.count,
                                 grabName : item.playerList[j].name,
-                                newDealStatus :false
+                                newDealStatus : false
                             });                            
                             this.robTimer();
                          }
@@ -506,11 +506,11 @@ class RoomMain extends React.Component {
              console.log('--------------');          
             let bottomCard,myCard=[],isShow_playLandlord='',landlordSit='',isShow_playCard=false; 
             let grabList = this.state.grabList;   
-            let noGradList = [];               
+            let noGradList = [];   
             data.map((item,i)=>{
                 if(room == item.room){
                     clearInterval(timer);
-                    if(item.newDeal === 'Y'){
+                    if(item.newDeal === 'Y'){ 
                         clearInterval(timer);
                         this.props._roomHandle({
                             roomData : data,                    
@@ -521,8 +521,10 @@ class RoomMain extends React.Component {
                             newDealStatus : true
                         }) 
                         //重新发牌
-                        // socket.emit('getCards',roomId);
-                        return false;
+                        // if(name == 'YH8022'){
+                        //     socket.emit('getCards',roomId);
+                        // }
+                        return false;                    
                     }else{
 
                     if(grabList.length > 0){
@@ -600,7 +602,7 @@ class RoomMain extends React.Component {
                     }
 
                 }
-            });
+            });                            
             this.props._roomHandle({
                 roomData : data,                    
             });
@@ -1136,7 +1138,7 @@ class RoomMain extends React.Component {
     }
 
     newDealFun(){
-        let roomId = this.props.room.roomId;
+        let roomId = this.props.room.roomId;        
         socket.emit('getCards',roomId);        
     }
 

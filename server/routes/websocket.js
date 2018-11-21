@@ -96,7 +96,7 @@ var self = {
     BOMB : 13,
     KING_BOMB : 14,
 }
-var landlord = ['left','right','bottom'].slice(0);
+var landlordList = ['left','right','bottom'];
 var one = [] , two = [] , three = [] , hiddenCards = [],firstLandlord,landlordNum=0,noRobArr=[],noOut=[],ringNum=0,firstOut,
 grabList = [],noGrabList = [];
 exports.websocket = function websocket(socket,io) {
@@ -201,6 +201,7 @@ exports.websocket = function websocket(socket,io) {
                         delete val.isLandlord;                        
                         delete item.headCard;
                         delete item.landlordIn;
+                        delete item.newDeal;
                     }
                 })
             }
@@ -212,45 +213,51 @@ exports.websocket = function websocket(socket,io) {
     //发牌
     socket.on('getCards',(data)=>{
         let obj = dealCards();
-        firstLandlord = '';              
-        desk.deskList.map((item , index)=>{
-            if(data.room == item.room){ 
-                 if(item.gameOver == 'Y'){
-                    delete item.gameOver;
-                }                
-                if(data.sit == 'left'){
-                    item.playerList[0] = {name : data.name,imgUrl : data.imgUrl,site : data.sit,isFull:true};
+        let landlord = landlordList.slice(0);
+        firstLandlord = '';   
+            desk.deskList.map((item , index)=>{
+                if(data.room == item.room){ 
+                    if(item.gameOver == 'Y'){
+                        delete item.gameOver;
+                    }  
+                    if(item.newDeal == 'Y'){
+                        delete item.newDeal;
+                    }               
+                    if(data.sit == 'left'){
+                        item.playerList[0] = {name : data.name,imgUrl : data.imgUrl,site : data.sit,isFull:true};
+                    }
+                    if(data.sit == 'bottom'){
+                        item.playerList[1] = {name : data.name,imgUrl : data.imgUrl,site : data.sit,isFull:true};
+                    }
+                    if(data.sit == 'right'){
+                        item.playerList[2] = {name : data.name,imgUrl : data.imgUrl,site : data.sit,isFull:true};
+                    }  
+                    if(item.playerList.every(function(val){ return val.isFull})){
+                        console.log(landlord+'---------------');
+                        firstLandlord = getOneCard(landlord);
+                        console.log(firstLandlord+'---------------');
+                        //当前房间的底牌                   
+                        item.headCard = obj.headCard;
+                        item.playerList.map((val,i)=>{
+                            if(val.site == 'left'){                        
+                                item.playerList[i].cardsList = obj.left;                           
+                            }
+                            if(val.site == 'right'){                        
+                                item.playerList[i].cardsList = obj.right;                           
+                            }
+                            if(val.site == 'bottom'){                        
+                                item.playerList[i].cardsList = obj.bottom;                            
+                            }
+                            if(firstLandlord == val.site){
+                                item.playerList[i].isLandlord = 'Y';
+                            }
+                        })
+                    }              
                 }
-                if(data.sit == 'bottom'){
-                    item.playerList[1] = {name : data.name,imgUrl : data.imgUrl,site : data.sit,isFull:true};
-                }
-                if(data.sit == 'right'){
-                    item.playerList[2] = {name : data.name,imgUrl : data.imgUrl,site : data.sit,isFull:true};
-                }  
-                 if(item.playerList.every(function(val){ return val.isFull})){
-                    firstLandlord = getOneCard(landlord);
-                    console.log(firstLandlord+'---------------');
-                    //当前房间的底牌                   
-                    item.headCard = obj.headCard;
-                    item.playerList.map((val,i)=>{
-                        if(val.site == 'left'){                        
-                            item.playerList[i].cardsList = obj.left;                           
-                        }
-                        if(val.site == 'right'){                        
-                            item.playerList[i].cardsList = obj.right;                           
-                        }
-                        if(val.site == 'bottom'){                        
-                            item.playerList[i].cardsList = obj.bottom;                            
-                        }
-                        if(firstLandlord == val.site){
-                            item.playerList[i].isLandlord = 'Y';
-                        }
-                    })
-                 }              
-            }
-        });
-       io.sockets.emit('getCards',desk.deskList); 
-    })  
+            });
+        io.sockets.emit('getCards',desk.deskList);          
+    });
+      
     //抢地主
     socket.on('robHost',(data)=>{
        if(landlordNum == 4){
@@ -494,7 +501,6 @@ exports.websocket = function websocket(socket,io) {
                    item.playerList.map((val,i)=>{                        
                         if(arr.length == 3){
                             landlordNum = 0;noRobArr=[];hiddenCards = []
-                            console.log('重新发牌');
                             item.newDeal = 'Y';
                             delete val.isRob;
                             delete val.showCard;
