@@ -52,7 +52,7 @@
                 transform-style:preserve-3d;
                 img {
                     margin-left: .1rem;
-                    transform:rotatey(180deg);
+                    //transform:rotatey(180deg);
                 }
             }
             .revers {
@@ -318,7 +318,24 @@
                     background-size: 100% 100%;
                     position: absolute;
                     left: 42%;
-                } 
+                }
+                .val-call{
+                    display: inline-block;
+                    position: relative;
+                    right: -1rem;
+                    top: -.45rem;
+                    span{
+                        padding: .05rem .15rem;
+                        border-radius: 40%;
+                        font-size: .4rem;
+                    }
+                    .can-call{
+                        background:#fad03e;
+                    }
+                    .no-call{
+                        background:#ccc;
+                    }
+                }
             }
             .show-card {
                 img {

@@ -46,15 +46,15 @@ class HallMain extends React.Component {
 
 
 
-    sitFun(param,data,sit){
+    sitFun(param,roomId,sit){
         if(param!==""){
             alert('此位置已有人');
         }else{
-            socket.emit('sit',{roomId:data.roomId,roomNum:1,location:sit,userId:this.props.match.params.id});
+            socket.emit('sit',{roomId:roomId,location:sit,id:this.props.login.id});
             this.props._hallHandle({
-                roomId:data.roomId,
+                roomId:roomId,
                 location:sit,
-                userId:this.props.match.params.id
+                userId:this.props.login.id
             });
             this.props.history.push("/room");
         }
@@ -63,6 +63,7 @@ class HallMain extends React.Component {
         if(data.length>0){
             return data.map((val,i)=>{
                 console.log(val);
+                let roomId='';
                 let leftPic='',rightPic='',bottomPic="";
                 if(val.leftSit!==''){
                     leftPic=val.leftSit.headImg;
@@ -71,30 +72,35 @@ class HallMain extends React.Component {
                 }
                 if(val.rightSit!==''){
                     rightPic=val.rightSit.headImg;
+                    roomId=val.rightSit.roomId
                 }else{
                     rightPic='';
                 }
                 if(val.bottomSit!==''){
                     bottomPic=val.bottomSit.headImg;
+                    roomId=val.bottomSit.roomId
                 }else{
                     bottomPic='';
                 }
-
+                roomId=(val.leftSit.roomId===''?roomId:val.leftSit.roomId);
+                roomId=(val.rightSit.roomId===''?roomId:val.rightSit.roomId);
+                roomId=(val.bottomSit.roomId===''?roomId:val.bottomSit.roomId);
+                console.log(roomId);
                 let roomNumImg=require('../../images/room'+(i+1)+'.png');
                 
                 return(
 
                     <li key={i}>
                         <img src={leftPic===""?require('../../images/Vacancy.png'):leftPic} className="player" alt="" 
-                            onClick={this.sitFun.bind(this,leftPic,val,'p1')}/>
+                            onClick={this.sitFun.bind(this,leftPic,roomId,'p1')}/>
                         <span className="table">
                             <img src={roomNumImg} alt=""/>
                         </span>
                         <img src={rightPic===""?require('../../images/Vacancy.png'):rightPic} className="player" alt="" 
-                            onClick={this.sitFun.bind(this,rightPic,val,'p3')}/>
+                            onClick={this.sitFun.bind(this,rightPic,roomId,'p3')}/>
 
                         <img src={bottomPic===""?require('../../images/Vacancy.png'):bottomPic} className="player player-bottom" alt="" 
-                            onClick={this.sitFun.bind(this,bottomPic,val,'p2')}/>
+                            onClick={this.sitFun.bind(this,bottomPic,roomId,'p2')}/>
                     </li>
                 );
             });

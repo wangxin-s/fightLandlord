@@ -261,10 +261,6 @@ class RoomMain extends React.Component {
             clearInterval(timer);
             let leftData, rightData, bottomData,id=this.props.login.id;
             let position='';
-            if(data.code&&data.code==3000){
-                alert('玩家获胜');
-                return;
-            }
             if(id==data.data.p1.id){
                 position=data.data.p1.locationSit
             }else if(id==data.data.p2.id){
@@ -272,6 +268,7 @@ class RoomMain extends React.Component {
             }else{
                 position=data.data.p3.locationSit
             }
+
             if (position == 'p1') {
                 leftData = data.data.p3;
                 bottomData = data.data.p1;
@@ -285,23 +282,60 @@ class RoomMain extends React.Component {
                 bottomData = data.data.p3;
                 rightData = data.data.p1;
             }
+            let isReady=bottomData.isReady;
+            if(data.getCard){
+                console.log('触发事件--向后台获取自己的牌');
+                socket.emit('get-my-card',{id:id});
+            }
+
+            let room=this.props.room;
+
+            if(data.code&&data.code==3000){
+                //判断牌局是否结束
+                if(room.leftData.card.length==0||room.bottomData.card.length==0||room.rightData.card.length==0){
+                    if(data.winId&&data.winId!==''){
+                        if(room.bottomData.playType=='landlord'){
+                            if(data.winId==bottomData.id){
+                                console.log('地主--恭喜你赢了');
+                            }else{
+                                console.log('地主--恭喜你输了');
+                            }
+                        }else{
+                            if(data.winId==room.bottomData.id){
+                                console.log('农民--恭喜你赢了');
+                            }else{
+                                if(room.leftData.playType=='farmer'&&room.leftData.id==data.id){
+                                    console.log('农民--恭喜你赢了');
+                                }else if(room.rightData.playType=='farmer'&&room.rightData.id==data.id){
+                                    console.log('农民--恭喜你赢了');
+                                }else{
+                                    console.log('农民--恭喜你输了');
+                                }
+                            }
+                        }
+                    }
+                }
+                this.props._roomHandle({
+                    topCard:[],
+                });
+            }
+
             this.props._roomHandle({
                 leftData,
                 rightData,
                 bottomData,
                 roomId:data.roomId,
-                topCard:data.data.topCard
+                //topCard:data.data.topCard
             });
+        });
 
-            //1000 表是出牌  2000 表示不出 不存在表示其他 3000表示玩家牌已经出完了，获胜
-            if(data.code&&(data.code==2000||data.code==1000)){
-
-                this.robTimer(data.code);
-            }else{
-                if (leftData.isReady == 'robAndNo' || rightData.isReady == 'robAndNo' || bottomData.isReady == 'robAndNo') {
-                    this.robTimer();
-                }
-            }
+        //获取当前玩家牌--监听方法
+        socket.on('get-my-card',(res)=>{
+            console.log('当前玩家牌',res);
+            let myCard=res.card;
+            this.props._roomHandle({
+                myCard
+            });
         });
 
         //启动定时器方法----监听事件
@@ -338,6 +372,24 @@ class RoomMain extends React.Component {
                 this.robTimer();
             }
         });
+
+        //获取三张底牌
+        socket.on('get-top-card', (data) => {
+            console.log('获取三张底牌',data);
+            this.props._roomHandle({
+                topCard:data.topCard,
+            });
+            this.setState({
+                isRevers:true,
+            })
+        });
+
+        socket.on('set-timer-num',(data)=>{
+            this.setState({
+                count:data.count,
+            })
+
+        })
     }
 
     //生命周期销毁方法
@@ -353,12 +405,13 @@ class RoomMain extends React.Component {
         });
         socket.removeAllListeners('getUserInfo');
         socket.removeAllListeners('start-timer');
+        socket.removeAllListeners('get-my-card');
     }
 
     //当牌被点击时
     imgClick = (index) => {
         let room = this.props.room;
-        let card = room.bottomData.card;
+        let card = room.myCard;
         let mySelectCard = room.mySelectCard;
         let check = false;
         mySelectCard[card[index]] = mySelectCard[card[index]] ? false : true;
@@ -396,7 +449,7 @@ class RoomMain extends React.Component {
         let bottomData = room.bottomData;
         let leftData = room.leftData;
         let rightData = room.rightData;
-        let card = bottomData.card;
+        let card = room.myCard;
         let mySelectCard = room.mySelectCard;
         let myCard = cloneFun(card);//去掉玩家已出的牌后玩家现有的牌
         let list = [];//当前玩家出的牌
@@ -432,7 +485,7 @@ class RoomMain extends React.Component {
         bottomData.outCard=list;
         bottomData.card=myCard;
         this.props._roomHandle({
-            bottomData, mySelectCard: {}
+            myCard, mySelectCard: {}
         });
         //调用接口出牌
         socket.emit('emit-card', {
@@ -461,7 +514,8 @@ class RoomMain extends React.Component {
         }
         clearInterval(timer);
         //告诉后端当前用户不抢
-        socket.emit('not-rob',{
+        socket.emit('rob-landlord',{
+            type:'noRob',
             id:id
         })
     }
@@ -471,6 +525,7 @@ class RoomMain extends React.Component {
         clearInterval(timer);
         //告诉后台抢地主
         socket.emit('rob-landlord',{
+            type:'rob',
             id:this.props.login.id
         });
     }
@@ -501,7 +556,7 @@ class RoomMain extends React.Component {
                     });
                 }
                 clearInterval(timer);
-                if(code&&(code==1000||code==2000)){
+                /*if(code&&(code==1000||code==2000)){
                     //告诉后端当前用户--不出
                     socket.emit('emit-card',{
                         id:id,
@@ -512,7 +567,7 @@ class RoomMain extends React.Component {
                     socket.emit('not-rob',{
                         id:id
                     })
-                }
+                }*/
             }
         }, 1000)
     }
@@ -592,6 +647,16 @@ class RoomMain extends React.Component {
         }
     }
 
+    //叫地主   或    不叫    点击 方法
+    callLanFun(type){
+        let login = this.props.login;
+        socket.emit('call-landlord', {
+            message: '当前用户叫地主--或者--不叫地主',
+            id: login.id,
+            type:type
+        });
+    }
+
     //离开房间
     leaveRoom(){
         //告诉后台当前登陆人 离开房间
@@ -604,6 +669,7 @@ class RoomMain extends React.Component {
 
     render() {
         let room = this.props.room;
+        let myCard = room.myCard;
         let roomId = room.roomId;
         let bottomData = room.bottomData;
         let isReady = bottomData.isReady;
@@ -612,7 +678,7 @@ class RoomMain extends React.Component {
                 {/*顶部展示区域 start*/}
                 <Top
                     roomId={roomId}
-                    list={this.state.list}
+                    list={room.topCard}
                     leaveRoom={this.leaveRoom.bind(this)}
                     newTime={this.state.newTime}
                     isRevers={this.state.isRevers}
@@ -646,6 +712,7 @@ class RoomMain extends React.Component {
                         {/* 不抢&抢地主 按钮 start */}
                         <PlayLandlordButton
                             show={isReady}
+                            callLanFun={this.callLanFun.bind(this)}
                             noLandlord={this.noLandlord.bind(this)}
                             playLandlord={this.playLandlord.bind(this)}
                             isTimer={this.state.isTimer}
@@ -675,7 +742,7 @@ class RoomMain extends React.Component {
                         {/* 我的卡牌  start*/}
                         <MyCard
                             show={isReady}
-                            list={bottomData.card}
+                            list={myCard}
                             imgArr={room.mySelectCard}
                             imgClick={this.imgClick}
                         />

@@ -52,7 +52,7 @@ class MyBeenOutCard extends React.Component {
         }
         if (type == 'landlord') {
             return <img className="farmer" src={require('../../../images/Landlord.png')} alt=""/>
-        } else {
+        } else if(type=='farmer'){
             return <img className="farmer" src={require('../../../images/farmer.png')} alt=""/>
         }
     }
@@ -61,7 +61,9 @@ class MyBeenOutCard extends React.Component {
     leftStatus(status) {
         let leftData = this.props.leftData;
         let html = '';
-        //ready--准备按钮  readyEd--已准备  robAndNo--抢·不抢  rob--抢地主  noRob--不抢 discard--出牌  noDiscard--不出  hasDisCard--已出牌
+        //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
+        // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
+        // hasDisCard--已出牌
         if(leftData.id!==''){
             switch (status) {
                 case 'ready':
@@ -69,6 +71,18 @@ class MyBeenOutCard extends React.Component {
                     break;
                 case 'readyEd':
                     html = <div className="center">已准备</div>;
+                    break;
+                case 'callOrNo':
+                    html =
+                        <div className="timer">
+                            {this.props.count}
+                        </div>;
+                    break;
+                case 'callLan':
+                    html = <div className="center">叫地主</div>;
+                    break;
+                case 'noCallLan':
+                    html = <div className="center">不叫</div>;
                     break;
                 case 'robAndNo':
                     html =
@@ -108,7 +122,9 @@ class MyBeenOutCard extends React.Component {
     rightStatus(status){
         let rightData = this.props.rightData;
         let html = '';
-        //ready--准备按钮  readyEd--已准备  robAndNo--抢·不抢  rob--抢地主  noRob--不抢 discard--出牌  noDiscard--不出  hasDisCard--已出牌
+        //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
+        // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
+        // hasDisCard--已出牌
         if(rightData.id!==''){
             switch (status) {
                 case 'ready':
@@ -116,6 +132,18 @@ class MyBeenOutCard extends React.Component {
                     break;
                 case 'readyEd':
                     html = <div className="center">已准备</div>;
+                    break;
+                case 'callOrNo':
+                    html =
+                        <div className="timer">
+                            {this.props.count}
+                        </div>;
+                    break;
+                case 'callLan':
+                    html = <div className="center">叫地主</div>;
+                    break;
+                case 'noCallLan':
+                    html = <div className="center">不叫</div>;
                     break;
                 case 'robAndNo':
                     html =

@@ -21,7 +21,9 @@ const roomState =sessionStorage.getItem('roomIndex')? JSON.parse(sessionStorage.
         locationSit: 'p1',
         password: '000000',
         headImg: 'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg',
-        //ready--准备按钮  readyEd--已准备  robAndNo--抢·不抢  rob--抢地主  noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出  hasDisCard--已出牌
+        //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
+        // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
+        // hasDisCard--已出牌
         isReady:'ready',
         card:[],//当前未出的牌
         outCard:[],//已出的牌

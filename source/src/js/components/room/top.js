@@ -16,9 +16,28 @@ class BottomCard extends React.Component {
     }
 
     imgFun(list) {
+        if(list.length<=0){
+            list=['','','']
+        }
         return (
             list.map((item, i)=> {
-                return <div key={i} className={this.props.isRevers?'revers':''}><img src={item} alt=""/></div>;
+                let srcIndex=1061;
+                let src='';
+                if(item!==''){
+                    if(item*1==51||item*1==50||item*1==49||item*1==48){
+                        srcIndex=1061+item*1-48
+                    }else if(item*1==52){
+                        srcIndex=1114;
+                    }else if(item*1==53){
+                        srcIndex=1113;
+                    }else{
+                        srcIndex=(1065+item*1);
+                    }
+                    src=require('../../../images/card/card_'+srcIndex+'@2x.png');
+                }else{
+                    src=require('../../../images/card_back.png');
+                }
+                return <div key={i}><img src={src} alt=""/></div>;
             })
         )
     }

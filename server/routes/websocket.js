@@ -90,59 +90,65 @@ let one = [], two = [], three = [], hiddenCards = [];
 let data = {
     roomList: [
         /*{
-            "roomId": 1,
-            "roomNum": "room1",
-            topCard: [],
-            position:''
-            p1: {
-                id: '2',
-                account: 'admin2',
-                isLogin: false,
-                roomId: '1',
-                locationSit: 'p1',
-                password: '000000',
-                headImg: 'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg',
-                //ready--准备按钮  readyEd--已准备  robAndNo--抢·不抢  rob--抢地主  noRob--不抢 discardOrNo--出牌·不出   discard--出牌  noDiscard--不出  hasDisCard--已出牌
-                isReady: 'ready',
-                card: [],//当前未出的牌
-                outCard: [],//已出的牌
-                beanNum: '100',//豆子数量
-                cardNum: '17',//还有多少张牌
-                playType: 'farmer',//Landlord 地主  farmer 农民
-            },//左侧玩家数据
-            p2: {
-                id: '0',
-                account: 'admin',
-                isLogin: false,
-                roomId: '1',
-                locationSit: 'p2',
-                password: '000000',
-                headImg: 'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg',
-                //ready--准备按钮  readyEd--已准备  robAndNo--抢·不抢  rob--抢地主  noRob--不抢 discardOrNo--出牌·不出   discard--出牌  noDiscard--不出  hasDisCard--已出牌
-                isReady: 'ready',
-                card: [],//当前未出的牌
-                outCard: [],//已出的牌
-                beanNum: '100',//豆子数量
-                cardNum: '17',//还有多少张牌
-                playType: 'farmer',//Landlord 地主  farmer 农民
-            },//右侧玩家数据
-            p3: {
-                id: '1',
-                account: 'admin1',
-                isLogin: false,
-                roomId: '1',
-                locationSit: 'p3',
-                password: '000000',
-                headImg: 'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg',
-                //ready--准备按钮  readyEd--已准备  robAndNo--抢·不抢  rob--抢地主  noRob--不抢 discardOrNo--出牌·不出   discard--出牌  noDiscard--不出  hasDisCard--已出牌
-                isReady: 'ready',
-                card: [],//当前未出的牌
-                outCard: [],//已出的牌
-                beanNum: '100',//豆子数量
-                cardNum: '17',//还有多少张牌
-                playType: 'landlord',//Landlord 地主  farmer 农民
-            }//当前玩家数据
-        },*/
+         "roomId": 1,
+         "roomNum": "room1",
+         topCard: [],
+         position:'',
+         count:'',当前叫地主次数
+         callOrNo:{},
+         p1: {
+         id: '2',
+         account: 'admin2',
+         isLogin: false,
+         roomId: '1',
+         locationSit: 'p1',
+         password: '000000',
+         headImg: 'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg',
+
+         //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
+         // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
+         // hasDisCard--已出牌
+
+         isReady: 'ready',
+         card: [],//当前未出的牌
+         outCard: [],//已出的牌
+         beanNum: '100',//豆子数量
+         cardNum: '17',//还有多少张牌
+         playType: 'farmer',//Landlord 地主  farmer 农民
+         },//左侧玩家数据
+         p2: {
+         id: '0',
+         account: 'admin',
+         isLogin: false,
+         roomId: '1',
+         locationSit: 'p2',
+         password: '000000',
+         headImg: 'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg',
+         //ready--准备按钮  readyEd--已准备  robAndNo--抢·不抢  rob--抢地主  noRob--不抢 discardOrNo--出牌·不出   discard--出牌  noDiscard--不出  hasDisCard--已出牌
+         isReady: 'ready',
+         card: [],//当前未出的牌
+         outCard: [],//已出的牌
+         beanNum: '100',//豆子数量
+         cardNum: '17',//还有多少张牌
+         playType: 'farmer',//Landlord 地主  farmer 农民
+         },//右侧玩家数据
+         p3: {
+         id: '1',
+         account: 'admin1',
+         isLogin: false,
+         roomId: '1',
+         locationSit: 'p3',
+         password: '000000',
+         headImg: 'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg',
+         //ready--准备按钮  readyEd--已准备  robAndNo--抢·不抢  rob--抢地主  noRob--不抢 discardOrNo--出牌·不出   discard--出牌  noDiscard--不出  hasDisCard--已出牌
+         isReady: 'ready',
+         card: [],//当前未出的牌
+         outCard: [],//已出的牌
+         beanNum: '100',//豆子数量
+         cardNum: '17',//还有多少张牌
+         playType: 'landlord',//Landlord 地主  farmer 农民
+         }//当前玩家数据
+         },*/
     ]
 };
 //空白数据
@@ -164,7 +170,9 @@ let blankData = {
 };
 
 //已经登陆的用户缓存信息
-let loginUserInfo={};
+let loginUserInfo = {};
+var robTime = null;//抢地主定时器
+var robTimeCount = 0;
 exports.websocket = function websocket(socket, io) {
     var obj = {
         list: [],
@@ -176,7 +184,6 @@ exports.websocket = function websocket(socket, io) {
 
     // 登录
     socket.on('login', (data)=> {
-        console.log(data);
         let num = parseInt(Math.random() * 10000);
         let sql = 'select * from users where account=' + '"' + data.account + '"';
         let insert = "INSERT INTO `users`(`account`, `password`) VALUES ('" + data.account + "','" + data.password + "')";
@@ -188,7 +195,7 @@ exports.websocket = function websocket(socket, io) {
             if (result.length > 0) {
                 if (result[0].password == data.password) {
                     serverData.data = result[0];
-                    loginUserInfo[serverData.data.id]=serverData.data;
+                    loginUserInfo[serverData.data.id] = serverData.data;
                     socket.emit('login', serverData);
                     return;
                 } else {
@@ -359,16 +366,22 @@ exports.websocket = function websocket(socket, io) {
     socket.on('fastMatching', (res)=> {
         var roomList = data.roomList;
         var item = searchRoomId(res.id);
-        var userInfo=loginUserInfo[res.id];
-        if(typeof item.index=='undefined'){
+        var userInfo = loginUserInfo[res.id];
+        var id = res.id;
+        if (typeof item.index == 'undefined') {
             joinRoom(userInfo);
         }
+        console.log('---------fastMatching-----------');
         socket.join(item.index, function (res) {
-            let rooms = Object.keys(socket.rooms);
-            io.to(item.index).emit('getUserInfo', {
-                data: data.roomList[item.index],
-                position: item.position
-            });
+            var newItem = searchRoomId(id);
+            getUserInfoFun(newItem, newItem.index, '1000', false);//向前端发送房间信息
+            /*newData.p1.card=[];
+             newData.p2.card=[];
+             newData.p3.card=[];
+             io.to(item.index).emit('getUserInfo', {
+             data: newData,
+             position: item.position
+             });*/
         }); // join(房间名)加入房间
     });
 
@@ -444,66 +457,29 @@ exports.websocket = function websocket(socket, io) {
 
     //选择房间座位
     socket.on('sit', function (res) {
-        /* let user_id = Number(res.userId);
-         let userSql = 'SELECT * FROM users where id=' + user_id;
-         let updateUser = 'update users set roomId=?,locationSit =?  where id =?';
-         let val = [res.id, res.location, user_id];
-         connect.query(userSql, (err, result)=> {
-
-         let sql = 'SELECT * FROM gamehall';
-         if (result[0].locationSit === '') {
-         connect.query(updateUser, val, (err, result)=> {
-         connect.query(userSql, (err, result)=> {
-         let location = "";
-         if (data.location === 'p1') {
-         location = 'leftSit';
-         } else if (data.location === 'p2') {
-         location = 'bottomSit';
-         } else if (data.location === 'p3') {
-         location = 'rightSit';
-         }
-         let upDataSql = 'update gamehall set ' + location + ' =?  where roomId =?';
-         let upDateValue = [`${JSON.stringify(result[0])}`, Number(data.id)];
-
-         connect.query(upDataSql, upDateValue, (err, result)=> {
-         connect.query(sql, (err, result)=> {
-         io.sockets.emit('getHallInfo', result);
-         });
-         });
-         });
-         });
-
-         }
-
-         });*/
-        let roomIndex = '';
-        for (var i = 0, len = data.roomList.length; i < len; i++) {
-            if (data.roomList[i].roomId == res.roomId) {
-                roomIndex = i;
-                data.roomList[i][res.location] = {
-                    id: res.userId,
-                    account: 'admin',
-                    isLogin: false,
-                    roomId: res.roomId,
-                    locationSit: res.location,
-                    password: '000000',
-                    headImg: 'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg'
-                };
-                let roomList = cloneFun(data.roomList);
-                roomList.forEach((item, i)=> {
-                    roomList[i] = {
-                        "roomId": 2,
-                        "roomNum": "room1",
-                        "leftSit": roomList[i].p1,
-                        "bottomSit": roomList[i].p2,
-                        "rightSit": roomList[i].p3,
-                    }
-                });
-                socket.emit('getHallInfo', roomList);
-                break;
+        var roomIndex = res.roomId;
+        var userInfo = loginUserInfo[res.id];
+        var newBlankData = cloneFun(blankData);
+        var position = res.location;
+        newBlankData.id = userInfo.id;
+        newBlankData.account = userInfo.account;
+        newBlankData.password = userInfo.password;
+        newBlankData.beanNum = userInfo.beanNum;
+        newBlankData.headImg = userInfo.headImg;
+        newBlankData.locationSit = position;
+        newBlankData.roomId = roomIndex;
+        data.roomList[roomIndex][position] = newBlankData;
+        let roomList1 = cloneFun(data.roomList);
+        roomList1.forEach((item, i)=> {
+            roomList1[i] = {
+                "roomId": i,
+                "roomNum": "room1",
+                "leftSit": roomList1[i].p1,
+                "bottomSit": roomList1[i].p2,
+                "rightSit": roomList1[i].p3,
             }
-        }
-
+        });
+        io.sockets.emit("getHallInfo", roomList1);
     })
 
     //退出大厅
@@ -542,13 +518,13 @@ exports.websocket = function websocket(socket, io) {
     });
 
     //当前玩家离开页面销毁当前 socket
-    socket.on('leave-hall',function(){
+    socket.on('leave-hall', function () {
         //socket.close();
     });
 
     /*socket.on('disconnect', function () {
-        console.log('断开连接');
-    });*/
+     console.log('断开连接');
+     });*/
 
 
     /*游戏界面  相关接口 start--------------------   */
@@ -560,11 +536,12 @@ exports.websocket = function websocket(socket, io) {
         socket.join(item.index, function (res) {
             console.log('----------')
             let rooms = Object.keys(socket.rooms);
-            io.to(item.index).emit('getUserInfo', {
-                roomId:item.index,
-                data: data.roomList[item.index],
-                position: item.position
-            });
+            getUserInfoFun(item, item.index, '1000', true);//向前端发送房间信息
+            /*io.to(item.index).emit('getUserInfo', {
+             roomId: item.index,
+             data: data.roomList[item.index],
+             position: item.position
+             });*/
         }); // join(房间名)加入房间
         let roomList1 = cloneFun(data.roomList);
         roomList1.forEach((item, i)=> {
@@ -576,7 +553,7 @@ exports.websocket = function websocket(socket, io) {
                 "rightSit": roomList1[i].p3,
             }
         });
-        io.sockets.emit("getHallInfo",roomList1);
+        io.sockets.emit("getHallInfo", roomList1);
     });
 
     //用户点击开始游戏--接口
@@ -587,167 +564,467 @@ exports.websocket = function websocket(socket, io) {
         data.roomList[index][position].isReady = 'readyEd';
         checkAllReady(data.roomList[index], index);//判断当前房间玩家是否都已经准备--如果都准备开始发牌
         let rooms = Object.keys(socket.rooms);
-        io.to(index).emit('getUserInfo', {
-            roomId:item.index,
-            data: data.roomList[item.index],
-            position: item.position
-        });
+        getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
+        /*io.to(index).emit('getUserInfo', {
+         getCard:true,
+         code:1000,
+         roomId: item.index,
+         data: data.roomList[item.index],
+         position: item.position
+         });*/
+    });
+
+    //向前端发送房间信息方法
+    function getUserInfoFun(item, index, code, getCard, winId) {
+        let newData = cloneFun(data.roomList[index]);
+        newData.p1.card = [];
+        newData.p2.card = [];
+        newData.p3.card = [];
+        newData.topCard = [];
+        if (typeof winId != 'undefined') {
+            io.to(index).emit('getUserInfo', {
+                winId: winId,
+                getCard: getCard,
+                code: code,
+                roomId: item.index,
+                data: newData,
+                position: item.position
+            });
+        } else {
+            io.to(index).emit('getUserInfo', {
+                getCard: getCard,
+                code: code,
+                roomId: item.index,
+                data: newData,
+                position: item.position
+            });
+        }
+
+    }
+
+    //叫地主或者不叫地主
+    socket.on('call-landlord', function (res) {
+        let item = searchRoomId(res.id);
+        let index = item.index;
+        let type = res.type;//叫地主  不叫
+        clearInterval(robTime);
+        callOrNo(res.id, res.type);
+    });
+
+    //叫或者不叫地主方法
+    function callOrNo(id, type) {
+        let item = searchRoomId(id);
+        let position = item.position;
+        let index = item.index;
+        data.roomList[index].count++;
+        //callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫
+        if (type == 'callLan') {
+            data.roomList[index][position].callOrNo = 'callLan';//叫地主状态
+            data.roomList[index][position].isReady = 'callLan';//叫地主状态
+        } else {//不叫
+            data.roomList[index][position].callOrNo = 'noCallLan';//叫地主状态
+            data.roomList[index][position].isReady = 'noCallLan';//叫地主状态
+        }
+        let p1_call = data.roomList[index].p1.isReady;
+        let p2_call = data.roomList[index].p2.isReady;
+        let p3_call = data.roomList[index].p3.isReady;
+        //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
+        // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
+        // hasDisCard--已出牌
+
+        if (p1_call == 'noCallLan' && p2_call == 'noCallLan' && p3_call == 'noCallLan') {//（3）1 不叫  2 不叫  3 不叫   --重新发牌
+            console.log('全部不叫--重新发牌', data.roomList[index]);
+            data.roomList[index].p1.isReady = 'readyEd';
+            data.roomList[index].p2.isReady = 'readyEd';
+            data.roomList[index].p3.isReady = 'readyEd';
+            data.roomList[index].count = 0;
+            checkAllReady(data.roomList[index], index);
+            getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
+        } else {
+            let newPosition = '';
+            let sPosition = '';
+            let newId = '';
+            let sId = '';
+            if (position == 'p1') {
+                newPosition = 'p2';
+                sPosition = 'p3';
+            } else if (position == 'p2') {
+                newPosition = 'p3';
+                sPosition = 'p1';
+            } else if (position == 'p3') {
+                newPosition = 'p1';
+                sPosition = 'p2';
+            }
+            newId = data.roomList[index][newPosition].id;
+            sId = data.roomList[index][sPosition].id;
+            if (type == 'callLan') {
+                if (data.roomList[index].count >= 3) {//叫地主--抢地主结束开始出牌
+                    data.roomList[index].p1.isReady = 'discard';
+                    data.roomList[index].p2.isReady = 'discard';
+                    data.roomList[index].p3.isReady = 'discard';
+                    data.roomList[index][position].isReady = 'discardOrNo';
+                    //playType: 'farmer',//Landlord 地主  farmer 农民
+                    data.roomList[index][position].playType = 'landlord';
+                    data.roomList[index][position].card = data.roomList[index][position].card.concat(data.roomList[index].topCard);
+                    data.roomList[index][position].card = sortFun(data.roomList[index][position].card);
+                    data.roomList[index][position].cardNum = data.roomList[index][position].card.length;
+                    outCardTimer(id, 2000);
+                    setTopCard(index);//向前端发送底牌
+                    getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
+                } else {
+                    data.roomList[index][newPosition].isReady = 'robAndNo';
+                    robTimeFun(sId, 'noRob');//调用--抢地主定时器
+                    getUserInfoFun(item, index, '1000', false);//向前端发送房间信息
+                }
+            } else {
+                data.roomList[index][newPosition].isReady = 'callOrNo';
+                callLanTime(newId, 'noCallLan');
+                getUserInfoFun(item, index, '1000', false);//向前端发送房间信息
+            }
+        }
+    }
+
+    //叫地主定时器
+    function callLanTime(id) {
+        console.log('-------叫地主定时器被触发---------');
+        clearInterval(robTime);
+        robTimeCount = 30;
+        robTime = setInterval(function () {
+            robTimeCount--;
+            console.log('------robTimeCount--------', robTimeCount);
+            if (robTimeCount <= 0) {
+                clearInterval(robTime);
+                console.log('------30秒时间到------', id);
+                callOrNo(id, 'noCallLan');
+            }
+            setTimerNum(id, robTimeCount);
+        }, 1000)
+    }
+
+    //获取当前玩家牌--监听方法
+    socket.on('get-my-card', function (res) {
+        let item = searchRoomId(res.id);
+        let index = item.index;
+        let position = item.position;
+        socket.emit('get-my-card', {
+            code: 1000,
+            card: data.roomList[index][position].card,
+        })
     });
 
     //用户点击不抢按钮
     socket.on('not-rob', function (res) {
-        let item = searchRoomId(res.id);
-        let index = item.index;
-        let position = item.position;
-        data.roomList[index][position].isReady = 'noRob';
-        data.roomList[index].count +=1 ;
-        let newPosition= data.roomList[index].position;//当前最新抢地主的玩家位置
-        let rooms = Object.keys(socket.rooms);
-        if(data.roomList[index].count<4){
-            if (position == 'p1') {
-                data.roomList[index].p2.isReady = 'robAndNo';
-            } else if (position == 'p2') {
-                data.roomList[index].p3.isReady = 'robAndNo';
-            } else if (position == 'p3') {
-                data.roomList[index].p1.isReady = 'robAndNo';
-            }
-            io.to(rooms[0]).emit('getUserInfo', {
-                roomId:item.index,
-                data: data.roomList[item.index],
-                position: item.position
-            });
-        }else{
-            data.roomList[index].p1.isReady = 'discard';
-            data.roomList[index].p2.isReady = 'discard';
-            data.roomList[index].p3.isReady = 'discard';
-            data.roomList[index][newPosition].isReady = 'discardOrNo';
-            data.roomList[index][newPosition].playType = 'landlord';
-            data.roomList[index][newPosition].card =data.roomList[index][newPosition].card.concat(data.roomList[index].topCard);
-            data.roomList[index][newPosition].card =sortFun(data.roomList[index][newPosition].card);
-            data.roomList[index][newPosition].cardNum = data.roomList[index][newPosition].card.length;
-            io.to(index).emit('getUserInfo', {
-                roomId:item.index,
-                code:1000,
-                data: data.roomList[item.index],
-                position: item.position
-            });
-        }
+        robLandlordFun(res.id, res.type);
     });
 
     //用户点击抢地主
+    //抢地主定时器方法
+    function robTimeFun(id, type) {
+        console.log('-------抢地主定时器被触发---------');
+        clearInterval(robTime);
+        robTimeCount = 30;
+        robTime = setInterval(function () {
+            robTimeCount--;
+            console.log('------robTimeCount--------', robTimeCount);
+            if (robTimeCount <= 0) {
+                clearInterval(robTime);
+                console.log('------30秒时间到------', id);
+                robLandlordFun(id, 'noCallLan');
+            }
+            setTimerNum(id, robTimeCount);
+        }, 1000)
+    }
+
     socket.on('rob-landlord', function (res) {
-        let item = searchRoomId(res.id);
+        robLandlordFun(res.id, res.type);
+    });
+
+    //抢地主方法
+    function robLandlordFun(id, type) {
+        clearInterval(robTime);
+        let item = searchRoomId(id);
         let index = item.index;
         let position = item.position;
-        data.roomList[index][position].isReady = 'rob';
-        data.roomList[index].position=position;
-        data.roomList[index].count +=1 ;
-        let rooms = Object.keys(socket.rooms);
-        let newPosition= data.roomList[index].position;//当前最新抢地主的玩家位置
-        if(data.roomList[index].count<4){
-            if (position == 'p1') {
-                data.roomList[index].p2.isReady = 'robAndNo';
-            } else if (position == 'p2') {
-                data.roomList[index].p3.isReady = 'robAndNo';
-            } else if (position == 'p3') {
-                data.roomList[index].p1.isReady = 'robAndNo';
-            }
-            io.to(index).emit('getUserInfo', {
-                roomId:item.index,
-                data: data.roomList[item.index],
-                position: item.position
-            });
-        }else{
+        let oldIsReady = data.roomList[index][position].isReady;//当前玩家--赋值前--状态
+        data.roomList[index][position].isReady = type;
+        data.roomList[index].count += 1;
+        let newPosition = '';
+        let sPosition = '';
+        let newId = '';
+        let sId = '';
+        if (position == 'p1') {
+            newPosition = 'p2';
+            sPosition = 'p3';
+        } else if (position == 'p2') {
+            newPosition = 'p3';
+            sPosition = 'p1';
+        } else if (position == 'p3') {
+            newPosition = 'p1';
+            sPosition = 'p2';
+        }
+        newId = data.roomList[index][newPosition].id;
+        sId = data.roomList[index][sPosition].id;
+        //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
+        // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
+        // hasDisCard--已出牌
+
+        function setVal(index, position, isReady) {
             data.roomList[index].p1.isReady = 'discard';
             data.roomList[index].p2.isReady = 'discard';
             data.roomList[index].p3.isReady = 'discard';
-            data.roomList[index][newPosition].isReady = 'discardOrNo';
+            data.roomList[index][position].isReady = isReady;
             //playType: 'farmer',//Landlord 地主  farmer 农民
-            data.roomList[index][newPosition].playType = 'landlord';
-            data.roomList[index][newPosition].card =data.roomList[index][newPosition].card.concat(data.roomList[index].topCard);
-            data.roomList[index][newPosition].card =sortFun(data.roomList[index][newPosition].card);
-            data.roomList[index][newPosition].cardNum = data.roomList[index][newPosition].card.length;
-            io.to(index).emit('getUserInfo', {
-                roomId:item.index,
-                code:1000,
-                data: data.roomList[item.index],
-                position: item.position
-            });
-
+            data.roomList[index][position].playType = 'landlord';
+            data.roomList[index][position].card = data.roomList[index][position].card.concat(data.roomList[index].topCard);
+            data.roomList[index][position].card = sortFun(data.roomList[index][position].card);
+            data.roomList[index][position].cardNum = data.roomList[index][position].card.length;
         }
 
-    });
+        let callCount = 0;//不叫地主玩家--数量
+        if (data.roomList[index].p1.isReady == 'noCallLan') {
+            callCount++;
+        } else if (data.roomList[index].p2.isReady == 'noCallLan') {
+            callCount++;
+        } else if (data.roomList[index].p3.isReady == 'noCallLan') {
+            callCount++;
+        }
+        if (callCount == 1) {//第一家   不叫地主
+            if (data.roomList[index].count == 3) {
+                if (type == 'rob') {//抢地主结束--开始出牌
+                    setVal(index, position, 'discardOrNo');
+                    outCardTimer(id, 2000);
+                    setTopCard(index);//向前端发送底牌
+                    getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
+                } else {
+                    setVal(index, sPosition, 'discardOrNo');
+                    outCardTimer(sId, 2000);
+                    setTopCard(index);//向前端发送底牌
+                    getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
+                }
+            } else {
+                data.roomList[index][newPosition].isReady = 'robAndNo';
+                getUserInfoFun(item, index, '1000', false);//向前端发送房间信息
+                robTimeFun(newId, 'noRob');
+            }
+        } else {
+            let isReady = data.roomList[index][position].isReady;
+            if (data.roomList[index].count == 3 && data.roomList[index][position].isReady == 'noRob' && data.roomList[index][sPosition].isReady == 'noRob') {
+                setVal(index, newPosition, 'discardOrNo');//上上家（即下家）为地主
+                outCardTimer(newId, 2000);//调用出牌定时器
+                setTopCard(index);//向前端发送底牌
+                getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
+            } else if (data.roomList[index].count >= 4) {//抢地主回到开始叫地主的玩家时  ---抢地主结束  开始出牌
+                let lanId = '';
+                if (isReady == 'rob') {
+                    setVal(index, position, 'discardOrNo');//当前玩家为地主
+                    lanId = id;
+                } else {
+                    if (data.roomList[index][sPosition].isReady == 'rob') {
+                        setVal(index, sPosition, 'discardOrNo');//上家
+                        lanId = sId;
+                    } else if (data.roomList[index][newPosition].isReady == 'rob') {
+                        setVal(index, newPosition, 'discardOrNo');//上上家（即下家）为地主
+                        lanId = newId;
+                    } else {
+                        setVal(index, position, 'discardOrNo');//当前玩家为地主
+                        lanId = id;
+                    }
+                }
+                outCardTimer(lanId, 2000);//调用出牌定时器
+                setTopCard(index);//向前端发送底牌
+                getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
+            } else {
+                data.roomList[index][newPosition].isReady = 'robAndNo';
+                getUserInfoFun(item, index, '1000', false);//向前端发送房间信息
+                robTimeFun(newId, 'noRob');
+            }
+        }
+    }
 
     //用户离开房间
-    socket.on('leave-room',function(res){
+    socket.on('leave-room', function (res) {
         console.log('-----------leave-room触发-----------');
         let roomList = data.roomList;
         let item = searchRoomId(res.id);
         let index = item.index;
         let position = item.position;
-        console.log(res,index,position,item,roomList);
-        if(roomList[index][position].isReady=='ready'||roomList[index][position].isReady=='readyEd'){
-            roomList[index][position]=cloneFun(blankData);
-        }else{
-            roomList[index][position].isLogin=false;
+        console.log(res, index, position, item, roomList);
+        if (roomList[index][position].isReady == 'ready' || roomList[index][position].isReady == 'readyEd') {
+            roomList[index][position] = cloneFun(blankData);
+        } else {
+            roomList[index][position].isLogin = false;
         }
-        if(roomList[index].p1.id===''&&roomList[index].p2.id===""&&roomList[index].p3.id===''){
-            data.roomList.splice(index,1);
+        if (roomList[index].p1.id === '' && roomList[index].p2.id === "" && roomList[index].p3.id === '') {
+            data.roomList.splice(index, 1);
         }
 
         let rooms = Object.keys(socket.rooms);
-        io.to(index).emit('getUserInfo', {
-            roomId:item.index,
-            data: data.roomList[item.index],
-            position: item.position
-        });
+        getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
+        /* io.to(index).emit('getUserInfo', {
+         roomId: item.index,
+         data: data.roomList[item.index],
+         position: item.position
+         });*/
         let roomList1 = cloneFun(data.roomList);
         roomList1.forEach((item, i)=> {
-            roomList1[i].leftSit=roomList1[i].p1;
-            roomList1[i].bottomSit=roomList1[i].p2;
-            roomList1[i].rightSit=roomList1[i].p3;
+            roomList1[i].leftSit = roomList1[i].p1;
+            roomList1[i].bottomSit = roomList1[i].p2;
+            roomList1[i].rightSit = roomList1[i].p3;
         });
-        io.sockets.emit("getHallInfo",roomList1);
+        io.sockets.emit("getHallInfo", roomList1);
         //socket.close();
     });
 
     //用户出牌 或者不出
-    socket.on('emit-card',function(res){
+    socket.on('emit-card', function (res) {
         let roomList = data.roomList;
         let item = searchRoomId(res.id);
         let index = item.index;
         let position = item.position;
-        let code=res.code;
+        let code = res.code;
         //1000 出牌 2000不出
-        if(res.code==2000){
-            data.roomList[index][position].isReady='noDiscard';
-            data.roomList[index][position].outCard=[];
-        }else{
-            data.roomList[index][position].isReady='hasDisCard';
-            data.roomList[index][position].outCard=res.outCard;
-            data.roomList[index][position].card=delFun(data.roomList[index][position].card,res.outCard);
-            data.roomList[index][position].cardNum=data.roomList[index][position].card.length;
-        }
-        let nextPosition='';
-        if(position=='p1'){
-            nextPosition='p2';
-        }else if(position=='p2'){
-            nextPosition='p3';
-        }else if(position=='p3'){
-            nextPosition='p1';
-        }
-        data.roomList[index][nextPosition].isReady='discardOrNo';
-        data.roomList[index][nextPosition].outCard=[];
-        socket.join(item.index, function (res) {
-            let rooms = Object.keys(socket.rooms);
-            io.to(index).emit('getUserInfo', {
-                roomId:item.index,
-                code:code,//1000 表是出牌  2000 表示不出 不存在表示其他 3000表示玩家牌已经出完了，获胜
-                data: data.roomList[item.index],
-                position: item.position
-            });
-        }); // join(房间名)加入房间
+        outCardFun(res.id, res.code, res.outCard);
     });
+
+    //获取三张底牌
+    function setTopCard(index) {
+        io.to(index).emit('get-top-card', {
+            code: 2000,
+            topCard: data.roomList[index].topCard,
+        })
+    }
+
+    //出牌或者不出定时器
+    function outCardTimer(id) {
+        console.log('-------出牌定时器被触发---------');
+        clearInterval(robTime);
+        robTimeCount = 30;
+        robTime = setInterval(function () {
+            robTimeCount--;
+            console.log('------robTimeCount--------', robTimeCount);
+            if (robTimeCount <= 0) {
+                clearInterval(robTime);
+                console.log('------30秒时间到------', id);
+                outCardFun(id, 2000);
+            }
+            setTimerNum(id, robTimeCount);
+        }, 1000)
+    }
+
+    //出牌方法
+    function outCardFun(id, code, outCard) {
+        clearInterval(robTime);
+        let roomList = data.roomList;
+        let item = searchRoomId(id);
+        let index = item.index;
+        let position = item.position;
+        let newCode = code;
+        //1000 出牌 2000不出
+        let winId = '';
+        let nextPosition = '';
+        let nextId = '';
+        let sPosition = '';
+        let sId = '';
+        if (!data.roomList[index].p1) {
+            return;
+        }
+        let p1CardLen = data.roomList[index].p1.card.length;
+        let p2CardLen = data.roomList[index].p2.card.length;
+        let p3CardLen = data.roomList[index].p3.card.length;
+
+        if (position == 'p1') {
+            nextPosition = 'p2';
+            sPosition = 'p3';
+        } else if (position == 'p2') {
+            nextPosition = 'p3';
+            sPosition = 'p1';
+        } else if (position == 'p3') {
+            nextPosition = 'p1';
+            sPosition = 'p2';
+        }
+
+        if (code == 2000) {
+            data.roomList[index][position].isReady = 'noDiscard';
+            data.roomList[index][position].outCard = [];
+
+            if (position == 'p1') {
+                nextPosition = 'p2';
+                nextId = data.roomList[index].p2.id;
+                if (data.roomList[index].p2.outCard.length <= 0 && data.roomList[index].p3.outCard.length <= 0) {
+                    data.roomList[index][position].isReady = 'hasDisCard';
+                    data.roomList[index][position].outCard = data.roomList[index][position].card.splice(p1CardLen - 1, 1);
+                    data.roomList[index][position].cardNum = data.roomList[index][position].card.length;
+                }
+            } else if (position == 'p2') {
+                nextPosition = 'p3';
+                nextId = data.roomList[index].p3.id;
+                if (data.roomList[index].p1.outCard.length <= 0 && data.roomList[index].p3.outCard.length <= 0) {
+                    data.roomList[index][position].isReady = 'hasDisCard';
+                    data.roomList[index][position].outCard = data.roomList[index][position].card.splice(p2CardLen - 1, 1);
+                    data.roomList[index][position].cardNum = data.roomList[index][position].card.length;
+                }
+            } else if (position == 'p3') {
+                nextPosition = 'p1';
+                nextId = data.roomList[index].p1.id;
+                if (data.roomList[index].p1.outCard.length <= 0 && data.roomList[index].p2.outCard.length <= 0) {
+                    data.roomList[index][position].isReady = 'hasDisCard';
+                    data.roomList[index][position].outCard = data.roomList[index][position].card.splice(p3CardLen - 1, 1);
+                    data.roomList[index][position].cardNum = data.roomList[index][position].card.length;
+                }
+            }
+
+        } else {
+            data.roomList[index][position].isReady = 'hasDisCard';
+            data.roomList[index][position].outCard = outCard;
+            data.roomList[index][position].card = delFun(data.roomList[index][position].card, outCard);
+            data.roomList[index][position].cardNum = data.roomList[index][position].card.length;
+            nextId = data.roomList[index][nextPosition].id;
+            sId = data.roomList[index][sPosition].id;
+        }
+
+        //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
+        // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
+        // hasDisCard--已出牌
+        data.roomList[index][nextPosition].isReady = 'discardOrNo';
+        data.roomList[index][nextPosition].outCard = [];
+
+        if (data.roomList[index].p1.card.length <= 0 || data.roomList[index].p2.card.length <= 0 || data.roomList[index].p3.card.length <= 0) {
+            newCode = 3000;
+            data.roomList[index].gramPro = 'gramOver';//游戏状态-- getReady 准备中  running  进行中  gramOver  游戏结束
+            winId = (data.roomList[index].p1.card.length <= 0 ? data.roomList[index].p1.id : winId);
+            winId = (data.roomList[index].p2.card.length <= 0 ? data.roomList[index].p2.id : winId);
+            winId = (data.roomList[index].p3.card.length <= 0 ? data.roomList[index].p3.id : winId);
+            data.roomList[index].p1.card = [];
+            data.roomList[index].p1.isReady = 'ready';
+            data.roomList[index].p1.outCard = [];
+            data.roomList[index].p1.cardNum = '';
+            data.roomList[index].p1.playType = '';//Landlord 地主  farmer 农民
+
+            data.roomList[index].p2.card = [];
+            data.roomList[index].p2.isReady = 'ready';
+            data.roomList[index].p2.outCard = [];
+            data.roomList[index].p2.cardNum = '';
+            data.roomList[index].p2.playType = '';//Landlord 地主  farmer 农民
+
+            data.roomList[index].p3.card = [];
+            data.roomList[index].p3.isReady = 'ready';
+            data.roomList[index].p3.outCard = [];
+            data.roomList[index].p3.cardNum = '';
+            data.roomList[index].p3.playType = '';//Landlord 地主  farmer 农民
+            clearInterval(robTime);
+        }else{
+            outCardTimer(nextId, 2000);
+        }
+        getUserInfoFun(item, index, newCode, true, winId);//向前端发送房间信息
+    }
+
+    //发送后台定时器接口
+    function setTimerNum(id, count) {
+        let item = searchRoomId(id);
+        io.to(item.index).emit('set-timer-num', {
+            count: count
+        });
+    }
 
     //创建房间方法
     function joinRoom(info) {
@@ -782,70 +1059,93 @@ exports.websocket = function websocket(socket, io) {
         let roomList = data.roomList;
         let len = roomList.length;
         let newBlankData = cloneFun(blankData);
-        newBlankData.id=info.id;
-        newBlankData.account=info.account;
-        newBlankData.password=info.password;
-        newBlankData.beanNum=info.beanNum;
-        newBlankData.headImg=info.headImg;
-        function setData(index,position,type){
-            newBlankData.locationSit=position;
-            newBlankData.roomId=index;
-            if(type=='push'){
+        newBlankData.id = info.id;
+        newBlankData.account = info.account;
+        newBlankData.password = info.password;
+        newBlankData.beanNum = info.beanNum;
+        newBlankData.headImg = info.headImg;
+        //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
+        // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
+        // hasDisCard--已出牌
+        function setData(index, position, type) {
+            newBlankData.locationSit = position;
+            newBlankData.roomId = index;
+            if (type == 'push') {
                 roomList.push({
                     "roomId": index,
-                    "roomNum": "room"+index,
-                    position:'',
-                    robCount:'1',
+                    "roomNum": "room" + index,
+                    position: '',
+                    robCount: '1',
                     topCard: [],
-                    p1:cloneFun(blankData),
-                    p2:cloneFun(blankData),
-                    p3:cloneFun(blankData),
+                    gramPro: 'getReady',//游戏状态-- getReady 准备中  running  进行中  gramOver  游戏结束
+                    callOrNo: {//callLan--叫地主 noCallLan--不叫
+                        p1: 'callOrNo',
+                        p2: 'callOrNo',
+                        p3: 'callOrNo',
+                    },//叫地主状态
+                    robStatus: {
+                        p1: 'callOrNo',//rob--抢地主// noRob--不抢
+                        p2: 'callOrNo',
+                        p3: 'callOrNo',
+                    },//抢地主状态
+                    p1: cloneFun(blankData),
+                    p2: cloneFun(blankData),
+                    p3: cloneFun(blankData),
                 });
             }
-            roomList[index][position]=newBlankData;
+            roomList[index][position] = newBlankData;
         }
+
         if (len <= 0) {
-            setData(0,'p1','push');
+            setData(0, 'p1', 'push');
         } else {
-            let current=roomList[len-1];
-            if(current.p1.id!==''&&current.p2.id!==''&&current.p3.id!==''){
-                setData(len,'p1','push');
-            }else{
-                if(current.p3.id!==''&&current.p1.id===''){
-                    setData(len-1,'p1','join');
-                }else if(current.p1.id!==''&&current.p2.id===''){
-                    setData(len-1,'p2','join');
-                }else if(current.p2.id!==''&&current.p3.id===''){
-                    setData(len-1,'p3','join');
+            let current = roomList[len - 1];
+            if (current.p1.id !== '' && current.p2.id !== '' && current.p3.id !== '') {
+                setData(len, 'p1', 'push');
+            } else {
+                if (current.p3.id !== '' && current.p1.id === '') {
+                    setData(len - 1, 'p1', 'join');
+                } else if (current.p1.id !== '' && current.p2.id === '') {
+                    setData(len - 1, 'p2', 'join');
+                } else if (current.p2.id !== '' && current.p3.id === '') {
+                    setData(len - 1, 'p3', 'join');
                 }
             }
         }
-        console.log('joinRoom--------------触发');
-        console.log('joinRoom',data.roomList);
     }
 
     //校验所有玩家是否都已准备
     function checkAllReady(item, index) {
         let roomList = data.roomList;
+        console.log();
+        //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
+        // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
+        // hasDisCard--已出牌
         if (item.p1.isReady == 'readyEd' && item.p2.isReady == 'readyEd' && item.p3.isReady == 'readyEd') {
             let newCard = creatCard();
             roomList[index].topCard = newCard.topCard;
             roomList[index].p1.card = newCard.p1;
             roomList[index].p1.isReady = 'discard';
             roomList[index].p1.cardNum = '17';
+            roomList[index].p1.playType = '';
 
             roomList[index].p2.card = newCard.p2;
             roomList[index].p2.isReady = 'discard';
             roomList[index].p2.cardNum = '17';
+            roomList[index].p2.playType = '';
 
             roomList[index].p3.card = newCard.p3;
             roomList[index].p3.isReady = 'discard';
             roomList[index].p3.cardNum = '17';
+            roomList[index].p3.playType = '';
             let num = rnd(1, 3);
             num = 2;
-            roomList[index]['p' + num].isReady = 'robAndNo';
+            roomList[index]['p' + num].isReady = 'callOrNo';
             roomList[index].position = 'p' + num;
-            roomList[index].count= 0;
+            roomList[index].count = 0;
+            roomList[index].gramPro = 'running';//游戏状态-- getReady 准备中  running  进行中  gramOver  游戏结束
+            console.log('-------校验所有玩家是否都已经准备触发--------');
+            callLanTime(roomList[index]['p' + num].id);
             return true;
         }
     }
@@ -918,17 +1218,18 @@ exports.websocket = function websocket(socket, io) {
     }
 
     //数组中是删除元素方法
-    function delFun(list,del){
-        function getIndex(list,val){
-            for(var i=0,len=list.length;i<len;i++){
-                if(list[i]==val){
-                    list.splice(i,1);
+    function delFun(list, del) {
+        function getIndex(list, val) {
+            for (var i = 0, len = list.length; i < len; i++) {
+                if (list[i] == val) {
+                    list.splice(i, 1);
                 }
             }
         }
-        list=cloneFun(list);
-        for(var i=0,len=del.length;i<len;i++){
-            getIndex(list,del[i]);
+
+        list = cloneFun(list);
+        for (var i = 0, len = del.length; i < len; i++) {
+            getIndex(list, del[i]);
         }
         return list;
     }
@@ -955,7 +1256,6 @@ exports.websocket = function websocket(socket, io) {
             socket.emit('palyCard', options)
         }
     })
-
 
     function dealCards() {
 
