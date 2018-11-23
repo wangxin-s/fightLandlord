@@ -18,7 +18,7 @@ console.log(modelString[WEBPACK_PRO_ENV]);
 var sourcePath = {
     'dev':path.join(__dirname,'../server/views'),
     'dist':path.join(__dirname,'../dist'),
-    'release':'/opt/allwebfront/topwebfront'
+    'release':'/webfront'
 };
 
 module.exports={
