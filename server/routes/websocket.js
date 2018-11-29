@@ -173,6 +173,9 @@ let blankData = {
 let loginUserInfo = {};
 var robTime = null;//抢地主定时器
 var robTimeCount = 0;
+var roomRobTime={
+
+};
 exports.websocket = function websocket(socket, io) {
     var obj = {
         list: [],
@@ -607,7 +610,15 @@ exports.websocket = function websocket(socket, io) {
         let item = searchRoomId(res.id);
         let index = item.index;
         let type = res.type;//叫地主  不叫
-        clearInterval(robTime);
+        if(roomRobTime[index]){
+
+        }else{
+            roomRobTime[index]={
+                robTime:null,
+                robTimeCount:30,
+            }
+        }
+        clearInterval(roomRobTime[index].robTime);
         callOrNo(res.id, res.type);
     });
 
@@ -637,6 +648,8 @@ exports.websocket = function websocket(socket, io) {
             data.roomList[index].p1.isReady = 'readyEd';
             data.roomList[index].p2.isReady = 'readyEd';
             data.roomList[index].p3.isReady = 'readyEd';
+            roomRobTime[index].robTimeCount=30;
+            roomRobTime[index].robTime=null;
             data.roomList[index].count = 0;
             checkAllReady(data.roomList[index], index);
             getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
@@ -686,18 +699,27 @@ exports.websocket = function websocket(socket, io) {
 
     //叫地主定时器
     function callLanTime(id) {
+        let item = searchRoomId(id);
+        let index = item.index;
         console.log('-------叫地主定时器被触发---------');
-        clearInterval(robTime);
-        robTimeCount = 30;
-        robTime = setInterval(function () {
-            robTimeCount--;
-            console.log('------robTimeCount--------', robTimeCount);
-            if (robTimeCount <= 0) {
-                clearInterval(robTime);
+        if(roomRobTime[index]){
+            clearInterval(roomRobTime[index].robTime);
+        }else{
+            roomRobTime[index]={
+                robTime:null,
+                robTimeCount:30,
+            }
+        }
+        roomRobTime[index].robTimeCount = 30;
+        roomRobTime[index].robTime = setInterval(function () {
+            roomRobTime[index].robTimeCount--;
+            console.log('------robTimeCount--------', roomRobTime[index].robTimeCount);
+            if (roomRobTime[index].robTimeCount <= 0) {
+                clearInterval(roomRobTime[index].robTime);
                 console.log('------30秒时间到------', id);
                 callOrNo(id, 'noCallLan');
             }
-            setTimerNum(id, robTimeCount);
+            setTimerNum(id, roomRobTime[index].robTimeCount);
         }, 1000)
     }
 
@@ -720,18 +742,22 @@ exports.websocket = function websocket(socket, io) {
     //用户点击抢地主
     //抢地主定时器方法
     function robTimeFun(id, type) {
+        let item = searchRoomId(id);
+        let index = item.index;
         console.log('-------抢地主定时器被触发---------');
-        clearInterval(robTime);
-        robTimeCount = 30;
-        robTime = setInterval(function () {
-            robTimeCount--;
-            console.log('------robTimeCount--------', robTimeCount);
-            if (robTimeCount <= 0) {
-                clearInterval(robTime);
+        if (roomRobTime[index].robTime) {
+            clearInterval(roomRobTime[index].robTime);
+        }
+        roomRobTime[index].robTimeCount = 30;
+        roomRobTime[index].robTime = setInterval(function () {
+            roomRobTime[index].robTimeCount--;
+            console.log('------robTimeCount--------', roomRobTime[index].robTimeCount);
+            if (roomRobTime[index].robTimeCount <= 0) {
+                clearInterval(roomRobTime[index].robTime);
                 console.log('------30秒时间到------', id);
                 robLandlordFun(id, 'noCallLan');
             }
-            setTimerNum(id, robTimeCount);
+            setTimerNum(id, roomRobTime[index].robTimeCount);
         }, 1000)
     }
 
@@ -741,9 +767,9 @@ exports.websocket = function websocket(socket, io) {
 
     //抢地主方法
     function robLandlordFun(id, type) {
-        clearInterval(robTime);
         let item = searchRoomId(id);
         let index = item.index;
+        clearInterval(roomRobTime[index].robTime);
         let position = item.position;
         let oldIsReady = data.roomList[index][position].isReady;//当前玩家--赋值前--状态
         data.roomList[index][position].isReady = type;
@@ -896,27 +922,29 @@ exports.websocket = function websocket(socket, io) {
 
     //出牌或者不出定时器
     function outCardTimer(id) {
+        let item = searchRoomId(id);
+        let index = item.index;
         console.log('-------出牌定时器被触发---------');
-        clearInterval(robTime);
-        robTimeCount = 30;
-        robTime = setInterval(function () {
-            robTimeCount--;
-            console.log('------robTimeCount--------', robTimeCount);
-            if (robTimeCount <= 0) {
-                clearInterval(robTime);
+        clearInterval(roomRobTime[index].robTime);
+        roomRobTime[index].robTimeCount = 30;
+        roomRobTime[index].robTime = setInterval(function () {
+            roomRobTime[index].robTimeCount--;
+            console.log('------robTimeCount--------', roomRobTime[index].robTimeCount);
+            if (roomRobTime[index].robTimeCount <= 0) {
+                clearInterval(roomRobTime[index].robTime);
                 console.log('------30秒时间到------', id);
                 outCardFun(id, 2000);
             }
-            setTimerNum(id, robTimeCount);
+            setTimerNum(id, roomRobTime[index].robTimeCount);
         }, 1000)
     }
 
     //出牌方法
     function outCardFun(id, code, outCard) {
-        clearInterval(robTime);
         let roomList = data.roomList;
         let item = searchRoomId(id);
         let index = item.index;
+        clearInterval(roomRobTime[index].robTime);
         let position = item.position;
         let newCode = code;
         //1000 出牌 2000不出
@@ -1011,8 +1039,8 @@ exports.websocket = function websocket(socket, io) {
             data.roomList[index].p3.outCard = [];
             data.roomList[index].p3.cardNum = '';
             data.roomList[index].p3.playType = '';//Landlord 地主  farmer 农民
-            clearInterval(robTime);
-        }else{
+            clearInterval(roomRobTime[index].robTime);
+        } else {
             outCardTimer(nextId, 2000);
         }
         getUserInfoFun(item, index, newCode, true, winId);//向前端发送房间信息
@@ -1021,8 +1049,9 @@ exports.websocket = function websocket(socket, io) {
     //发送后台定时器接口
     function setTimerNum(id, count) {
         let item = searchRoomId(id);
+        let index = item.index;
         io.to(item.index).emit('set-timer-num', {
-            count: count
+            count: roomRobTime[index].robTimeCount
         });
     }
 
@@ -1139,7 +1168,8 @@ exports.websocket = function websocket(socket, io) {
             roomList[index].p3.cardNum = '17';
             roomList[index].p3.playType = '';
             let num = rnd(1, 3);
-            num = 2;
+            //num = 2;
+
             roomList[index]['p' + num].isReady = 'callOrNo';
             roomList[index].position = 'p' + num;
             roomList[index].count = 0;
