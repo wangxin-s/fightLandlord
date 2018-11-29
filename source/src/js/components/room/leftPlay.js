@@ -157,7 +157,7 @@ class MyBeenOutCard extends React.Component {
                                 src={require('../../../images/beans2.png')}></img>9999</p>
                         </div>
                         <div className="player-identity">
-                            <img className="farmer" src={this.props.landlordShow == this.state.playerLeft ? require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
+                            <img className="farmer" style={{display : this.props.landlordShow !== ''?'inline-block':'none'}} src={this.props.landlordShow == this.state.playerLeft ? require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
                             <div className="card-back">
                                 17
                             </div>
@@ -202,7 +202,7 @@ class MyBeenOutCard extends React.Component {
                     </div>
                     <div className="player">
                         <div className="player-identity">
-                            <img className="farmer" src={this.props.landlordShow == this.state.playerRight ? require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
+                            <img className="farmer" style={{display : this.props.landlordShow !== ''?'inline-block':'none'}} src={this.props.landlordShow == this.state.playerRight ? require('../../../images/Landlord.png') : require('../../../images/farmer.png')} alt="" />
                             <div className="card-back">
                                 17
                             </div>

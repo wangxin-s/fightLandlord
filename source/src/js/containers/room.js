@@ -108,6 +108,8 @@ class RoomMain extends React.Component {
             noOutText : [],
             //重新发牌
             newDealStatus : false,
+            //当前玩家最小的牌
+            minCard : {},
         }
     }
 
@@ -306,10 +308,12 @@ class RoomMain extends React.Component {
                             isShow_playLandlord: false,
                             isShow_playCard: false,
                             isRevers:false,
+                            list: [card_back, card_back, card_back],
                             isTimer: 1,
                             count: 20,
                             timerImg : '',
                             noOutText : [],
+                            maxCard : [],
                             landlordShow : ''
                         });
                         this.props._roomHandle({
@@ -412,16 +416,17 @@ class RoomMain extends React.Component {
                             let key = item.playerList[j].cardsList[length-1].icon;
                             let mySelectCard = {};
                             mySelectCard[key] = true;
-                            this.props._roomHandle({
-                                mySelectCard
-                            });
+                            // this.props._roomHandle({
+                            //     mySelectCard
+                            // });                            
                             this.setState({
                                 landlordShow : item.playerList[j].name,
                                 timerImg : item.playerList[j].name,
                                 landlordSit : item.playerList[j].site,
                                 count : this.state.count,
                                 noGradList : [],
-                                grabList : []                                
+                                grabList : [],
+                                minCard : mySelectCard                                
                             });
                             clearInterval(timer);
                             this.playCardTimer(2);
@@ -518,12 +523,13 @@ class RoomMain extends React.Component {
                         this.setState({
                             timerImg : '',
                             isRevers:false,
+                            list: [card_back, card_back, card_back],
                             newDealStatus : true
                         }) 
                         //重新发牌
-                        // if(name == 'YH8022'){
-                        //     socket.emit('getCards',roomId);
-                        // }
+                        if(name == 'YH8022'){
+                            socket.emit('getCards',roomId);
+                        }
                         return false;                    
                     }else{
 
@@ -556,16 +562,17 @@ class RoomMain extends React.Component {
                             let key = item.playerList[j].cardsList[length-1].icon;
                             let mySelectCard = {};
                             mySelectCard[key] = true;
-                            this.props._roomHandle({
-                                mySelectCard
-                            });
+                            // this.props._roomHandle({
+                            //     mySelectCard
+                            // });
                             this.setState({
                                 landlordShow : item.playerList[j].name,
                                 timerImg : item.playerList[j].name,
                                 landlordSit : item.playerList[j].site,
                                 count : this.state.count,
                                 noGradList : [],
-                                grabList : []                                
+                                grabList : [],
+                                minCard : mySelectCard                                
                             });
                             clearInterval(timer);
                             this.playCardTimer(2);
@@ -650,21 +657,27 @@ class RoomMain extends React.Component {
                 if(room == item.room){                    
                      clearInterval(timer);
                      if(item.gameOver == 'Y'){
-                        clearInterval(timer);
-                        alert('gameOver');
+                        clearInterval(timer);                       
                         this.setState({
                             newDealStatus : true,
                             isShow_beenOut : false,
                             landlordImg : false,
                             noOutStatus : false,
+                            landlordStatus : false,
                             isRevers:false,
+                            list: [card_back, card_back, card_back],
                             timerImg : '',
                             noOutText : [],
+                            maxCard : [],
                             landlordShow : ''
                         });
                         this.props._roomHandle({
                             myCardOut : []
-                        });                        
+                        }); 
+                        //重新发牌
+                        if(name == 'YH8022'){
+                            socket.emit('getCards',roomId);
+                        }                       
                         return false;
                      }else{
 
@@ -789,9 +802,12 @@ class RoomMain extends React.Component {
                                 count : this.state.count,                             
                             });
                             if(name == item.playerList[j].name){
-                                this.props._roomHandle({
-                                    mySelectCard
-                                });
+                                // this.props._roomHandle({
+                                //     mySelectCard
+                                // });
+                                this.setState({
+                                    minCard : mySelectCard
+                                })
                             }
                             clearInterval(timer);
                             this.playCardTimer(2);
@@ -958,6 +974,9 @@ class RoomMain extends React.Component {
         this.props._roomHandle({
             myCard, myCardOut: list, mySelectCard: {}
         });
+        this.setState({
+            minCard : {}
+        })
         // this.setState({
         //     isShow_playCard: false,
         //     // isTimer: 1,
@@ -1074,8 +1093,10 @@ class RoomMain extends React.Component {
 
     //出牌定时器
     playCardTimer(type) {
-        let roomId = this.props.room.roomId;  
-        let timerImg = this.state.timerImg;                   
+        let roomId = this.props.room.roomId;
+        let mySelectCard = this.props.room.mySelectCard; 
+        let timerImg = this.state.timerImg;
+        let minCard = this.state.minCard;                   
         timer = setInterval(() => {
             let obj = this.state;
             if (this.state.count == 1 && timerImg == roomId.name) {
@@ -1084,6 +1105,11 @@ class RoomMain extends React.Component {
                     this.notOut();
                 }
                 if(type == 2){
+                    if(JSON.stringify(mySelectCard) == '{}'){
+                        this.props._roomHandle({
+                            mySelectCard: minCard
+                        });
+                    }
                     this.playCard();
                 }
                 if (obj.isTimer == 1) {
@@ -1198,9 +1224,9 @@ class RoomMain extends React.Component {
                             count={this.state.count}
                         />
                         {/* 不抢&抢地主 按钮 end */}
-                        {this.state.newDealStatus && 
+                        {/*{this.state.newDealStatus && 
                             <div className="newDeal" onClick={this.newDealFun.bind(this)}>重新发牌</div>
-                        }
+                        }*/}
                         {/* 已出的牌  start*/}
                         <MyBeenOutCard
                             show={this.state.isShow_beenOut}
@@ -1225,7 +1251,7 @@ class RoomMain extends React.Component {
                         <div className="my-head" title="点击头像发牌" onClick={this.startCard}></div>
 
                         {/* 地主农民身份 */}
-                        <div className={this.state.landlordImg ? 'my-identity-Y' : 'my-identity-N'}></div>
+                        <div style={{display : this.state.landlordShow !== ''?'inline-block':'none'}} className={this.state.landlordImg ? 'my-identity-Y' : 'my-identity-N'}></div>
                     </div>                    
                     {/*底部静态文件 start*/}
                     <Bottom 

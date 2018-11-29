@@ -837,18 +837,19 @@ function cardSort  (a , b){
 }
 function dealCards (){    
     let total = 17;
+    one = [] ; two = [] ; three = [] ; hiddenCards = [];
     let cards = Cards.slice(0);
     for(let i=0;i<3;i++){
         hiddenCards[i] = getOneCard(cards);
     }
-    for(let i=0;i<total;i++){
-        one[i] = getOneCard(cards);
+    for(let j=0;j<17;j++){
+        one[j] = getOneCard(cards);
     }
-    for(let i=0;i<total;i++){
-        two[i] = getOneCard(cards);
+    for(let k=0;k<17;k++){
+        two[k] = getOneCard(cards);
     }
-    for(let i=0;i<total;i++){
-        three[i] = getOneCard(cards);
+    for(let z=0;z<17;z++){
+        three[z] = getOneCard(cards);
     }   
     one = one.sort(cardSort);
     two = two.sort(cardSort);
