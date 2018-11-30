@@ -2,6 +2,10 @@
  * Created by ex-wangxin on 2018/9/13.
  */
 var connect = require("./connect");
+
+var cardTypeFun=require("./units/room").cardType;
+var compareCardFun=require("./units/room").compareCard;
+
 var moduleData = {
     code: 200,
     msg: '成功'
@@ -173,9 +177,7 @@ let blankData = {
 let loginUserInfo = {};
 var robTime = null;//抢地主定时器
 var robTimeCount = 0;
-var roomRobTime={
-
-};
+var roomRobTime = {};
 exports.websocket = function websocket(socket, io) {
     var obj = {
         list: [],
@@ -184,6 +186,21 @@ exports.websocket = function websocket(socket, io) {
         right: [],
         bottomCard: []
     };
+    //本局结束后更新表中的值 豆子
+    function updateFun(id,index,position,beanNum) {
+        let newBeanNum = data.roomList[index][position].beanNum * 1 + beanNum;
+        let update = "UPDATE users SET beanNum = '" + newBeanNum + "' WHERE id = '" + id + "'";
+        connect.query(update, function (err, result) {
+            if (err) {
+                console.log('[SELECT ERROR] - ', err.message);
+                return;
+            }
+            loginUserInfo[id].beanNum = newBeanNum;
+            data.roomList[index][position].beanNum = newBeanNum;
+            let item = searchRoomId(id);
+            getUserInfoFun(item, index, 1000, false)
+        });
+    }
 
     // 登录
     socket.on('login', (data)=> {
@@ -584,6 +601,10 @@ exports.websocket = function websocket(socket, io) {
         newData.p2.card = [];
         newData.p3.card = [];
         newData.topCard = [];
+        let doubleBeanNum=1;
+        if(newData.beanDouble){
+            doubleBeanNum=newData.beanDouble;
+        }
         if (typeof winId != 'undefined') {
             io.to(index).emit('getUserInfo', {
                 winId: winId,
@@ -591,6 +612,7 @@ exports.websocket = function websocket(socket, io) {
                 code: code,
                 roomId: item.index,
                 data: newData,
+                doubleBeanNum:doubleBeanNum,
                 position: item.position
             });
         } else {
@@ -599,6 +621,7 @@ exports.websocket = function websocket(socket, io) {
                 code: code,
                 roomId: item.index,
                 data: newData,
+                doubleBeanNum:doubleBeanNum,
                 position: item.position
             });
         }
@@ -610,12 +633,12 @@ exports.websocket = function websocket(socket, io) {
         let item = searchRoomId(res.id);
         let index = item.index;
         let type = res.type;//叫地主  不叫
-        if(roomRobTime[index]){
+        if (roomRobTime[index]) {
 
-        }else{
-            roomRobTime[index]={
-                robTime:null,
-                robTimeCount:30,
+        } else {
+            roomRobTime[index] = {
+                robTime: null,
+                robTimeCount: 30,
             }
         }
         clearInterval(roomRobTime[index].robTime);
@@ -648,8 +671,11 @@ exports.websocket = function websocket(socket, io) {
             data.roomList[index].p1.isReady = 'readyEd';
             data.roomList[index].p2.isReady = 'readyEd';
             data.roomList[index].p3.isReady = 'readyEd';
-            roomRobTime[index].robTimeCount=30;
-            roomRobTime[index].robTime=null;
+
+            data.roomList[index].beanDouble = 1;
+
+            roomRobTime[index].robTimeCount = 30;
+            roomRobTime[index].robTime = null;
             data.roomList[index].count = 0;
             checkAllReady(data.roomList[index], index);
             getUserInfoFun(item, index, '1000', true);//向前端发送房间信息
@@ -702,12 +728,12 @@ exports.websocket = function websocket(socket, io) {
         let item = searchRoomId(id);
         let index = item.index;
         console.log('-------叫地主定时器被触发---------');
-        if(roomRobTime[index]){
+        if (roomRobTime[index]) {
             clearInterval(roomRobTime[index].robTime);
-        }else{
-            roomRobTime[index]={
-                robTime:null,
-                robTimeCount:30,
+        } else {
+            roomRobTime[index] = {
+                robTime: null,
+                robTimeCount: 30,
             }
         }
         roomRobTime[index].robTimeCount = 30;
@@ -813,6 +839,9 @@ exports.websocket = function websocket(socket, io) {
             callCount++;
         } else if (data.roomList[index].p3.isReady == 'noCallLan') {
             callCount++;
+        }
+        if(type=='rob'){
+            beanDoubleFun(index);//调用方法 当前局再次加倍
         }
         if (callCount == 1) {//第一家   不叫地主
             if (data.roomList[index].count == 3) {
@@ -960,6 +989,14 @@ exports.websocket = function websocket(socket, io) {
         let p2CardLen = data.roomList[index].p2.card.length;
         let p3CardLen = data.roomList[index].p3.card.length;
 
+        //判断当前出牌是不是炸弹或者火箭
+        if(code===1000){
+            let outCardType=cardTypeFun(outCard);
+            if(outCardType=='火箭'||outCardType=='炸弹'){
+                beanDoubleFun(index);
+            }
+        }
+
         if (position == 'p1') {
             nextPosition = 'p2';
             sPosition = 'p3';
@@ -1017,11 +1054,45 @@ exports.websocket = function websocket(socket, io) {
         data.roomList[index][nextPosition].outCard = [];
 
         if (data.roomList[index].p1.card.length <= 0 || data.roomList[index].p2.card.length <= 0 || data.roomList[index].p3.card.length <= 0) {
+            let p1Id = data.roomList[index].p1.id;
+            let p2Id = data.roomList[index].p2.id;
+            let p3Id = data.roomList[index].p3.id;
+            let danOrSuang = 1;
+            let beanDouble = data.roomList[index].beanDouble;//当前这一局的倍数
+            let newBeanNum = 0;
+
+            //即使算更新玩家豆子
+            function newBeanFun(index, id, position, beanDouble) {
+                let danOrSuang = 1;
+                let newBeanNum = 0;
+                if (data.roomList[index][position].card.length <= 0) {
+                    if (data.roomList[index][position].playType == 'landlord') {//地主获得倍数的双份 豆子
+                        danOrSuang = 2;
+                    } else {//农民获取倍数等同的豆子
+                        danOrSuang = 1;
+                    }
+                }else{
+                    if (data.roomList[index][position].playType == 'landlord') {//地主获得倍数的双份 豆子
+                        danOrSuang = -2;
+                    } else {//农民获取倍数等同的豆子
+                        danOrSuang = -1;
+                    }
+                }
+                newBeanNum = 100 * beanDouble * danOrSuang;
+                updateFun(id,index,position,newBeanNum);//更新得分--
+            }
+
+            newBeanFun(index, p1Id, 'p1', beanDouble);//更新 p1 位置玩家得分
+            newBeanFun(index, p2Id, 'p2', beanDouble);//更新 p2 位置玩家得分
+            newBeanFun(index, p3Id, 'p3', beanDouble);//更新 p3 位置玩家得分
+
             newCode = 3000;
             data.roomList[index].gramPro = 'gramOver';//游戏状态-- getReady 准备中  running  进行中  gramOver  游戏结束
             winId = (data.roomList[index].p1.card.length <= 0 ? data.roomList[index].p1.id : winId);
             winId = (data.roomList[index].p2.card.length <= 0 ? data.roomList[index].p2.id : winId);
             winId = (data.roomList[index].p3.card.length <= 0 ? data.roomList[index].p3.id : winId);
+            data.roomList[index].beanDouble =1;
+
             data.roomList[index].p1.card = [];
             data.roomList[index].p1.isReady = 'ready';
             data.roomList[index].p1.outCard = [];
@@ -1146,7 +1217,6 @@ exports.websocket = function websocket(socket, io) {
     //校验所有玩家是否都已准备
     function checkAllReady(item, index) {
         let roomList = data.roomList;
-        console.log();
         //ready--准备按钮  readyEd--已准备 callOrNo--叫·不叫 callLan--叫地主 noCallLan--不叫  robAndNo--抢·不抢  rob--抢地主
         // noRob--不抢  discardOrNo--出牌·不出  discard--出牌  noDiscard--不出
         // hasDisCard--已出牌
@@ -1264,10 +1334,20 @@ exports.websocket = function websocket(socket, io) {
         return list;
     }
 
+    //当前局加倍方法
+    function beanDoubleFun(index){
+        if(data.roomList[index].beanDouble){
+            data.roomList[index].beanDouble=data.roomList[index].beanDouble*2;
+        }else{
+            data.roomList[index].beanDouble=1*2;
+        }
+    }
+
     /*游戏界面  相关接口 end----------------------   */
 
 
     //判断牌型
+
     socket.on('typeJudge', (data)=> {
         let options = typeJudge(data);
         socket.emit('typeJudge', options);

@@ -59,6 +59,9 @@ class BottomCard extends React.Component {
                 <div className='room-header-center' onClick={this.props.revers}>
                     {this.imgFun(this.props.list)}
                 </div>
+                {/*当前局倍数 start*/}
+                <div className="double">倍数：{this.props.doubleBeanNum}倍</div>
+                {/*当前局倍数 end*/}
                 {/*三张底牌 end*/}
                 <div className="room-header-right">
                     <img src={require('../../../images/hosting.png')} alt=""/>

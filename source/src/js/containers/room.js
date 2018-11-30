@@ -82,7 +82,8 @@ class RoomMain extends React.Component {
             // 地主牌  翻转控制
             isRevers: false,
             //地主牌数据源
-            list: [card_back, card_back, card_back]
+            list: [card_back, card_back, card_back],
+            doubleBeanNum:1,//当前倍数
         }
     }
 
@@ -268,6 +269,9 @@ class RoomMain extends React.Component {
             }else{
                 position=data.data.p3.locationSit
             }
+            this.setState({
+                doubleBeanNum:data.doubleBeanNum,
+            })
 
             if (position == 'p1') {
                 leftData = data.data.p3;
@@ -679,6 +683,7 @@ class RoomMain extends React.Component {
                 <Top
                     roomId={roomId}
                     list={room.topCard}
+                    doubleBeanNum={this.state.doubleBeanNum}
                     leaveRoom={this.leaveRoom.bind(this)}
                     newTime={this.state.newTime}
                     isRevers={this.state.isRevers}
