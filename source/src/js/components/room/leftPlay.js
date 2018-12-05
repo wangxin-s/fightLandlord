@@ -18,6 +18,8 @@ class MyBeenOutCard extends React.Component {
             bottomList : [],//底下人的牌
             leftText : '',
             rightText : '',
+            leftChat : '',
+            rightChat : '',
             grabImg : false,           
         };
 
@@ -31,6 +33,8 @@ class MyBeenOutCard extends React.Component {
             rightList : [],//右边的牌
             leftText : '',
             rightText : '',
+            leftChat : '',
+            rightChat : '',
             bottomList : [],//底下人的牌
             noOut : [],
             grabImg : false,
@@ -41,6 +45,7 @@ class MyBeenOutCard extends React.Component {
         let noOutText = this.props.noOutText;   
         let noOut = [];   
         this.dataFun(roomData,name,room) 
+        
     }
 
     componentWillUnmount() {
@@ -52,6 +57,8 @@ class MyBeenOutCard extends React.Component {
             rightList : [],//右边的牌
             leftText : '',
             rightText : '',
+            leftChat : '',
+            rightChat : '',
             bottomList : [],//底下人的牌
             grabImg : false,
         })
@@ -65,7 +72,7 @@ class MyBeenOutCard extends React.Component {
 
     dataFun(roomData,name,room,left,right,bottom){
         let playerLeft,playerRight,leftList=[],rightList=[],sit,dataList,isRob,showCard,grabImg,leftText,
-            rightText;       
+            rightText,rightChat,leftChat;       
         roomData.map((item,i)=>{
             if(room == item.room){
                 dataList = item.playerList;
@@ -83,6 +90,8 @@ class MyBeenOutCard extends React.Component {
             rightList = dataList[1].cardsList;
             leftText = dataList[2].text;
             rightText = dataList[1].text;
+            leftChat = dataList[2].chatText;
+            rightChat = dataList[1].chatText;
         }
         if(sit == 'right'){
             playerLeft = dataList[1].name;
@@ -91,6 +100,8 @@ class MyBeenOutCard extends React.Component {
             rightList = dataList[0].cardsList;
             leftText = dataList[1].text;
             rightText = dataList[0].text;
+            leftChat = dataList[1].chatText;
+            rightChat = dataList[0].chatText;
         }
         if(sit == 'bottom'){
             playerLeft = dataList[0].name;
@@ -99,6 +110,8 @@ class MyBeenOutCard extends React.Component {
             rightList = dataList[2].cardsList;
             leftText = dataList[0].text;
             rightText = dataList[2].text;
+            leftChat = dataList[0].chatText;
+            rightChat = dataList[2].chatText;
         }
         this.setState({
             playerLeft,
@@ -106,7 +119,9 @@ class MyBeenOutCard extends React.Component {
             leftList,
             rightList,
             leftText,
-            rightText
+            rightText,
+            leftChat,
+            rightChat
         })
     }
     // 左边玩家出牌展示
@@ -153,6 +168,7 @@ class MyBeenOutCard extends React.Component {
                             <img src={require('../../../images/player8.png')} alt="" />
                             <p>{this.state.playerLeft}</p>
                             <p>已准备</p>
+                            <p>{this.state.leftChat}</p>
                             <p className="color-y"><img className="beans"
                                 src={require('../../../images/beans2.png')}></img>9999</p>
                         </div>
@@ -211,6 +227,7 @@ class MyBeenOutCard extends React.Component {
                             <img src={require('../../../images/player8.png')} alt="" />
                             <p>{this.state.playerRight}</p>
                             <p>已准备</p>
+                            <p>{this.state.rightChat}</p>
                             <p className="color-y"><img className="beans"
                                 src={require('../../../images/beans2.png')}></img>9999</p>
                         </div>

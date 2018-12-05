@@ -198,7 +198,8 @@ exports.websocket = function websocket(socket,io) {
                         delete val.text;
                         delete val.firstCard;
                         delete val.noOut;
-                        delete val.isLandlord;                        
+                        delete val.isLandlord; 
+                        delete val.landowner;                       
                         delete item.headCard;
                         delete item.landlordIn;
                         delete item.newDeal;
@@ -239,6 +240,9 @@ exports.websocket = function websocket(socket,io) {
                         //当前房间的底牌                   
                         item.headCard = obj.headCard;
                         item.playerList.map((val,i)=>{
+                            if(val.landowner == 'Y'){
+                                delete item.playerList[i].landowner;
+                            }
                             if(val.site == 'left'){                        
                                 item.playerList[i].cardsList = obj.left;                           
                             }
@@ -345,7 +349,8 @@ exports.websocket = function websocket(socket,io) {
                           }                          
                           if(arr.length == 0){
                                 if(data.landlordSit == val.site){
-                                    item.playerList[i].showCard = 'Y';                                    
+                                    item.playerList[i].showCard = 'Y';
+                                    item.playerList[i].landowner = 'Y';                                  
                                     item.landlordIn = 'Y';
                                     for(let k in hiddenCards){
                                             item.playerList[i].cardsList.push(hiddenCards[k]);
@@ -364,7 +369,8 @@ exports.websocket = function websocket(socket,io) {
                             }
                             if(arr.length == 1){
                                 if(data.landlordSit == val.site){
-                                    item.playerList[i].showCard = 'Y';                                    
+                                    item.playerList[i].showCard = 'Y'; 
+                                    item.playerList[i].landowner = 'Y';                                    
                                     item.landlordIn = 'Y';
                                     for(let k in hiddenCards){
                                         item.playerList[i].cardsList.push(hiddenCards[k]);
@@ -387,6 +393,7 @@ exports.websocket = function websocket(socket,io) {
                                 if(arr.length == 2){                                    
                                     if(val.isRob !== 'Y'){    
                                         item.playerList[i].showCard = 'Y';
+                                        item.playerList[i].landowner = 'Y'; 
                                         item.landlordIn = 'Y';
                                         for(let k in hiddenCards){
                                             item.playerList[i].cardsList.push(hiddenCards[k]);
@@ -467,6 +474,7 @@ exports.websocket = function websocket(socket,io) {
                         }
                         if(data.landlordSit == 'left'){
                             item.playerList[2].showCard = 'Y';
+                            item.playerList[2].landowner = 'Y'; 
                             item.landlordIn = 'Y';
                             for(let k in hiddenCards){
                                     item.playerList[2].cardsList.push(hiddenCards[k]);
@@ -475,6 +483,7 @@ exports.websocket = function websocket(socket,io) {
                         }
                         if(data.landlordSit == 'bottom'){
                             item.playerList[0].showCard = 'Y';
+                            item.playerList[0].landowner = 'Y'; 
                             item.landlordIn = 'Y';
                             for(let k in hiddenCards){
                                     item.playerList[0].cardsList.push(hiddenCards[k]);
@@ -483,6 +492,7 @@ exports.websocket = function websocket(socket,io) {
                         }
                         if(data.landlordSit == 'right'){
                             item.playerList[1].showCard = 'Y';
+                            item.playerList[1].landowner = 'Y'; 
                             item.landlordIn = 'Y';
                             for(let k in hiddenCards){
                                     item.playerList[1].cardsList.push(hiddenCards[k]);
@@ -508,12 +518,14 @@ exports.websocket = function websocket(socket,io) {
                             delete val.cardsList;
                             delete val.text;
                             delete val.isLandlord;
+                            delete val.landowner;
                             delete item.headCard;
                             delete item.landlordIn;
                         }
                         if(arr.length == 2){
                             if(val.isRob !== 'Y'){    
                                 item.playerList[i].showCard = 'Y';
+                                item.playerList[i].landowner = 'Y'; 
                                 item.landlordIn = 'Y';
                                 for(let k in hiddenCards){
                                         item.playerList[i].cardsList.push(hiddenCards[k]);
@@ -642,9 +654,10 @@ exports.websocket = function websocket(socket,io) {
                                 delete val.firstCard;
                                 delete val.noOut;
                                 delete val.isLandlord;
+                                // delete val.landowner;                                
                             })
                             delete item.headCard;
-                            delete item.landlordIn;
+                            delete item.landlordIn;                            
                         }
                     }
                 });
@@ -751,6 +764,7 @@ exports.websocket = function websocket(socket,io) {
                             delete val.firstCard;
                             delete val.noOut;
                             delete val.isLandlord;
+                            // delete val.landowner;
                         })
                         delete item.headCard;
                         delete item.landlordIn;
@@ -817,6 +831,20 @@ exports.websocket = function websocket(socket,io) {
         io.sockets.emit('notPlayCard',desk.deskList);
     })
 
+//聊天
+socket.on('chat',(data)=>{
+   console.log(data);
+   desk.deskList.map((item , index)=>{
+            if(data.room == item.room){                                               
+                item.playerList.map((val,i)=>{
+                    if(data.name == val.name){
+                        item.playerList[i].chatText = data.chatText;
+                    }              
+                })
+            }
+        });
+    io.sockets.emit('chat',desk.deskList);
+})
 
 
 //随机取一张牌

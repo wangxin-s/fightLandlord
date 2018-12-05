@@ -445,8 +445,10 @@
                 }
             }
             .footer-text{
+                width: 1.5rem;
+                height: 0.8rem;
                 position: absolute;
-                top: 0;
+                top: -2.5rem;
                 left: 50%;
                 font-size: 0.5rem;
                 color: black;                
@@ -458,6 +460,18 @@
                     width: .9rem;
                     height: .9rem;
                     margin-right: .4rem;
+                }
+            }
+        }
+        .footer-chat{
+            margin-right: 0.4rem;
+            float: right;
+            border:0.1rem solid red;
+            ul{
+                li{
+                    font-size: 0.3rem;   
+                    list-style: none;
+                    margin: 0.2rem;                     
                 }
             }
         }

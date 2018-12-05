@@ -89,6 +89,8 @@ class RoomMain extends React.Component {
             grabName : '',
             //抢地主玩家所在位置
             landlordSit : '',
+            //默认重新发牌
+            defaultCard : '',
             //叫地主/抢地主显示(默认叫地主)
             landlordStatus : false,
             //抢地主图标显示
@@ -304,10 +306,11 @@ class RoomMain extends React.Component {
                             newDealStatus : false,
                             isShow_beenOut : false,
                             landlordImg : false,
-                            noOutStatus : false,
+                            // noOutStatus : false,
                             isShow_playLandlord: false,
                             isShow_playCard: false,
                             isRevers:false,
+                            landlordStatus:false,
                             list: [card_back, card_back, card_back],
                             isTimer: 1,
                             count: 20,
@@ -349,6 +352,7 @@ class RoomMain extends React.Component {
                          if(item.playerList[j].isLandlord === 'Y'){
                             this.setState({
                                 timerImg : item.playerList[j].name,
+                                defaultCard : item.playerList[j].name,
                                 landlordSit : item.playerList[j].site,
                                 count : this.state.count,
                                 grabName : item.playerList[j].name,
@@ -526,8 +530,9 @@ class RoomMain extends React.Component {
                             list: [card_back, card_back, card_back],
                             newDealStatus : true
                         }) 
+                        console.log(this.state.defaultCard,'++++++++')
                         //重新发牌
-                        if(name == 'YH8022'){
+                        if(name == this.state.defaultCard){
                             socket.emit('getCards',roomId);
                         }
                         return false;                    
@@ -662,7 +667,7 @@ class RoomMain extends React.Component {
                             newDealStatus : true,
                             isShow_beenOut : false,
                             landlordImg : false,
-                            noOutStatus : false,
+                            // noOutStatus : false,
                             landlordStatus : false,
                             isRevers:false,
                             list: [card_back, card_back, card_back],
@@ -674,8 +679,10 @@ class RoomMain extends React.Component {
                         this.props._roomHandle({
                             myCardOut : []
                         }); 
+                        console.log('gameOver');
+                        console.log(this.state.defaultCard,'++++++++++')
                         //重新发牌
-                        if(name == 'YH8022'){
+                        if(name == this.state.defaultCard){
                             socket.emit('getCards',roomId);
                         }                       
                         return false;
@@ -721,7 +728,16 @@ class RoomMain extends React.Component {
                                 if(item.playerList[j].showCard == 'Y'){
                                     isShow_playCard = true;
                                     landlordSit = item.playerList[j].site;                                                                
-                                }                        
+                                } 
+                                if(item.playerList[j].firstCard == 'Y'){
+                                    this.setState({
+                                        noOutStatus : true,                                            
+                                    })                                                                                              
+                                }else{
+                                    this.setState({
+                                        noOutStatus : false
+                                    }) 
+                                }                       
                             } 
                         } 
                      }                     
@@ -853,6 +869,12 @@ class RoomMain extends React.Component {
             };  
         })
 
+        //聊天
+        socket.on('chat',(data)=>{
+            this.props._roomHandle({
+                roomData : data,                    
+            })
+        });
         //左侧玩家出牌接口
         socket.on('leftPushCards', (data) => {
             this.props._roomHandle({
@@ -971,9 +993,9 @@ class RoomMain extends React.Component {
         //     return false
         // }
 
-        this.props._roomHandle({
-            myCard, myCardOut: list, mySelectCard: {}
-        });
+        // this.props._roomHandle({
+        //     myCard, myCardOut: list, mySelectCard: {}
+        // });
         this.setState({
             minCard : {}
         })
@@ -988,8 +1010,53 @@ class RoomMain extends React.Component {
         roomId.maxCard = maxCard;
         roomId.outCard = list;
         roomId.landlordSit = this.state.landlordSit;
-        //调用接口出牌
-        socket.emit('emitCard', roomId);
+        if(maxCard.length > 0){
+            if(this.state.count <= 1){
+                if(compareCard(list, maxCard)){
+                    this.props._roomHandle({
+                        myCard, myCardOut: list, mySelectCard: {}
+                    });
+                    socket.emit('emitCard', roomId);
+                }else{
+                    this.props._roomHandle({
+                        myCard, myCardOut: list, mySelectCard: {}
+                    });
+                    this.notOut();
+                }
+            }else{
+                if(compareCard(list, maxCard)){
+                    this.props._roomHandle({
+                        myCard, myCardOut: list, mySelectCard: {}
+                    });
+                    socket.emit('emitCard', roomId);
+                }else{
+                    // this.props._roomHandle({
+                    //     mySelectCard: {}
+                    // });
+                }
+            }
+        }else{
+            if(!cardType(cloneFun(list))){
+                // this.props._roomHandle({
+                //     mySelectCard: {}
+                // });
+            }else{
+                this.props._roomHandle({
+                        myCard, myCardOut: list, mySelectCard: {}
+                    });
+                socket.emit('emitCard', roomId);
+            }
+        }
+        // if(this.state.count <= 2 && maxCard.length > 0){
+        //     if(compareCard(list, maxCard)){
+        //         socket.emit('emitCard', roomId);
+        //     }else{
+        //         this.notOut();
+        //     }
+        // }else{
+        //     //调用接口出牌
+        //     socket.emit('emitCard', roomId);
+        // }        
     }
 
     // 不抢
@@ -1085,8 +1152,7 @@ class RoomMain extends React.Component {
             } else {
                 this.setState({
                     count: this.state.count - 1,
-                });
-                console.log(this.state.count);
+                });                
             }
         }, 1000)
     }
@@ -1109,6 +1175,22 @@ class RoomMain extends React.Component {
                         this.props._roomHandle({
                             mySelectCard: minCard
                         });
+                    }else{
+                        let list = [];
+                        for (let key in mySelectCard) {
+                            if (mySelectCard[key]) {
+                                list.push(key);                            
+                            }
+                        } 
+                        if(!cardType(cloneFun(list))){
+                           this.props._roomHandle({
+                                mySelectCard: minCard
+                           }); 
+                        }else{
+                           this.props._roomHandle({
+                                mySelectCard
+                           }); 
+                        }
                     }
                     this.playCard();
                 }
@@ -1166,6 +1248,17 @@ class RoomMain extends React.Component {
     newDealFun(){
         let roomId = this.props.room.roomId;        
         socket.emit('getCards',roomId);        
+    }
+
+    //聊天callBack
+    chatBackFun(text){
+        let roomId = this.props.room.roomId; 
+        roomId.chatText = text;       
+        socket.emit('chat',roomId);
+        setTimeout(function(){
+            roomId.chatText = '';       
+            socket.emit('chat',roomId);
+        },2000)  
     }
 
     render() {
@@ -1256,7 +1349,8 @@ class RoomMain extends React.Component {
                     {/*底部静态文件 start*/}
                     <Bottom 
                         roomId = {room.roomId}
-                        roomData = {room.roomData}                        
+                        roomData = {room.roomData}  
+                        chatBackFun = {this.chatBackFun.bind(this)}                      
                     />
                     {/*底部静态文件 end*/}
                     {/*<div onClick={this.getCardFun.bind(this)}>开始发牌</div>*/}
