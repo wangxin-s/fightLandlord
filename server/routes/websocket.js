@@ -189,6 +189,7 @@ exports.websocket = function websocket(socket, io) {
     //本局结束后更新表中的值 豆子
     function updateFun(id,index,position,beanNum) {
         let newBeanNum = data.roomList[index][position].beanNum * 1 + beanNum;
+        console.log('更新----',newBeanNum);
         let update = "UPDATE users SET beanNum = '" + newBeanNum + "' WHERE id = '" + id + "'";
         connect.query(update, function (err, result) {
             if (err) {
@@ -198,7 +199,13 @@ exports.websocket = function websocket(socket, io) {
             loginUserInfo[id].beanNum = newBeanNum;
             data.roomList[index][position].beanNum = newBeanNum;
             let item = searchRoomId(id);
-            getUserInfoFun(item, index, 1000, false)
+            getUserInfoFun(item, index, 1000, false);
+            io.to(index).emit('game-over',{
+                id:id,
+                account:data.roomList[index][position].account,
+                position:position,
+                newbeanNum:newBeanNum,
+            })
         });
     }
 
@@ -1058,9 +1065,15 @@ exports.websocket = function websocket(socket, io) {
             let p2Id = data.roomList[index].p2.id;
             let p3Id = data.roomList[index].p3.id;
             let danOrSuang = 1;
-            let beanDouble = data.roomList[index].beanDouble;//当前这一局的倍数
+            let beanDouble = '';//当前这一局的倍数
+            if(data.roomList[index].beanDouble){
+                beanDouble=data.roomList[index].beanDouble;
+            }else{
+                beanDouble=1
+            }
             let newBeanNum = 0;
-
+            console.log('beanDouble----',beanDouble);
+            console.log('beanDouble----',data.roomList[index].beanDouble);
             //即使算更新玩家豆子
             function newBeanFun(index, id, position, beanDouble) {
                 let danOrSuang = 1;

@@ -29,6 +29,7 @@ import PlayLandlordButton from '../components/room/playLandlordButton';
 import MyBeenOutCard from '../components/room/myBeenOutCard';
 import LeftPlay from '../components/room/leftPlay';
 import Bottom from '../components/room/bottom';
+import BalancePanel from '../components/room/balancePanel';
 import {
     roomHandle, getCard
 } from '../actions/room';
@@ -84,6 +85,13 @@ class RoomMain extends React.Component {
             //地主牌数据源
             list: [card_back, card_back, card_back],
             doubleBeanNum:1,//当前倍数
+
+            //结算弹框显示隐藏
+            panelShow:false,
+            title:'',
+            beanObj:{
+
+            },
         }
     }
 
@@ -295,30 +303,41 @@ class RoomMain extends React.Component {
             let room=this.props.room;
 
             if(data.code&&data.code==3000){
+                let title='';
                 //判断牌局是否结束
                 if(room.leftData.card.length==0||room.bottomData.card.length==0||room.rightData.card.length==0){
                     if(data.winId&&data.winId!==''){
                         if(room.bottomData.playType=='landlord'){
                             if(data.winId==bottomData.id){
                                 console.log('地主--恭喜你赢了');
+                                title='地主--恭喜你赢了';
                             }else{
                                 console.log('地主--恭喜你输了');
+                                title='地主--恭喜你输了';
                             }
                         }else{
                             if(data.winId==room.bottomData.id){
                                 console.log('农民--恭喜你赢了');
+                                title='农民--恭喜你赢了';
                             }else{
                                 if(room.leftData.playType=='farmer'&&room.leftData.id==data.id){
                                     console.log('农民--恭喜你赢了');
+                                    title='农民--恭喜你赢了';
                                 }else if(room.rightData.playType=='farmer'&&room.rightData.id==data.id){
                                     console.log('农民--恭喜你赢了');
+                                    title='农民--恭喜你赢了';
                                 }else{
                                     console.log('农民--恭喜你输了');
+                                    title='农民--恭喜你输了';
                                 }
                             }
                         }
                     }
                 }
+                this.setState({
+                    panelShow:true,
+                    title:title,
+                });
                 this.props._roomHandle({
                     topCard:[],
                 });
@@ -392,8 +411,17 @@ class RoomMain extends React.Component {
             this.setState({
                 count:data.count,
             })
-
         })
+        socket.on('game-over',(data)=>{
+            let beanObj=this.state.beanObj;
+            beanObj[data.position]=data;
+            this.setState({
+                beanObj
+            },()=>{
+                console.log(this.state.beanObj);
+            })
+        })
+
     }
 
     //生命周期销毁方法
@@ -670,6 +698,9 @@ class RoomMain extends React.Component {
             roomId: '',
         });
     }
+    inputFun(val){
+        this.setState({panelShow:val})
+    }
 
     render() {
         let room = this.props.room;
@@ -679,6 +710,13 @@ class RoomMain extends React.Component {
         let isReady = bottomData.isReady;
         return (
             <div id="landlord-room">
+                {/*结算面板 start*/}
+                <BalancePanel
+                    beanObj={this.state.beanObj}
+                    title={this.state.title}
+                    show={this.state.panelShow}
+                    callback={this.inputFun.bind(this)} />
+                {/*结算面板 end*/}
                 {/*顶部展示区域 start*/}
                 <Top
                     roomId={roomId}
