@@ -4,6 +4,3 @@
 >   ·it('to 相等',function(){
 >       expect(3+4).to.be.equal(7);
 >   });·
->
->
->
