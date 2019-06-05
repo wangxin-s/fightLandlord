@@ -1,0 +1,19 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "mocha ./file/*.js",
+    "test:-t": "mocha -timeout 4000 ./file/*.js",
+    "test:-ts": "mocha --reporter spec -timeout 4000 ./file/*.js",
+    "test:-tt": "mocha --reporter tap -timeout 4000 ./file/*.js",
+    "test:-t_g": "mocha --grep '动态生成测试用例集' ./file/*.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "supertest": "^4.0.2"
+  }
+}

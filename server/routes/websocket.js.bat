@@ -1,7 +1,7 @@
 /**
  * Created by ex-wangxin on 2018/9/13.
  */
-// var connect = require("./connect");
+var connect = require("./connect");
 
 var cardTypeFun=require("./units/room").cardType;
 var compareCardFun=require("./units/room").compareCard;
@@ -163,12 +163,12 @@ let blankData = {
     roomId: '',
     locationSit: '',
     password: '',
-    headImg:'', //'https://pic.qqtn.com/up/2017-9/15063376742826581.jpg',
+    headImg: '',
     //ready--准备按钮  readyEd--已准备  robAndNo--抢·不抢  rob--抢地主  noRob--不抢 discardOrNo--出牌·不出   discard--出牌  noDiscard--不出  hasDisCard--已出牌
     isReady: 'ready',
     card: [],//当前未出的牌
     outCard: [],//已出的牌
-    beanNum:'',//'10000',//豆子数量
+    beanNum: '',//豆子数量
     cardNum: '',//还有多少张牌
     playType: 'farmer',//Landlord 地主  farmer 农民
 };
@@ -178,9 +178,6 @@ let loginUserInfo = {};
 var robTime = null;//抢地主定时器
 var robTimeCount = 0;
 var roomRobTime = {};
-var loginNum=0;
-var defaultHeadImg='https://pic.qqtn.com/up/2017-9/15063376742826581.jpg';//新登陆用户  默认头像
-var defaultBeanNum='100000';//新登陆用户默认豆子数量
 exports.websocket = function websocket(socket, io) {
     var obj = {
         list: [],
@@ -214,23 +211,39 @@ exports.websocket = function websocket(socket, io) {
 
     // 登录
     socket.on('login', (data)=> {
-        //let num = parseInt(Math.random() * 10000);
-        var result={
-            code: 200,
-            msg: '成功'
-        };
-        if(!loginUserInfo[data.account]){
-            loginUserInfo[data.account] = cloneFun(blankData);
-            loginUserInfo[data.account].id= data.account;
-            loginUserInfo[data.account].account=data.account;
-            loginUserInfo[data.account].password=data.password;
-            loginUserInfo[data.account].beanNum=defaultBeanNum;
-            loginUserInfo[data.account].headImg=defaultHeadImg;
-            console.log('新建用户');
-            loginNum++;
-        }
-        result.data=loginUserInfo[data.account]
-        socket.emit('login', result);
+        let num = parseInt(Math.random() * 10000);
+        let sql = 'select * from users where account=' + '"' + data.account + '"';
+        let insert = "INSERT INTO `users`(`account`, `password`) VALUES ('" + data.account + "','" + data.password + "')";
+        connect.query(sql, function (err, result) {
+            if (err) {
+                console.log('[SELECT ERROR] - ', err.message);
+                return;
+            }
+            if (result.length > 0) {
+                if (result[0].password == data.password) {
+                    serverData.data = result[0];
+                    loginUserInfo[serverData.data.id] = serverData.data;
+                    socket.emit('login', serverData);
+                    return;
+                } else {
+                    serverData.code = 202;
+                    serverData.msg = '密码错误';
+                    socket.emit('login', serverData);
+                    return;
+                }
+            } else {
+                connect.query(insert, function (err, result) {
+                    if (err) {
+                        console.log('[SELECT ERROR] - ', err.message);
+                        return;
+                    } else {
+                        serverData.data = 'YH' + num;
+                        socket.emit('login', serverData);
+                        return;
+                    }
+                })
+            }
+        })
     });
     //登录用户的资料
     socket.on('loginer', (data)=> {
@@ -384,9 +397,8 @@ exports.websocket = function websocket(socket, io) {
         var id = res.id;
         if (typeof item.index == 'undefined') {
             joinRoom(userInfo);
-            console.log('---------fastMatching-----------');
         }
-
+        console.log('---------fastMatching-----------');
         socket.join(item.index, function (res) {
             var newItem = searchRoomId(id);
             getUserInfoFun(newItem, newItem.index, '1000', false);//向前端发送房间信息

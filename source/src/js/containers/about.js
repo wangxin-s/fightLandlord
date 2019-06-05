@@ -1,6 +1,4 @@
-/**
- * Created by ex-wangxin on 2018/9/11.
- */
+
 import React from 'react';
 import { connect } from 'react-redux'
 import {aboutAllHandle} from '../actions/about'

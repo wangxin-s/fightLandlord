@@ -1,6 +1,4 @@
-/**
- * Created by ex-wangxin on 2018/9/13.
- */
+
 var mysql = require("mysql");
 
 var pool = mysql.createConnection({

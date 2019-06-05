@@ -1,6 +1,4 @@
-/**
- * Created by ex-wangxin on 2018/9/29.
- */
+
 const roomState =sessionStorage.getItem('roomIndex')? JSON.parse(sessionStorage.getItem('roomIndex')):{
     topCard:[],//顶部中间的底牌
     myCard:[],//我的牌

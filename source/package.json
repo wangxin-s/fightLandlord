@@ -4,7 +4,7 @@
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "dev": "set NODE_ENV=dev&& npm install && webpack --watch --progress --colors",
+    "dev": "export NODE_ENV=dev&& npm install && webpack --watch --progress --colors",
     "dist": "set NODE_ENV=dist&& npm install && webpack -p --progress --colors",
     "release": "export NODE_ENV=release&& npm install && webpack -p --progress --colors"
   },

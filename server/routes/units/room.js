@@ -3,7 +3,7 @@
  */
 
 //判断当前牌的类型
-exports.cardType=function cardType(list) {
+function cardType(list) {
     newSort(list);
     if(list.length<=0){
         return false;
@@ -158,7 +158,7 @@ exports.cardType=function cardType(list) {
 }
 
 //比较当前要出的牌  和  上家已经出的牌的大小 是否能出牌
-exports.compareCard= function compareCard(myList,upList){
+function compareCard(myList,upList){
     /*
     myList  我当前要出的牌  和 上家已经出的牌
     * */
@@ -312,3 +312,6 @@ function len(list) {
 function cloneFun(list){
     return JSON.parse(JSON.stringify(list));
 }
+
+exports.cardType=cardType;
+exports.compareCard=compareCard;

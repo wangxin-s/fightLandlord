@@ -1,6 +1,4 @@
-/**
- * Created by ex-fuyunfeng on 2018/9/20.
- */
+
 const loginState =sessionStorage.getItem('loginStateIndex')? JSON.parse(sessionStorage.getItem('loginStateIndex')): {
    token:'',
    account:'',

@@ -1,6 +1,4 @@
-/**
- * Created by ex-shijinge on 2018/9/29.
- */
+
 const hallState = sessionStorage.getItem('hallStateIndex')? JSON.parse(sessionStorage.getItem('hallStateIndex')):{
     hallInfo:[],//大厅数据
 };

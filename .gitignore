@@ -6,4 +6,5 @@ build
 .project
 server/views/
 source/node_modules/
+test/node_modules/
 

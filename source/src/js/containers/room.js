@@ -1,6 +1,4 @@
-/**
- * Created by ex-fuyunfeng on 2018/9/20.
- */
+
 import React from 'react';
 import {connect} from 'react-redux'
 import card1 from '../../images/card/card_1061@2x.png';
